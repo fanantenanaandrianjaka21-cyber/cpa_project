@@ -1,0 +1,32 @@
+# Laravel
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+/.idea
+/.vscode
+/.phpunit.result.cache
+Homestead.yaml
+Homestead.json
+.env
+.env.backup
+.phpunit.result.cache
+
+# Laravel specific
+/storage/logs
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*
+
+# SQLite databases
+*.sqlite*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# npm & composer lock files (optional to ignore)
+/package-lock.json
+/yarn.lock

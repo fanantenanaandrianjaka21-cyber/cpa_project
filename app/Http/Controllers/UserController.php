@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use App\Models\Emplacement;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
+class UserController extends Controller
+{
+    public function index()
+    {
+        $emplacement = Emplacement::all();
+     
+         $active_tab='utilisateur';
+        return view('users.ajout', compact('emplacement','active_tab'));
+    }
+    public function ajoutUser(Request $request)
+    {
+        // dd($request);
+        $this->validate($request, [
+            'id_emplacement' => 'required',
+            'nom_utilisateur' => 'required',
+            'prenom_utilisateur' => 'required',
+            'email' => 'required',
+            'password' => 'required|min:8',
+            'equipe' => 'required',
+            'societe' => 'required',
+            'contact_utilisateur' => 'required',
+            'role' => 'required',
+        ]);
+        User::create([
+            'id_emplacement' => $request['id_emplacement'],
+            'nom_utilisateur' => $request['nom_utilisateur'],
+            'prenom_utilisateur' => $request['prenom_utilisateur'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password']),
+            'equipe' => $request['equipe'],
+            'societe' => $request['societe'],
+            'contact_utilisateur' => $request['contact_utilisateur'],
+            'role' => $request['role'],
+        ]);
+
+        $user = User::all();
+        $notification = 'Utilisateur ajouté  avec succès';
+        $emplacement = Emplacement::all();
+         $active_tab='utilisateur';
+        return view('users.liste', compact('user', 'notification', 'emplacement','active_tab'));
+    }
+    public function listUser()
+    {
+        $user = User::all();
+        $emplacement = Emplacement::all();
+        // $user=User::where('name','jack')->where('id',1)->get();
+         $active_tab='utilisateur';
+        return view('users.liste', compact('user', 'emplacement','active_tab'));
+    }
+    public function detailsUtilisateur($id)
+    {
+        $utilisateur = User::where('id', $id)->get()->first();
+         $active_tab='utilisateur';
+        return view('users.details', compact('utilisateur','active_tab'));
+    }
+    public function editUtilisateur($id)
+    {
+        $utilisateur = User::where('id', $id)->get()->first();
+        $emplacement = Emplacement::where('id', $utilisateur->id_emplacement)->get()->first();
+        $utilisateur['emplacement'] = $emplacement->emplacement;
+        $emplacement = Emplacement::all();
+         $active_tab='utilisateur';
+        return view('users.modifier', compact('utilisateur', 'emplacement','active_tab'));
+    }
+    public function modifierUtilisateur(Request $request)
+    {
+        $this->validate($request, [
+            'idutilisateur' => 'required',
+            'id_emplacement' => 'required',
+            'nom_utilisateur' => 'required',
+            'prenom_utilisateur' => 'required',
+            'email' => 'required',
+            'password' => 'required|min:8',
+            'equipe' => 'required',
+            'societe' => 'required',
+            'contact_utilisateur' => 'required',
+        ]);
+        $id = $request['idutilisateur'];
+        $utilisateurData = $request->all();
+        $utilisateurData['password'] = Hash::make($request['password']);
+        //update post data
+        User::find($id)->update($utilisateurData);
+        $notification = 'Utilisateur modifié avec succès';
+        $user = User::all();
+         $active_tab='utilisateur';
+        return view('users.liste', compact('user', 'notification','active_tab'));
+    }
+    protected function delete(User $id)
+    {
+        //dd($pub)
+        $id->delete();
+        $notification = 'Utilisateur supprimé avec succès';
+        $user = User::all();
+         $active_tab='utilisateur';
+        return view('users.liste', compact('user', 'notification','active_tab'));
+    }
+}
