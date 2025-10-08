@@ -122,4 +122,5 @@ Route::get('/indextickes', function () {
     return redirect('/tickets?active_tab=ticket')->with('active_tab', 'ticket');
 })->middleware('auth')->name('ticket');
 
-
+// ************* Dashboard******************//
+Route::get('/Dashboard', [App\Http\Controllers\DashboardController::class, 'afficheDashboard'])->name('dashboard');

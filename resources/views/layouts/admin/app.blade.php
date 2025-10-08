@@ -65,8 +65,8 @@ if (request()->has('active_tab')) {
 ?>
                 <div class="navbar-nav w-100">
                     <!-- active -->
-                    <a href="#" class="nav-item nav-link {{ $active_tab == 'dashboard' ? 'active' : '' }}"
-                        id="displayNotif"><i class="fa fa-tachometer"></i>Dashboard</a>
+                    <a href="{{ route('dashboard') }}" class="nav-item nav-link {{ $active_tab == 'dashboard' ? 'active' : '' }}"
+                        ><i class="fa fa-tachometer"></i>Dashboard</a>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link {{ $active_tab == 'emplacement' ? 'active' : '' }}"
                             data-bs-toggle="dropdown"><i class="fa fa-building"></i>Emplacements</a>
