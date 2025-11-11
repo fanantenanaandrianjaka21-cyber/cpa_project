@@ -18,8 +18,13 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY . .
 
-# Installer les dépendances Laravel sans exécuter les scripts
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+# Installer les dépendances Laravel et générer les caches
+RUN composer install --no-dev --optimize-autoloader && \
+    php artisan package:discover --ansi && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
+
 
 # ----------------------------
 # Étape 2 : Image finale
