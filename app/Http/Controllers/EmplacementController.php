@@ -21,13 +21,13 @@ class EmplacementController extends Controller
         $this->validate($data, [
             'code_emplacement' => 'required',
             'emplacement' => 'required',
-            'code_final' => 'required',
+            // 'code_final' => 'required',
         ]);
 
         Emplacement::create([
             'code_emplacement' => $data['code_emplacement'],
             'emplacement' => $data['emplacement'],
-            'code_final' => $data['code_final'],
+            // 'code_final' => $data['code_final'],
         ]);
         $notification = 'Emplacement ajouté avec succès';
         $emplacement = Emplacement::all();
@@ -132,7 +132,7 @@ class EmplacementController extends Controller
             'idemplacement' => 'required',
             'code_emplacement' => 'required',
             'emplacement' => 'required',
-            'code_final' => 'required',
+            // 'code_final' => 'required',
         ]);
         $id = $request['idemplacement'];
         $emplacementData = $request->all();

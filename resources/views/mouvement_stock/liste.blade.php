@@ -4,20 +4,44 @@
         <i class="fa fa-home"></i>/ Stock / Mouvement
 
     </div>
+    <div class="w3-panel w3-pale-blue w3-bottombar w3-border-blue w3-border">
+        <h4 class="w3-start w3-animate-right">
+            Mouvement de stock
+        </h4>
+    </div>
     <div class="card">
-        <div class="card-header">
-            <h7>Mouvement de stock</h7>
-        </div>
-        <div class="card-body">
+        <div class="card-body bg-primary text-white">
             <div class="row">
-                <div class="col-12">
-                    <a href="{{ route('gestionMateriels') }}"class="btn btn-secondary btn-round">Liste de Stock</a>
-                    <table id="bootstrap-data-table-export" class="table table-hover table-responsive table-bordered">
+                <div class="col-12 ">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <a
+                                href="{{ route('gestionMateriels', ['id_emplacement' => Auth::user()->id_emplacement, 'role' => Auth::user()->role]) }}"class="btn btn-success btn-round ">Liste
+                                de Stock</a>
+                        </div>
+                        <div class="col-md-3">
+                            <form method="POST" action="{{ route('mouvementexcel.export') }}">
+
+                                @csrf
+
+                                {{-- <input type="text" name="name" placeholder="Nom de fichier"> --}}
+                                <button type="submit" class="btn btn-success btn-round">Export Excel</button>
+                                <select name="extension">
+                                    <option value="xlsx">.xlsx</option>
+                                    <option value="csv">.csv</option>
+                                </select>
+
+                            </form>
+                        </div>
+                    </div>
+                    <div id="filters" class="row mb-3"></div>
+                    <table id="bootstrap-data-table-export"
+                        class="table table-striped table-striped-bg-default table-hover table-responsive">
                         <thead>
                             <tr>
                                 <th>Id</th>
                                 <th>Materiel</th>
-                                {{-- <th>Model</th> --}}
+                                <th>Quantite</th>
                                 <th>Mouvement</th>
                                 <th>Source</th>
                                 <th>Destination</th>
@@ -29,15 +53,21 @@
                             @foreach ($mouvement as $mouvement)
                                 <tr>
                                     <td>{{ $mouvement['id'] }}</td>
-                                    <td class="text-center "><img class="card-img-top"
-                                            style="background-size: cover;min-height: 50px; max-height: 50px;max-width:100px"src="{{ asset('storage/' . $mouvement['image']) }}"><br>{{ $mouvement['type'] }}
+                                    <td class="text-center ">
+                                        {{-- <img class="card-img-top"
+                                            style="background-size: cover;min-height: 50px; max-height: 50px;max-width:100px"src="{{ asset('storage/' . $mouvement['image']) }}"><br> --}}
+                                        {{ $mouvement['type'] }}
                                     </td>
-                                    @if ($mouvement['type_mouvement']=='entree')
-                                        <td class="text-center" style="background-color: rgba(0, 128, 64, 0.7);">{{ $mouvement['type_mouvement'] }}</td>
+                                    <td class="text-center">
+                                        {{ $mouvement['quantite'] }}
+                                    </td>
+                                    @if ($mouvement['type_mouvement'] == 'entree')
+                                        <td class="text-center w3-text-green">{{ $mouvement['type_mouvement'] }}</td>
                                     @else
-                                        <td class="text-center" style="background-color: rgba(255, 0, 0, 0.7)">{{ $mouvement['type_mouvement'] }}</td>
+                                        <td class="text-center" style="color: rgba(255, 0, 0, 0.7)">
+                                            {{ $mouvement['type_mouvement'] }}</td>
                                     @endif
-                                    
+
                                     <td>
                                         @if (empty($mouvement['source']))
                                             Achat
@@ -54,12 +84,13 @@
                                         @endif
                                     </td>
                                     <td>{{ $mouvement['date_mouvement'] }}</td>
+
                                     <td>
 
-                                        <div class="pull-right hidden-phone">
-                                            <a href="" class="btn btn-info btn-xs">Details</a>
-                                            <a href="" class="btn btn-danger btn-xs"><i
-                                                    class="fa fa-trash-o "></i></a>
+                                        <div class="text-center">
+                                            {{-- <a href="#" class="btn btn-outline-info btn-xs" >Details</a> --}}
+                                            <a href="#" class="btn btn-outline-danger btn-xs" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="Supprimer"><i class="fa fa-trash-o "></i></a>
                                         </div>
                                     </td>
                                 </tr>
@@ -71,7 +102,7 @@
             </div>
         </div>
     </div>
-     <!-- modal materiel -->
+    <!-- modal materiel -->
     <div class="modal fade" id="modal-materiel">
         <div class="modal-dialog">
             <div class="modal-content info">
@@ -273,4 +304,5 @@
             }
         }
     </script>
+
 @endsection

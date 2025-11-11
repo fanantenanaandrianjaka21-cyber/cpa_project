@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+         // Exécute la commande chaque minute (pour vérifier l’heure exacte)
+    $schedule->command('alertes:envoyer')->everyMinute();
     }
 
     /**

@@ -18,9 +18,18 @@
                                 <div class="col-md-6">
                                     <select class="form-select" name="id_emplacement" id="id_emplacement" required>
                                         <option value="">Sélectionner un emplacement</option>
-                                        @foreach ($emplacement as $emp)
-                                            <option value="{{ $emp->id }}">{{ $emp->emplacement }}</option>
-                                        @endforeach
+                                        @if (Auth::User()->role == 'Super Admin' or Auth::User()->role == 'Admin IT')
+                                            @foreach ($emplacement as $emp)
+                                                <option value="{{ $emp->id }}">{{ $emp->emplacement }}</option>
+                                            @endforeach
+                                        @else
+                                            @foreach ($emplacement as $emp)
+                                                @if (Auth::User()->id_emplacement == $emp->id)
+                                                    <option value="{{ $emp->id }}">{{ $emp->emplacement }}</option>
+                                                @endif
+                                            @endforeach
+                                        @endif
+
                                     </select>
                                 </div>
                             </div>

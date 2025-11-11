@@ -14,10 +14,12 @@ class CreateMouvementStocksTable extends Migration
     public function up()
     {
         Schema::create('mouvement_stocks', function (Blueprint $table) {
-            $table->id(); 
+            $table->id();
             $table->foreignId('id_materiel')
-                  ->constrained('materiels')
-                  ->onDelete('cascade');
+                ->constrained('materiels')
+                ->onDelete('cascade');
+            $table->string('quantite')
+                ->nullable();
             $table->string('source')
                 ->nullable();
             $table->string('emplacement_destination')

@@ -10,17 +10,17 @@
                     </h4>
                 @endif
             </div>
-            <div class="card-body">
+            <div class="card-body bg-primary">
 
                 <div class="row">
                     <div class="col-12">
-
+<div id="filters" class="row mb-3"></div>
                         <table id="bootstrap-data-table-export" class="table table-hover table-responsive table-bordered">
                             <thead>
                                 <tr>
                                     <th>Id</th>
                                     <th>Materiel</th>
-                                    <th>Type</th>
+                                    {{-- <th>Type</th> --}}
                                     <th>Marque</th>
                                     <th>Localisation</th>
                                     <th>status</th>
@@ -32,9 +32,9 @@
                                 @foreach ($materiel as $materiel)
                                     <tr>
                                         <td>{{ $materiel['id'] }}</td>
-                                        <td><img class="card-img-top"
+                                        {{-- <td><img class="card-img-top"
                                                 style="background-size: cover;min-height: 100px; max-height: 100px"src="{{ asset('storage/' . $materiel['image']) }}">
-                                        </td>
+                                        </td> --}}
                                         <td>{{ $materiel['type'] }}</td>
                                         <td>{{ $materiel['marque'] }}</td>
                                         <td>{{ $materiel['emplacement'] }}</td>
@@ -53,7 +53,7 @@
                                         </td>
                                         <td>
                                             <div class="pull-right hidden-phone">
-                                                <a href="{{ route('caracteristique.voir', $materiel['id']) }}"
+                                                <a href="{{ route('caracteristique.voir', ['id'=>$materiel['id'],'page'=>'materiel']) }}"
                                                     class="btn btn-info btn-xs">Details</a>
                                                 <a href="{{ route('materiel.edit', $materiel['id']) }}"
                                                     class="btn btn-secondary btn-xs"><i class="fa fa-pencil"></i></a>
@@ -73,4 +73,5 @@
             </div>
         </div>
     </div>
+     
 @endsection
