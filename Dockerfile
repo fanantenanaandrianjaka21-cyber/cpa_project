@@ -1,44 +1,29 @@
-services:
-  - type: web
-    name: cpa-project
-    env: php
-    plan: free
-    buildCommand: |
-      composer install --no-dev --optimize-autoloader
-      php artisan config:cache
-      php artisan route:cache
-      php artisan view:cache
-    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: APP_ENV
-        value: production
-      - key: APP_KEY
-        generateValue: true
-      - key: APP_DEBUG
-        value: false
-      - key: DB_CONNECTION
-        value: pgsql
-      - key: DB_HOST
-        fromDatabase:
-          name: cpa-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: cpa-db
-          property: port
-      - key: DB_DATABASE
-        fromDatabase:
-          name: cpa-db
-          property: database
-      - key: DB_USERNAME
-        fromDatabase:
-          name: cpa-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: cpa-db
-          property: password
+# Utilisation d'une image PHP FPM comme base
+FROM php:8.3-fpm-alpine
 
-databases:
-  - name: cpa-db
-    plan: free
+# Définition du répertoire de travail
+WORKDIR /var/www/html
+
+# Installation des dépendances système et des extensions PHP (pdo_pgsql est essentiel)
+RUN apk add --no-cache git libzip-dev libpng-dev libpq \
+    && docker-php-ext-configure gd --with-png \
+    && docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd sockets
+
+# Installation de Composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+# Copie des fichiers de l'application
+COPY . .
+
+# Définition des permissions pour Laravel
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Render injecte généralement le port, mais EXPOSE est une bonne pratique
+EXPOSE 8000 
+
+# Commande de démarrage (si vous n'utilisez pas php artisan serve dans render.yaml, utilisez php-fpm ici)
+# MAIS : Étant donné que votre render.yaml utilise 'php artisan serve', 
+# cette ligne n'est pas strictement nécessaire pour Render dans ce cas, 
+# mais laissons-la pour une image réutilisable.
+CMD ["php-fpm"]
