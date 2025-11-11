@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y \
     libzip-dev zlib1g-dev pkg-config \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_pgsql gd zip \
-    && docker-php-ext-enable pdo_pgsql
+    && docker-php-ext-enable pdo_pgsql \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -18,8 +19,8 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY . .
 
-# Installer les dépendances sans exécuter les scripts artisan
-RUN composer install --no-dev --optimize-autoloader
+# Installer les dépendances Laravel sans exécuter les scripts
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # ----------------------------
 # Étape 2 : Image finale
