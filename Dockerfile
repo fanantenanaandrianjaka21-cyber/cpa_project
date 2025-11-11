@@ -30,6 +30,7 @@ FROM php:8.2-fpm
 RUN apt-get update && apt-get install -y \
     libpq-dev libpng-dev libjpeg-dev libfreetype6-dev \
     libzip-dev zlib1g-dev zip unzip pkg-config \
+    postgresql-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_pgsql gd zip \
     && docker-php-ext-enable pdo_pgsql \
