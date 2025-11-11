@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateEmplacementsTable extends Migration
 {
-    
     /**
      * Run the migrations.
      *
@@ -16,9 +15,8 @@ class CreateEmplacementsTable extends Migration
     {
         Schema::create('emplacements', function (Blueprint $table) {
             $table->id();
-            // $table->string('code_emplacement');
+            $table->string('code_emplacement');
             $table->string('emplacement');
-            // $table->string('code_final');
             $table->timestamps();
         });
     }

@@ -9,8 +9,7 @@
                 <div class="card">
                     <div class="card-header" style="text-align:center">{{ __('Enregistrement d\'un nouveau utilisateur') }}
                     </div>
-
-                    <div class="card-body">
+                    <div class="card-body bg-primary text-white">
                         <form method="POST" action="/ajoutUser" id="register-form">
                             @csrf
 
@@ -49,6 +48,23 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
+                                <label for="id"
+                                    class="col-md-4 col-form-label text-md-end">{{ __('Matricule ') }}</label>
+
+                                <div class="col-md-6">
+                                    <input id="id" type="number"
+                                        class="form-control @error('id') is-invalid @enderror"
+                                        name="id" value="{{ old('id') }}" placeholder="nouveau matricule:{{ $utilisateur->id+1 }}" required
+                                        autocomplete="id" autofocus>
+
+                                    @error('id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="row mb-3">
                                 <label for="phone"
                                     class="col-md-4 col-form-label text-md-end">{{ __('Contact') }}</label>
                                 <div class="col-md-6">
@@ -56,8 +72,6 @@
                                     <input id="phone" type="tel"
                                         class="form-control @error('contact_utilisateur') is-invalid @enderror"
                                         name="contact_utilisateur" placeholder="Entrez le numéro">
-
-
                                     @error('contact_utilisateur')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -89,9 +103,9 @@
                                     class="col-md-4 col-form-label text-md-right">{{ __('Societe') }}</label>
                                 <div class="col-md-6">
                                     <select class="form-select" name="societe">
-                                        <option value="ADV">CPA</option >
-                                        <option value="Audit">Expert CPA</option >
-                                        <option value="ComptaStar">RFC</option >
+                                        <option value="ADV">CPA</option>
+                                        <option value="Audit">Expert CPA</option>
+                                        <option value="ComptaStar">RFC</option>
                                     </select>
                                 </div>
 
@@ -101,11 +115,26 @@
                                     class="col-md-4 col-form-label text-md-right">{{ __('Emplacement') }}</label>
                                 <div class="col-md-6">
                                     <select class="form-select" name="id_emplacement">
-                                        @foreach ($emplacement as $emp)
-                                            <option value="{{ $emp->id }}">{{ $emp->emplacement }}</option>
-                                        @endforeach
+                                        @if (Auth::user()->role == 'Super Admin' or Auth::user()->role == 'Admin IT')
+                                            @foreach ($emplacement as $emp)
+                                            @if ($emp->emplacement!='GLOBALE')
+                                                <option value="{{ $emp->id }}">{{ $emp->emplacement }}</option>
+                                                
+                                            @endif
 
+                                            @endforeach
+                                        @else
+                                            @foreach ($emplacement as $emp)
+                                                @if ($emp->id == Auth::User()->id_emplacement)
+                                            @if ($emp->emplacement!='GLOBALE')
+                                                <option value="{{ $emp->id }}">{{ $emp->emplacement }}</option>
+                                                
+                                            @endif
+                                                @endif
+                                            @endforeach
 
+                                            </option>
+                                        @endif
                                     </select>
                                 </div>
                             </div>
@@ -114,11 +143,14 @@
                                     class="col-md-4 col-form-label text-md-right">{{ __('Role') }}</label>
                                 <div class="col-md-6">
                                     <select class="form-select" name="role">
-                                        <option  value="Utilisateur">Utilisateur</option>
-                                        <option  value="Technicien IT">Technicien IT</option>
-                                        <option  value="Responsable Site">Responsable Site</option>
-                                        <option  value="Admin IT">Admin IT</option>
-                                        <option  value="Super Admin">Super Admin</option>
+                                        <option value="Utilisateur">Utilisateur</option>
+                                        @if (Auth::User()->role == 'Super Admin')
+                                            <option value="Technicien IT">Technicien IT</option>
+                                            <option value="Responsable Site">Responsable Site</option>
+                                            <option value="Admin IT">Admin IT</option>
+                                            <option value="Super Admin">Super Admin</option>
+                                        @endif
+
                                     </select>
                                 </div>
 
@@ -169,7 +201,8 @@
 
                             <div class="row mb-0">
                                 <div class="col-md-6 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="reset" class="btn btn-danger"> Annuler </button>
+                                    <button type="submit" class="btn btn-success">
                                         {{ __('Enregistrer') }}
                                     </button>
                                 </div>

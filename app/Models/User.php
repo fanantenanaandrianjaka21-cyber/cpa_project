@@ -18,6 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'id_emplacement', // emplacement
         'nom_utilisateur',
         'prenom_utilisateur',
@@ -48,4 +49,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    // public function materiel()
+    // {
+    //     return $this->hasMany(Materiel::class,'id_utilisateur','id');
+    // }
+    //     public function emplacement()
+    // {
+    //     return $this->hasMany(Emplacement::class,'id','id_emplacement');
+    // }
+    public function emplacement()
+    {
+        return $this->belongsTo(Emplacement::class, 'id_emplacement');
+    }
+
+    public function materiels()
+    {
+        return $this->hasMany(Materiel::class, 'id_utilisateur', 'id');
+    }
 }

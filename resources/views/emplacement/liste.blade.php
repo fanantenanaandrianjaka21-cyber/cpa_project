@@ -1,43 +1,45 @@
 @extends('layouts.dynamique')
 @section('content')
-
-
     @if (!empty($emplacement))
-       <div class="header">
-        <i class="fa fa-home"></i>/ Emplacement / Liste
+        <div class="header d-none d-lg-block">
+            <i class="fa fa-home"></i>/ Locale / Liste
 
-    </div>
+        </div>
+        <div class="w3-panel w3-pale-blue w3-bottombar w3-border-blue w3-border">
+            <h4 class="w3-start w3-animate-right">
+                Liste des Locales
+            </h4>
+        </div>
         <div class="card">
-            <div class="card-header">
-                <h7>Liste des Emplacements</h7>
-            </div>
-            {{-- <button id="darkModeToggle" class="btn btn-outline-secondary">
-  🌙 Mode Sombre
-</button> --}}
 
-            <div class="card-body">
+            <div class="card-body bg-primary text-white">
 
                 <div class="row">
                     <div class="col-12">
                         <?php
                         if (isset($notification)) {
-                            echo "<div class='alert alert-success shadow-lg'>
-                                            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                                              <i class='fa fa-close'></i>
-                                            </button>
-                                            <span>
-                                              <b><i class='fa fa-bell'></i>  Success - </b>" .
+                            echo "<div class='alert alert-success shadow-lg fade show'>
+                                                                                                                                            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                                                                                                                              <i class='fa fa-close'></i>
+                                                                                                                                            </button>
+                                                                                                                                            <span>
+                                                                                                                                              <b><i class='fa fa-bell'></i>  Success - </b>" .
                                 $notification .
                                 "</span>
-                                          </div>";
+                                                                                                                                          </div>";
                         }
                         ?>
+                        <div class="d-flex">
+                            <a href=""class="btn btn-success btn-round h-25" data-toggle="modal"
+                                data-target="#modal-locale"><i class="fa fa-plus"></i> Locale</a>
+                            <div id="filters" class="row mb-3 flex-fill"></div>
+                        </div>
 
-                        <table id="bootstrap-data-table-export" class="table table-hover table-responsive table-bordered">
+                        <table id="bootstrap-data-table-export" class="table table-hover table-responsive ">
                             <thead>
                                 <tr>
                                     <th>Id</th>
-                                    {{-- <th>Code_emplacement</th> --}}
+                                    <th>Code Locale</th>
                                     <th>Emplacement</th>
                                     {{-- <th>code_final</th> --}}
                                     <th>Action</th>
@@ -46,19 +48,23 @@
                             <tbody>
                                 @foreach ($emplacement as $emplacement)
                                     <tr data-row-id="{{ $emplacement->id }}">
-                                        <td> {{ $emplacement->id }} </td>
-                                        {{-- <td> {{ $emplacement->code_emplacement }} </td> --}}
-                                        <td class="text-center"><a href="/localisation/ {{ $emplacement->id }} "> {{ $emplacement->emplacement }}
+                                        <td class="text-center"> {{ $emplacement->id }} </td>
+                                        <td class="text-center"> {{ $emplacement->code_emplacement }} </td>
+                                        <td class="text-center"><a href="/localisation/ {{ $emplacement->id }} ">
+                                                {{ $emplacement->emplacement }}
                                             </a></td>
                                         {{-- <td> {{ $emplacement->code_final }} </td> --}}
 
                                         <td>
                                             <div class="text-center">
                                                 <a href="{{ route('emplacement.details', $emplacement->id) }}"
-                                                    class="btn btn-info btn-xs">Details</i></a>
+                                                    class="btn btn-outline-info btn-xs">Details</i></a>
                                                 <a href="{{ route('emplacement.edit', $emplacement->id) }}"
-                                                    class="btn btn-secondary btn-xs"><i class="fa fa-pencil"></i></a>
-                                                <button type="button" class="btn btn-danger deleteBtn"
+                                                    class="btn btn-outline-secondary btn-xs" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="Modifier"><i
+                                                        class="fa fa-pencil"></i></a>
+                                                <button type="button" class="btn btn-outline-danger deleteBtn"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Supprimer"
                                                     data-id="{{ $emplacement->id }}">
                                                     <i class="fa fa-trash-o "></i>
                                                 </button>
@@ -68,32 +74,23 @@
                                     </tr>
                                     {{-- modal --}}
                                     <div class="modal fade" id="deleteModal">
-                                        <!-- mbola reglage -->
                                         <div class="modal-dialog">
-                                            <!-- modal-content manao border radius -->
-                                            <!-- bg-primary lokon'ny background -->
-                                            <div class="modal-content bgcolor">
-                                                <!-- modal-header reglage ny header,manisy tsipika -->
+                                            <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h4 class="modal-title">Confirmation du suppression</h4>
                                                     <button type="button" class="close" data-dismiss="modal"
                                                         aria-label="Close">
-                                                        <!-- &times; icone crois kely -->
                                                         <span aria-hidden="true">&times;</span></button>
                                                 </div>
-                                                <!-- le corps du modal -->
-                                                <div class="modal-body">
-                                                    <!-- &hellip icone 3points -->
-                                                    <p>Voullez vous vraiment supprimer cet emplacement?Tous les donnees
+                                                <div class="modal-body bg-primary text-warning">
+                                                    <p><i class="fa fa-warning"></i> Tous les donnees
                                                         relatifs à cet emplacement seront aussi supprimer definitivement</p>
                                                 </div>
-                                                <!-- justify-content-between manasaraka an'ilay boutton==>lasa responsive -->
                                                 <div class="modal-footer footer">
-                                                    <!-- data-dismiss=modal manala an'ilay modal -->
-                                                    <button id="confirmDelete" class="btn btn-success">Confirmer</button>
-                                                    <button class="btn btn-primary" data-dismiss="modal">Annuler</button>
-
-
+                                                    <button id="confirmDelete"
+                                                        class="btn btn-success">Confirmer</button>
+                                                    <button class="btn btn-primary"
+                                                        data-dismiss="modal">Annuler</button>
                                                 </div>
                                             </div>
                                             <!-- /.modal-content -->
@@ -111,8 +108,55 @@
 
             </div>
         </div>
-
-
+        {{-- modal locale --}}
+        <div class="modal" id="modal-locale">
+            <div class="modal-dialog modal-lg w3-animate-right">
+                <div class="modal-content info ">
+                    <div class="modal-header ">
+                        <h4 class="modal-title text-primary">Ajout d'un materiel</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body bg-primary text-white">
+                        <form method="POST" action="{{ route('emplacement.ajout') }}" id="register-form"
+                            onsubmit="return validateForm()" class="needs-validation" novalidate>
+                            @csrf
+                            <div class="row mb-3">
+                                <label for="emplacement"
+                                    class="col-md-4 col-form-label text-md-end">{{ __('Locale :') }}</label>
+                                <div class="col-md-6">
+                                    <input id="emplacement" type="text"
+                                        class="form-control  @error('emplacement') is-invalid @enderror" name="emplacement"
+                                        value="{{ old('emplacement') }}" required>
+                                    <div class="invalid-feedback">Nom Locale invalide.</div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="code_emplacement"
+                                    class="col-md-4 col-form-label text-md-end">{{ __('Code Locale :') }}</label>
+                                <div class="col-md-6">
+                                    <input id="code_emplacement" type="text"
+                                        class="form-control  @error('code_emplacement') is-invalid @enderror"
+                                        name="code_emplacement" value="{{ old('code_emplacement') }}" required>
+                                    <div class="invalid-feedback">Code Locale invalide.</div>
+                                </div>
+                            </div>
+                            <div class="row mb-0">
+                                <div class="col-md-6 offset-md-4">
+                                    <button type="submit" class="btn btn-success">
+                                        {{ __('Enregistrer') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        {{-- fin modal locale --}}
         <script>
             let currentId = null;
 
@@ -192,30 +236,5 @@
                 xhttp.send();
             });
         </script>
-        {{-- dark mode --}}
-        <script>
-            const toggleBtn = document.getElementById("darkModeToggle");
-            const body = document.body;
-
-            // Vérifier si le mode sombre est déjà activé (sauvegarde dans localStorage)
-            if (localStorage.getItem("theme") === "dark") {
-                body.classList.add("dark-mode");
-                toggleBtn.textContent = "☀️ Mode Clair";
-            }
-
-            toggleBtn.addEventListener("click", () => {
-                body.classList.toggle("dark-mode");
-
-                if (body.classList.contains("dark-mode")) {
-                    toggleBtn.textContent = "☀️ Mode Clair";
-                    localStorage.setItem("theme", "dark");
-                } else {
-                    toggleBtn.textContent = "🌙 Mode Sombre";
-                    localStorage.setItem("theme", "light");
-                }
-            });
-        </script>
-    @else
-        <h1>hafa</h1>
     @endif
 @endsection

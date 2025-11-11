@@ -12,14 +12,16 @@ class UserController extends Controller
     public function index()
     {
         $emplacement = Emplacement::all();
-     
+     $utilisateur = User::orderBy('id', 'desc')->first();
+
          $active_tab='utilisateur';
-        return view('users.ajout', compact('emplacement','active_tab'));
+        return view('users.ajout', compact('emplacement','active_tab','utilisateur'));
     }
     public function ajoutUser(Request $request)
     {
         // dd($request);
         $this->validate($request, [
+            'id' => 'required',
             'id_emplacement' => 'required',
             'nom_utilisateur' => 'required',
             'prenom_utilisateur' => 'required',
@@ -31,6 +33,7 @@ class UserController extends Controller
             'role' => 'required',
         ]);
         User::create([
+            'id' => $request['id'],
             'id_emplacement' => $request['id_emplacement'],
             'nom_utilisateur' => $request['nom_utilisateur'],
             'prenom_utilisateur' => $request['prenom_utilisateur'],
@@ -48,9 +51,13 @@ class UserController extends Controller
          $active_tab='utilisateur';
         return view('users.liste', compact('user', 'notification', 'emplacement','active_tab'));
     }
-    public function listUser()
+    public function listUser($id_emplacement,$role)
     {
+        if($role=='Super Admin'OR $role=='Admin IT'){
         $user = User::all();
+        }else{
+            $user = User::where('id_emplacement',$id_emplacement)->get();
+        }
         $emplacement = Emplacement::all();
         // $user=User::where('name','jack')->where('id',1)->get();
          $active_tab='utilisateur';
@@ -94,13 +101,36 @@ class UserController extends Controller
          $active_tab='utilisateur';
         return view('users.liste', compact('user', 'notification','active_tab'));
     }
-    protected function delete(User $id)
+    // protected function delete(User $id)
+    // {
+    //     //dd($pub)
+    //     $id->delete();
+    //     $notification = 'Utilisateur supprimé avec succès';
+    //     $user = User::all();
+    //      $active_tab='utilisateur';
+    //     return view('users.liste', compact('user', 'notification','active_tab'));
+    // }
+    public function delete(Request $request, User $id)
     {
-        //dd($pub)
-        $id->delete();
-        $notification = 'Utilisateur supprimé avec succès';
-        $user = User::all();
-         $active_tab='utilisateur';
-        return view('users.liste', compact('user', 'notification','active_tab'));
+        if ($request->ajax()) {
+            try {
+                $id->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Utilisateur supprimé avec succès.',
+                    'id' => $id->id
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la suppression.',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+
+        // Si ce n'est pas une requête AJAX
+        abort(403, 'Requête non autorisée.');
     }
 }

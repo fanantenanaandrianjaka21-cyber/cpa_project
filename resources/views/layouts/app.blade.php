@@ -109,7 +109,7 @@
                                     id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">Utilisateurs</a>
                                 <div class="dropdown-menu dropdown-cust" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="{{ route('user.liste') }}">Liste des utilisateurs</a>
+                                    <a class="dropdown-item" href="#">Liste des utilisateurs</a>
                                     <a class="dropdown-item" href="/inscription">Nouveau utilisateur</a>
 
                                 </div>

@@ -1,322 +1,346 @@
 @extends('layouts.dynamique')
 
 @section('content')
-    <section class="container">
-        <div class="row ">
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card card-stats">
-                    <div class="card-body ">
-                        <div class="row">
-                            <div class="col-5 col-md-4">
-                                <div class="icon-big text-center icon-warning">
-                                    <i class="nc-icon nc-globe text-warning"></i>
-                                </div>
-                            </div>
-                            <div class="col-7 col-md-8">
-                                <div class="numbers">
-                                    <p class="card-category">Capacity</p>
-                                    <p class="card-title">150GB
-                                    <p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer ">
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-refresh"></i>
-                            Update Now
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card card-stats">
-                    <div class="card-body ">
-                        <div class="row">
-                            <div class="col-5 col-md-4">
-                                <div class="icon-big text-center icon-warning">
-                                    <i class="nc-icon nc-money-coins text-success"></i>
-                                </div>
-                            </div>
-                            <div class="col-7 col-md-8">
-                                <div class="numbers">
-                                    <p class="card-category">Revenue</p>
-                                    <p class="card-title">$ 1,345
-                                    <p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer ">
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-calendar-o"></i>
-                            Last day
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card card-stats">
-                    <div class="card-body ">
-                        <div class="row">
-                            <div class="col-5 col-md-4">
-                                <div class="icon-big text-center icon-warning">
-                                    <i class="nc-icon nc-vector text-danger"></i>
-                                </div>
-                            </div>
-                            <div class="col-7 col-md-8">
-                                <div class="numbers">
-                                    <p class="card-category">Errors</p>
-                                    <p class="card-title">23
-                                    <p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer ">
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-clock-o"></i>
-                            In the last hour
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card card-stats">
-                    <div class="card-body ">
-                        <div class="row ">
-                            <div class="col-5 col-md-4">
-                                <div class="icon-big text-center icon-warning">
-                                    <i class="fa fa-refresh"></i>
-                                </div>
-                            </div>
-                            <div class="col-7 col-md-8">
-                                <div class="numbers">
-                                    <p class="card-category">Followers</p>
-                                    <p class="card-title">+45K
-                                    <p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer ">
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-refresh"></i>
-                            Update now
-                        </div>
-                    </div>
-                </div>
-            </div>
+    {{-- <div class="col-lg-12">
+        <div class="header">
+            <i class="fa fa-home"></i>/ Tableau de Bord
+
         </div>
-    </section>
-    {{--  --}}
-    <script>
-        $(function() {
-            'use strict'
-            var ticksStyle = {
-                fontColor: 'black',
-                fontStyle: 'bold'
-            }
+        <section>
+            <!--Section 1 : Statistiques générales -->
 
-            var mode = 'index'
-            var intersect = true
-            //debut sales-chart
-            var $salesChart = $('#sales-chart')
-            var salesChart = new Chart($salesChart, {
-                type: 'bar',
-                data: {
-                    labels: ['ANALAMANGA', 'BONGOLAVA', 'ITASY', 'VAKINANKARATRA', 'DIANA', 'SAVA',
-                        'AMORON\'I MANIA', 'ATSIMO-ATSINANANA', 'HAUTE MATSIATRA', 'IHOROMBE',
-                        'VATOVAVY', 'FITOVINANY', 'BETSIBOKA', 'BOENY', 'MELAKY', 'SOFIA',
-                        'ALAOTRA-MANGORO', 'ANALANJIROFO', 'ATSINANANA', 'ANDROY', 'ANOSY',
-                        'ATSIMO-ANDREFANA', 'MENABE'
-                    ],
-                    datasets: [{
-                            backgroundColor: ' #0956e4',
-                            borderColor: ' #007bff',
-                            data: [1500, 2300, 3000, 2100, 2800, 2000, 3000, 1500, 2300, 3000, 2100,
-                                2800, 2000, 3000, 2000, 3000, 1500, 2300, 3000, 2100, 2800, 2000,
-                                3000,
-                            ],
-                            pointHoverBackgroundColor: ' #cc1515',
-                            pointHoverBorderColor: ' #cc1515'
-                        },
-                        // afaka amina data hafa
-                        // {
-                        //   backgroundColor: 'black',
-                        //   borderColor    : '#ced4da',
-                        //   data           : [1400, 1900, 2700, 2900, 1950, 1200, 2600]
-                        // }
-                    ]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    tooltips: {
-                        mode: mode,
-                        intersect: intersect
-                    },
-                    hover: {
-                        mode: mode,
-                        intersect: intersect
-                    },
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        yAxes: [{
-                            // display: false,
-                            gridLines: {
-                                display: true,
-                                lineWidth: '4px',
-                                color: 'rgba(18, 184, 26, 0.2)',
-                                zeroLineColor: 'transparent'
-                            },
-                            ticks: $.extend({
-                                beginAtZero: true,
+            <h2></h2>
 
-                                // Include a dollar sign in the ticks
-                                callback: function(value, index, values) {
-                                    if (value >= 1000) {
+            <div class="row ">
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-info rounded-3 d-flex align-items-center justify-content-between p-4">
+                        <i class="fa fa-laptop fa-3x text-white "></i>
+                        <div class="ms-3">
+                            <h6 class="mb-2 text-end">TOTAL MATERIELS</h6>
+                            <h6 class="mb-0 text-end">{{ $totalMateriels }}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-success rounded-3 d-flex align-items-center justify-content-between p-4">
+                        <i class="fa fa-check fa-3x text-white"></i>
+                        <div class="ms-3">
+                            <h6 class="mb-2 text-end">STOCK DISPONIBLE</h6>
+                            <h6 class="mb-0 text-end">{{ $stockDispo }}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-danger rounded-3 d-flex align-items-center justify-content-between p-4">
+                        <i class="fa fa-bell fa-3x text-warning"></i>
+                        <div class="ms-3">
+                            <h6 class="mb-2 text-end">ARTICLE SOUS SEUIL</h6>
+                            <h6 class="mb-0 text-end">{{ $articlesAlerte }}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-secondary rounded-3 d-flex align-items-center justify-content-between p-4">
+                        <i class="fa fa-cogs fa-3x text-warning"></i>
+                        <div class="ms-3">
+                            <h6 class="mb-2 text-end">MATERIELS EN PANNE</h6>
+                            <h6 class="mb-0 text-end">{{ $ticketsOuverts }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4 pt-4">
+                <div class="col-md-4">
+                    <div class="card rounded-3 color-secondary">
+                        <div class="body m-4">
+                            <h7 class="text-primary ">REPARTITION DES MATERIELS PAR TYPE</h7>
+                            <canvas id="repartitionType" class="mt-2"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card rounded-3 color-secondary">
+                        <div class="body m-4">
+                            <h7 class=" text-primary">DISPONIBILITE DES MATERIELS</h7>
+                            <canvas id="disponibiliteParc" class="mt-2"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card rounded-3 color-secondary">
+                        <div class="body m-4">
+                            <h7 class=" text-primary">STATUT DES TICKETS</h7>
+                            <canvas id="ticketsStatus" class="mt-2"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- 🧰 Section 2 : Utilisation et Affectation -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card rounded-3 color-secondary">
+                        <div class="body m-4">
+                            <h7 class=" text-primary">MATERIELS AFFECTÉS PAR SERVICE</h7>
+                            <canvas id="repartitionService" class="mt-2"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card rounded-3 color-secondary">
+                        <div class="body m-4">
+                            <h7 class="text-center text-primary">PRIORITE DES TICKETS</h7>
+                            <canvas id="ticketsPriorite" class="mt-2"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h7 class="text-primary">Durée de vie moyenne par type</h7>
+                    <canvas id="vieMoyenneParType" class="mt-2"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <h7 class="text-primary">ÉVOLUTION DES TICKETS</h7>
+                    <canvas id="ticketsMois" class="mt-2"></canvas>
+                </div>
 
-                                    }
-                                    return value + " Utilisateur"
-                                }
-                            }, ticksStyle)
-                        }],
-                        xAxes: [{
-                            display: true,
-                            gridLines: {
-                                display: false
-                            },
-                            ticks: ticksStyle
-                        }]
-                    }
-                }
-            }) //fin sales-chart
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <h7 class="text-primary">Probabilité de panne par service</h7>
+                    <canvas id="servicesRisque" class="mt-2"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <h7 class="text-primary">Prévision de la demande (6 prochains mois)</h7>
+                    <canvas id="previsionDemandes" class="mt-2"></canvas>
+                </div>
 
-            //debut visitor chart
-            var $visitorsChart = $('#visitors-chart')
-            var visitorsChart = new Chart($visitorsChart, {
-                data: {
-                    labels: ['18th', '20th', '22nd', '24th', '26th', '28th', '30th'],
-                    datasets: [{
-                            type: 'line',
-                            data: [150, 100, 160, 148, 123, 147, 180],
-                            backgroundColor: 'transparent',
-                            borderColor: ' #cc1515',
-                            pointBorderColor: ' #cc1515',
-                            pointBackgroundColor: ' #cc1515',
-                            fill: false,
-                            pointHoverBackgroundColor: ' #cc1515',
-                            pointHoverBorderColor: ' #cc1515'
-                        },
+            </div>
+            <div class="row text-primary mb-4">
 
-                        // ilay ovana
-                        {
-                            type: 'line',
-                            data: [16, 70, 31, 69, 84, 72, 106],
-                            backgroundColor: 'tansparent',
-                            borderColor: ' #0956e4',
-                            pointBorderColor: ' #0956e4',
-                            pointBackgroundColor: ' #0956e4',
-                            fill: false,
-                            pointHoverBackgroundColor: '#0956e4',
-                            pointHoverBorderColor: '#0956e4'
-                        }
-                    ]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    tooltips: {
-                        mode: mode,
-                        intersect: intersect
-                    },
-                    hover: {
-                        mode: mode,
-                        intersect: intersect
-                    },
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        yAxes: [{
-                            // display: false,
-                            gridLines: {
-                                display: true,
-                                lineWidth: '4px',
-                                color: 'rgba(0, 0, 0, .2)',
-                                zeroLineColor: 'transparent'
-                            },
-                            ticks: $.extend({
-                                beginAtZero: true,
-                                suggestedMax: 200
-                            }, ticksStyle)
-                        }],
-                        xAxes: [{
-                            display: true,
-                            gridLines: {
-                                display: false
-                            },
-                            ticks: ticksStyle
-                        }]
-                    }
-                }
-            })
-            //fin visitor chart
+                <div class="col-md-4">
+                    <h6>Moyenne par utilisateur</h6>
+                    <h2>{{ $moyenneMaterielParUser }}</h2>
+                </div>
+                <div class="col-md-4">
+                    <h6>Durée de vie moyenne max</h6>
+                    <h2>{{ $vieMoyenneParType->max() }} ans</h2>
+                </div>
+            </div>
 
 
 
+            <!-- 🔧 Section 3 : Maintenance & Support Technique -->
+            <h4 class="mt-5 mb-3">Maintenance & Support Technique</h4>
+            <div class="row text-primary mb-4">
+                <div class="col-md-4">
+                    <h6>Tickets en cours</h6>
+                    <h2>{{ $ticketsEncours }}</h2>
+                </div>
+                <div class="col-md-4">
+                    <h6>Tickets résolus</h6>
+                    <h2>{{ $ticketsResolus }}</h2>
+                </div>
+                <div class="col-md-4">
+                    <h6>Taux de résolution</h6>
+                    <h2>{{ $tauxResolution }}%</h2>
+                </div>
+            </div>
 
-            //debut pieChart
-            var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
-            var pieData = {
-                labels: ["test", "test"],
+
+            <hr class="my-5">
+            <h4 class="mt-5 mb-3">Statistiques prédictives et analytiques</h4>
+
+            <div class="row text-primary mb-4">
+                <div class="col-md-4">
+                    <h6>Taux de panne prévisionnel</h6>
+                    <h2>{{ $tauxPannePrevision }}%</h2>
+                </div>
+
+                <div class="col-md-4">
+                    <h6>Service le plus à risque</h6>
+                    <h2>{{ $servicesRisque->sortDesc()->keys()->first() }}</h2>
+                </div>
+            </div>
+
+
+
+            <div class="row mt-5">
+
+            </div>
+        </section>
+    </div> --}}
+
+
+
+
+    {{-- <script>
+        // --- Prévision demande matériel ---
+        new Chart(document.getElementById('previsionDemandes'), {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($previsionDemandes->keys()) !!},
                 datasets: [{
-                    data: ["10", "42"],
-                    backgroundColor: [" #cc1515", " #0956e4"],
-                    pointHoverBackgroundColor: ' #0956e4',
-                    pointHoverBorderColor: ' #0956e4'
+                    label: 'Demande estimée',
+                    data: {!! json_encode($previsionDemandes->values()) !!},
+                    borderColor: '#36A2EB',
+                    fill: false,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // --- Durée de vie moyenne ---
+        new Chart(document.getElementById('vieMoyenneParType'), {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($vieMoyenneParType->keys()) !!},
+                datasets: [{
+                    label: 'Durée de vie (ans)',
+                    data: {!! json_encode($vieMoyenneParType->values()) !!},
+                    backgroundColor: '#FFCE56'
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // --- Risque de panne par service ---
+        new Chart(document.getElementById('servicesRisque'), {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($servicesRisque->keys()) !!},
+                datasets: [{
+                    label: 'Probabilité de panne',
+                    data: {!! json_encode($servicesRisque->values()) !!},
+                    backgroundColor: '#FF6384'
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 1,
+                        ticks: {
+                            callback: value => value * 100 + '%'
+                        }
+                    }
+                }
+            }
+        });
+    </script> --}}
+
+
+    <!-- Chart.js local -->
+    {{-- <script src="{{ asset('js/chart.js') }}"></script> --}}
+
+    {{-- <script>
+        // --- Section 1 : Parc & Stock ---
+        new Chart(document.getElementById('repartitionType'), {
+            type: 'pie',
+            data: {
+                labels: {!! json_encode($repartitionType->keys()) !!},
+                datasets: [{
+                    data: {!! json_encode($repartitionType->values()) !!},
+                    backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0']
                 }]
             }
-            var pieOptions = {
-                legend: {
-                    display: false
-                },
+        });
+        new Chart(document.getElementById('ticketsStatus'), {
+            type: 'pie',
+            data: {
+                labels: ['Ouverts', 'En cours', 'Fermés'],
+                datasets: [{
+                    data: [{{ $ticketsOuverts }}, {{ $ticketsEncours }}, {{ $ticketsResolus }}],
+                    backgroundColor: ['#FF6384', '#FF9F40', '#4BC0C0']
+                }]
             }
-            // Create pie or douhnut chart
-            // You can switch between pie and douhnut using the method below.
-            // eslint-disable-next-line no-unused-vars
-            var pieChart = new Chart(pieChartCanvas, {
-                type: 'doughnut',
-                data: pieData,
-                // options: pieOptions
-                options: {
-                    tooltips: {
-                        callbacks: {
-                            // title:function(){return "%"},
-                            label: (a, data) => data.datasets[0].data[a.index] + '%'
-                        }
-                    },
-                    label: {
-                        display: false
-                    },
+        });
+
+        // --- Section 2 : Affectation ---
+        new Chart(document.getElementById('repartitionService'), {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($repartitionService->keys()) !!},
+                datasets: [{
+                    label: 'Matériels par service',
+                    data: {!! json_encode($repartitionService->values()) !!},
+                    backgroundColor: '#36A2EB'
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        new Chart(document.getElementById('disponibiliteParc'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Affectés', 'Disponibles'],
+                datasets: [{
+                    data: [{{ $materielsAffectes }}, {{ $materielsDisponibles }}],
+                    backgroundColor: ['#4BC0C0', '#FFCE56']
+                }]
+            }
+        });
+
+        // --- Section 3 : Maintenance ---
+        new Chart(document.getElementById('ticketsPriorite'), {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($ticketsParPriorite->keys()) !!},
+                datasets: [{
+                    label: 'Tickets',
+                    data: {!! json_encode($ticketsParPriorite->values()) !!},
+                    backgroundColor: ['#FF6384', '#FFCE56', '#36A2EB']
+                }]
+            },
+            options: {
+                plugins: {
                     legend: {
                         display: false
-                    },
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
-            })
-            //fin pieChart
-
-
-
-
-
-
-        })
-    </script>
+            }
+        });
+        new Chart(document.getElementById('ticketsMois'), {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($ticketsParMois->keys()) !!},
+                datasets: [{
+                    label: 'Tickets par mois',
+                    data: {!! json_encode($ticketsParMois->values()) !!},
+                    borderColor: '#36A2EB',
+                    fill: false,
+                    tension: 0.3
+                }]
+            }
+        });
+    </script> --}}
 @endsection
