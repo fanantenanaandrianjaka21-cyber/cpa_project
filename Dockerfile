@@ -3,7 +3,7 @@
 # ----------------------------
 FROM php:8.2-fpm AS build
 
-# Installer dépendances système et extensions PHP
+# Installer dépendances système, PHP et Node
 RUN apt-get update && apt-get install -y \
     git curl zip unzip libpq-dev libpng-dev libjpeg-dev libfreetype6-dev \
     libzip-dev zlib1g-dev pkg-config nodejs npm \
@@ -26,14 +26,14 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 RUN npm install
 
 # Compiler les assets pour production
-RUN npm run build
+RUN npm run production
 
 # ----------------------------
 # Étape 2 : Image finale
 # ----------------------------
 FROM php:8.2-fpm
 
-# Installer extensions nécessaires et client PostgreSQL
+# Installer extensions PHP nécessaires et client PostgreSQL
 RUN apt-get update && apt-get install -y \
     libpq-dev libpng-dev libjpeg-dev libfreetype6-dev \
     libzip-dev zlib1g-dev zip unzip pkg-config postgresql-client \
