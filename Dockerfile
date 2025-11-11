@@ -1,25 +1,51 @@
-FROM php:8.2-fpm
+# ----------------------------
+# Étape 1 : Build Laravel
+# ----------------------------
+FROM php:8.2-fpm AS build
 
-# Dépendances système
+# Installer dépendances système
 RUN apt-get update && apt-get install -y \
-    git unzip libzip-dev libpq-dev libonig-dev \
-    && docker-php-ext-install pdo pdo_pgsql mbstring zip bcmath
+    git curl zip unzip libpq-dev libpng-dev libjpeg-dev libfreetype6-dev \
+    libzip-dev zlib1g-dev pkg-config \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_pgsql gd zip \
+    && docker-php-ext-enable pdo_pgsql
 
 # Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Copier le code source
 WORKDIR /var/www/html
 COPY . .
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/html
+# Installer les dépendances Laravel sans exécuter les scripts
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Installer dépendances PHP avec logs
-RUN composer install --no-dev --optimize-autoloader --verbose
+# ----------------------------
+# Étape 2 : Image finale
+# ----------------------------
+FROM php:8.2-fpm
 
-# Création des liens de stockage et permissions
-RUN php artisan storage:link || true
-RUN chown -R www-data:www-data storage bootstrap/cache
+# Installer extensions nécessaires
+RUN apt-get update && apt-get install -y \
+    libpq-dev libpng-dev libjpeg-dev libfreetype6-dev \
+    libzip-dev zlib1g-dev zip unzip pkg-config \
+    postgresql-client \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_pgsql gd zip \
+    && docker-php-ext-enable pdo_pgsql \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Copier le build Laravel
+WORKDIR /var/www/html
+COPY --from=build /var/www/html /var/www/html
+
+# Ajouter un script d'entrée pour attendre la DB
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Exposer le port
 EXPOSE 8000
-CMD ["php-fpm"]
+
+# Utiliser le script d'entrée
+ENTRYPOINT ["docker-entrypoint.sh"]
