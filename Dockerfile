@@ -19,7 +19,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Installer les dépendances sans exécuter les scripts artisan
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN composer install --no-dev --optimize-autoloader
 
 # ----------------------------
 # Étape 2 : Image finale
