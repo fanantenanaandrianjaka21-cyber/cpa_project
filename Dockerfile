@@ -7,8 +7,8 @@ FROM php:8.3-fpm-alpine
 WORKDIR /var/www/html
 
 # ----------------- BLOC À CORRIGER -----------------
-# Installation des dépendances système (y compris libpng-dev pour GD)
-RUN apk add --no-cache git libzip-dev libpng-dev libpq \
+# Installation des dépendances système (AJOUT de libpq-dev)
+RUN apk add --no-cache git libzip-dev libpng-dev libpq libpq-dev \
     # Installez toutes les extensions requises
     && docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd sockets
 
