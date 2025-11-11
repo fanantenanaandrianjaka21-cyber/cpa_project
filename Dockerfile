@@ -1,12 +1,12 @@
 # ----------------------------
-# Étape 1 : Build Laravel
+# Étape 1 : Build Laravel + Front-end
 # ----------------------------
 FROM php:8.2-fpm AS build
 
 # Installer dépendances système et extensions PHP
 RUN apt-get update && apt-get install -y \
     git curl zip unzip libpq-dev libpng-dev libjpeg-dev libfreetype6-dev \
-    libzip-dev zlib1g-dev pkg-config \
+    libzip-dev zlib1g-dev pkg-config nodejs npm \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_pgsql gd zip \
     && docker-php-ext-enable pdo_pgsql \
@@ -19,8 +19,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 COPY . .
 
-# Installer les dépendances Laravel sans exécuter les scripts
+# Installer les dépendances Laravel
 RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+# Installer les dépendances front-end
+RUN npm install
+
+# Compiler les assets pour production
+RUN npm run build
 
 # ----------------------------
 # Étape 2 : Image finale
@@ -36,7 +42,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-enable pdo_pgsql \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copier le build Laravel
+# Copier le build Laravel (PHP + assets front-end)
 WORKDIR /var/www/html
 COPY --from=build /var/www/html /var/www/html
 
