@@ -3,7 +3,7 @@
 # ----------------------------
 FROM php:8.2-fpm AS build
 
-# Installer dépendances système
+# Installer dépendances système et extensions PHP
 RUN apt-get update && apt-get install -y \
     git curl zip unzip libpq-dev libpng-dev libjpeg-dev libfreetype6-dev \
     libzip-dev zlib1g-dev pkg-config \
@@ -14,24 +14,22 @@ RUN apt-get update && apt-get install -y \
 # Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copier le code source
+# Copier le code source Laravel
 WORKDIR /var/www/html
 COPY . .
 
-# Installer les dépendances Laravel et générer les caches
-RUN composer install --no-dev --optimize-autoloader 
-
+# Installer les dépendances sans exécuter les scripts artisan
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # ----------------------------
 # Étape 2 : Image finale
 # ----------------------------
 FROM php:8.2-fpm
 
-# Installer extensions nécessaires
+# Installer extensions nécessaires et client PostgreSQL
 RUN apt-get update && apt-get install -y \
     libpq-dev libpng-dev libjpeg-dev libfreetype6-dev \
-    libzip-dev zlib1g-dev zip unzip pkg-config \
-    postgresql-client \
+    libzip-dev zlib1g-dev zip unzip pkg-config postgresql-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_pgsql gd zip \
     && docker-php-ext-enable pdo_pgsql \
@@ -41,12 +39,12 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /var/www/html
 COPY --from=build /var/www/html /var/www/html
 
-# Ajouter un script d'entrée pour attendre la DB
+# Copier le script d’entrée
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Exposer le port
 EXPOSE 8000
 
-# Utiliser le script d'entrée
+# Script d'entrée
 ENTRYPOINT ["docker-entrypoint.sh"]
