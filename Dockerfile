@@ -3,7 +3,7 @@ FROM php:8.2-fpm as build
 
 # Installer dépendances système
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpq-dev libpng-dev libjpeg-dev libfreetype6-dev \
+    git curl zip unzip libpq-dev libpng-dev libjpeg-dev libfreetype6-dev pkg-config \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_pgsql gd zip
 
@@ -23,17 +23,18 @@ RUN php artisan key:generate --force
 # Étape 2 : Lancer le serveur PHP
 FROM php:8.2-fpm
 
-# Installer extensions nécessaires dans l'image finale
+# Installer toutes les extensions nécessaires dans l'image finale
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev libzip-dev zip unzip \
+    libpq-dev libpng-dev libjpeg-dev libfreetype6-dev libzip-dev zip unzip pkg-config \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_pgsql gd zip
 
+# Copier le code buildé
 WORKDIR /var/www/html
 COPY --from=build /var/www/html /var/www/html
 
-# Exposer le port
+# Exposer le port pour Laravel
 EXPOSE 8000
 
-# Commande pour démarrer Laravel
+# Démarrer le serveur Laravel
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
