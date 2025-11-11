@@ -1,25 +1,30 @@
 @extends('layouts.dynamique')
 @section('content')
+    <div class="w3-panel w3-pale-blue w3-bottombar w3-border-blue w3-border">
+        <h4 class="w3-start w3-animate-right">
+            Historique des affectations
+        </h4>
+    </div>
     @if (!empty($affectation))
         <div class="card">
-            <div class="card-header">
-                <h4>Historique des affectations</h4>
-            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
                         <?php
                         if (isset($notification)) {
                             echo "<div class='alert alert-success'>
-                                    <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                                        <i class='fa fa-close'></i>
-                                    </button>
-                                    <span>
-                                        <b><i class='fa fa-bell'></i>  Success - </b>" .$notification ."
-                                    </span>
-                                </div>";
+                                                            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                                                <i class='fa fa-close'></i>
+                                                            </button>
+                                                            <span>
+                                                                <b><i class='fa fa-bell'></i>  Success - </b>" .
+                                $notification .
+                                "
+                                                            </span>
+                                                        </div>";
                         }
                         ?>
+
                         <table id="bootstrap-data-table-export" class="table table-hover table-responsive table-bordered">
                             <thead>
                                 <tr>
@@ -61,7 +66,5 @@
                 </div>
             </div>
         </div>
-    @else
-        <h1>hafa</h1>
     @endif
 @endsection

@@ -6,11 +6,18 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header" style="text-align:center">Modification d\'un utilisateur
-                    </div>
+                <div class="header">
+                    <i class="fa fa-home"></i>/ Modification Utilisateur
 
-                    <div class="card-body">
+                </div>
+                <div class="w3-panel w3-pale-blue w3-bottombar w3-border-blue w3-border">
+                    <h4 class="w3-start w3-animate-right">
+                        Modification d'un Utilisateur
+                    </h4>
+                </div>
+                <div class="card">
+
+                    <div class="card-body bg-primary text-white">
                         <form method="POST" action="{{ route('utilisateur.modifier') }}" id="register-form">
                             @csrf
                             <input type="hidden" name="idutilisateur" value="{{ $utilisateur->id }}">
@@ -71,47 +78,100 @@
                                     class="col-md-4 col-form-label text-md-right">{{ __('Equipe') }}</label>
                                 <div class="col-md-6">
                                     <select class="form-select" name="equipe">
-                                        <option value="{{ $utilisateur->equipe }}">{{ $utilisateur->equipe }}</option>
-                                        <option value="admin">Admin</option>
-                                        {{-- atao administration --}}
-                                        <option value="ADV">ADV</option>
-                                        <option value="Audit">Audit</option>
-                                        <option value="Call Adv">Call ADV</option>
-                                        <option value="ComptaStar">ComptaStar</option>
-                                        <option value="Formation">Formation</option>
-                                        <option value="Informatique">Informatique</option>
-                                        <option value="my">my</option>
-                                        <option value="MyU">MyU</option>
-                                        <option value="Recci">Recci</option>
-                                        <option value="Serveur">Serveur</option>
+                                        @php
+                                            $equipe = [
+                                                'Administration',
+                                                'ADV',
+                                                'Audit',
+                                                'Call Adv',
+                                                'ComptaStar',
+                                                'Formation',
+                                                'Informatique',
+                                                'my',
+                                                'MyU',
+                                                'Recci',
+                                                'Serveur',
+                                            ];
+                                        @endphp
+                                        <option value="{{ $utilisateur->equipe }}" selected>
+                                            {{ $utilisateur->equipe }}
+                                        </option>
+                                        @foreach ($equipe as $equipe)
+                                            @if ($equipe !== $utilisateur->equipe)
+                                                <option value="{{ $equipe }}">{{ $equipe }}</option>
+                                            @endif
+                                        @endforeach
                                     </select>
                                 </div>
+                            </div>
+                            <div class="form-group row">
                                 <label for="societe"
                                     class="col-md-4 col-form-label text-md-right">{{ __('Societe') }}</label>
                                 <div class="col-md-6">
                                     <select class="form-select" name="societe">
-                                        <option value="{{ $utilisateur->societe }}">{{ $utilisateur->societe }}</option>
-                                        <option value="ADV">CPA</option>
-                                        <option value="Audit">Expert CPA</option>
-                                        <option value="ComptaStar">RFC</option>
+                                        @php
+                                            $societe = ['CPA', 'Expert CPA', 'RFC'];
+                                        @endphp
+                                        <option value="{{ $utilisateur->societe }}" selected>
+                                            {{ $utilisateur->societe }}
+                                        </option>
+                                        @foreach ($societe as $societe)
+                                            @if ($societe !== $utilisateur->societe)
+                                                <option value="{{ $societe }}">{{ $societe }}</option>
+                                            @endif
+                                        @endforeach
                                     </select>
                                 </div>
 
                             </div>
-                            <!-- alaina avy any anaty base -->
                             <div class="form-group row">
                                 <label for="id_emplacement"
                                     class="col-md-4 col-form-label text-md-right">{{ __('Emplacement') }}</label>
                                 <div class="col-md-6">
-                                    <select class="form-select" name="id_emplacement">
-                                        @foreach ($emplacement as $emp)
-                                            <option value="{{ $emp->id }}">{{ $emp->emplacement }}</option>
-                                        @endforeach
-
+                                    <select class="form-select" name="id_emplacement" id="id_emplacement">
+                                        <option value="{{ $utilisateur->id_emplacement }}" selected>
+                                            {{ $utilisateur->emplacement }}
+                                        </option>
+                                        @if (Auth::User()->role == 'Super Admin' or Auth::User()->role == 'Admin IT')
+                                            @foreach ($emplacement as $emp)
+                                                @if ($emp->id !== $utilisateur->id_emplacement)
+                                                    <option value="{{ $emp->id }}">{{ $emp->emplacement }}</option>
+                                                @endif
+                                            @endforeach
+                                        @endif
 
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="form-group row">
+                                <label for="role"
+                                    class="col-md-4 col-form-label text-md-right">{{ __('Role') }}</label>
+                                <div class="col-md-6">
+                                    <select class="form-select" name="role">
+                                        @php
+                                            $roles = [
+                                                'Utilisateur',
+                                                'Technicien IT',
+                                                'Responsable Site',
+                                                'Admin IT',
+                                                'Super Admin',
+                                            ];
+                                        @endphp
+                                        <option value="{{ $utilisateur->role }}" selected>{{ $utilisateur->role }}
+                                        </option>
+                                        @if (Auth::User()->role == 'Super Admin')
+                                            @foreach ($roles as $role)
+                                                @if ($role !== $utilisateur->role)
+                                                    <option value="{{ $role }}">{{ $role }}</option>
+                                                @endif
+                                            @endforeach
+                                        @endif
+
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="row mb-3">
                                 <label for="email"
                                     class="col-md-4 col-form-label text-md-end">{{ __('Email') }}</label>

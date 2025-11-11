@@ -22,13 +22,17 @@ class CreateMaterielsTable extends Migration
                   ->nullable()
                   ->constrained('users')
                   ->onDelete('cascade'); 
-            $table->string('code_interne')->unique();
+            $table->string('code_interne')->unique()->nullable();
+            $table->boolean('existe_code_interne')->default(false); 
             $table->string('type'); 
-            $table->string('marque'); 
-            $table->string('model'); 
-            $table->string('num_serie'); 
+            $table->string('quantite'); 
+            $table->string('nbr_poste')->default('0'); 
+            $table->string('marque')->nullable(); 
+            $table->string('categorie')->nullable(); 
+            $table->string('model')->nullable(); 
+            $table->string('num_serie')->nullable(); 
             $table->string('status'); 
-            $table->string('image'); 
+            $table->string('image')->nullable(); 
             $table->date('date_aquisition'); 
             $table->timestamps();
         });

@@ -10,10 +10,15 @@ use App\Models\MouvementStock;
 
 class MouvementStockController extends Controller
 {
-    public function listMouvement()
+    public function listMouvement($id_emplacement,$role)
     {
-        // $mouvement=MouvementStock::all();
-        $mouvement = MouvementStock::with('utilisateurs')->get();
+        if($role=='Super Admin' OR $role=='Admin IT'){
+$mouvement = MouvementStock::with('utilisateurs')->get();
+        }else{
+$mouvement = MouvementStock::with('utilisateurs')->where('emplacement_destination',$id_emplacement)->get();
+
+        }
+        
         //  dd($mouvement);
         $detail_mouvements = $mouvement->flatMap(function ($mouvement) {
 

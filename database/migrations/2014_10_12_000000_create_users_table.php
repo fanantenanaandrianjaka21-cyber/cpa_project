@@ -15,7 +15,8 @@ class CreateUsersTable extends Migration
     {
 
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            // $table->id();
+            $table->unsignedBigInteger('id')->primary();
             $table->foreignId('id_emplacement')
                 ->constrained('emplacements') // nom de la table parente
                 ->onDelete('cascade');
