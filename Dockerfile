@@ -6,6 +6,7 @@ FROM php:8.3-fpm-alpine
 # Définition du répertoire de travail
 WORKDIR /var/www/html
 
+# ----------------- BLOC À CORRIGER -----------------
 # Installation des dépendances système (y compris libpng-dev pour GD)
 RUN apk add --no-cache git libzip-dev libpng-dev libpq \
     # Installez toutes les extensions requises
