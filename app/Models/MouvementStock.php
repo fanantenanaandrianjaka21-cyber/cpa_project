@@ -13,6 +13,7 @@ class MouvementStock extends Model
     protected $fillable = [
         'id_materiel',
         'type_mouvement',
+        'quantite',
         'source',
         'emplacement_destination',
         'utilisateur_destination',

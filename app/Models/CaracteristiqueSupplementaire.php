@@ -14,4 +14,10 @@ class CaracteristiqueSupplementaire extends Model
         'valeur',
 
     ];
+    protected $table = 'caracteristique_supplementaires';
+
+    public function materiel()
+    {
+        return $this->belongsTo(Materiel::class, 'id_materiel');
+    }
 }

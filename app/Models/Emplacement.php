@@ -14,7 +14,7 @@ class Emplacement extends Model
     protected $fillable = [
         'code_emplacement',
         'emplacement',
-        'code_final',
+        // 'code_final',
     ];
 
 }

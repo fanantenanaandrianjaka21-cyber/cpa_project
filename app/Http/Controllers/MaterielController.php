@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alert;
 use App\Models\Materiel;
 use App\Models\Affectation;
+use App\Models\Alertes_types;
 use App\Models\Emplacement;
 use App\Models\TypeMateriel;
 use Illuminate\Http\Request;
 use App\Models\MouvementStock;
 use App\Models\CategorieMateriel;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Models\CaracteristiqueSupplementaire;
 
 class MaterielController extends Controller
@@ -36,13 +39,14 @@ class MaterielController extends Controller
                     'id' => $materiel->id,
                     'image' => $materiel->image,
                     'id_emplacement' => $materiel->id_emplacement,
-                    'code_emplacement' => $emplacementMateriel->code_emplacement,
+                    'code_locale' => $emplacementMateriel->code_emplacement,
                     'emplacement' => $emplacementMateriel->emplacement,
-                    'code_final' => $emplacementMateriel->code_final,
+                    // 'code_final' => $emplacementMateriel->code_final,
                     'id_utilisateur' => $materiel->id_utilisateur,
                     'code_interne' => $materiel->code_interne,
                     'date_aquisition' => $materiel->date_aquisition,
                     'type' => $materiel->type,
+                    'quantite' => $materiel->quantite,
                     'marque' => $materiel->marque,
                     'model' => $materiel->model,
                     'num_serie' => $materiel->num_serie,
@@ -71,9 +75,9 @@ class MaterielController extends Controller
                     'id' => $materiel->id,
                     'image' => $materiel->image,
                     'id_emplacement' => $materiel->id_emplacement,
-                    'code_emplacement' => $emplacementMateriel->code_emplacement,
+                    'code_locale' => $emplacementMateriel->code_emplacement,
                     'emplacement' => $emplacementMateriel->emplacement,
-                    'code_final' => $emplacementMateriel->code_final,
+                    // 'code_final' => $emplacementMateriel->code_final,
                     'id_utilisateur' => $materiel->id_utilisateur,
                     'code_interne' => $materiel->code_interne,
                     'date_aquisition' => $materiel->date_aquisition,
@@ -101,9 +105,13 @@ class MaterielController extends Controller
         });
         return $detail_materiel;
     }
-    public function index()
+    public function index($id_emplacement, $role)
     {
-        $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('status', 'disponible')->get();
+        if ($role == 'Super Admin' or $role == 'Admin IT') {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('status', 'disponible')->get();
+        } else {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('status', 'disponible')->where('id_emplacement', $id_emplacement)->get();
+        }
         $colonnes = $this->recupererColonnes('caracteristique_supplementaires', 'cle');
         $i = $colonnes;
         $detail_materiel = $this->recupererLesInfoMateriels($materiel, $colonnes);
@@ -111,39 +119,92 @@ class MaterielController extends Controller
         $materielpartype = collect($detail_materiel)
             ->groupBy('type')
             ->map(function ($materiel) {
+                $materielemplacement = collect($materiel)
+                    ->where('type', $materiel[0]['type'])->where('emplacement', '!=', 'GLOBALE')
+                    ->groupBy('emplacement')
+                    ->map(function ($emplacement) {
+                        // dd($emplacement);
+                        // dd($emplacement->sum('quantite'));
+                        return [
+                            'id_emplacement' => $emplacement[0]['id_emplacement'],
+                            'nom_emplacement' => $emplacement[0]['emplacement'],
+                            // 'quantite' => $emplacement->count(),
+                            'quantite' => $emplacement->sum('quantite'),
+                            'emplacement' => $emplacement,
+                        ];
+                    })
+                    ->values();
+                // IL FAUT METTRE GLOBALE
+                $non_distribue = $materiel->where('emplacement', 'GLOBALE')->sum('quantite');
+                $Total_en_stock = $materiel->where('emplacement', '!=', 'GLOBALE')->sum('quantite');
+                // dd($non_distribue);
                 return [
+                    'materielemplacement' => $materielemplacement,
                     'type' => $materiel[0]['type'],
-                    'quantite' => $materiel->count(),
-                    'materiel' => $materiel // si tu veux garder la liste des matériels
+                    'non_distribue' => $non_distribue,
+                    'quantite' => $Total_en_stock,
+                    'materiel' => $materiel,
                 ];
             })
-            ->values(); // pour réindexer proprement
-
+            ->values();
         // dd($materielpartype);
         $emplacement = Emplacement::all();
-        $active_tab='stock';
-        return view('materiel.gestion', compact('materielpartype', 'emplacement', 'colonnes', 'i','active_tab'));
+        $emplacement1 = $emplacement;
+        // $alert = Alert::where('id', 1)->get()->first();
+        // $alert=Alert::All();
+        $alert=Alertes_types::All();
+        // dd($alert);
+        $active_tab = 'stock';
+        return view('materiel.gestion', compact('materielpartype', 'emplacement', 'colonnes', 'i', 'active_tab', 'alert', 'emplacement1'));
     }
-    public function afficheMateriels()
+    public function afficheMateriels($id_emplacement, $role)
     {
-        $materiel = Materiel::with('caracteristiques', 'utilisateurs')->get();
+        if ($role == 'Super Admin' or $role == 'Admin IT') {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->get();
+        } else {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('id_emplacement', $id_emplacement)->get();
+        }
+
         $colonnes = $this->recupererColonnes('caracteristique_supplementaires', 'cle');
         $i = $colonnes;
         $detail_materiel = $this->recupererLesInfoMateriels($materiel, $colonnes);
+
         $emplacement = Emplacement::all();
-        $active_tab='materiel';
-        return view('materiel.liste', compact('detail_materiel', 'emplacement', 'colonnes', 'i','active_tab'));
+        $active_tab = 'materiel';
+        return view('materiel.liste', compact('detail_materiel', 'emplacement', 'colonnes', 'i', 'active_tab'));
     }
     public function afficheMaterielspartype_centre($type)
     {
-        $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('type', $type)->where('status', 'disponible')->get();
+        if (Auth::User()->role == 'Super Admin' or Auth::User()->role == 'Admin IT') {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('type', $type)->where('status', 'disponible')->get();
+        } else {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('type', $type)->where('status', 'disponible')->where('id_emplacement', Auth::User()->id_emplacement)->get();
+        }
+
         $colonnes = $this->recupererColonnes('caracteristique_supplementaires', 'cle');
         $i = $colonnes;
         $detail_materiel = $this->recupererLesInfoMateriels($materiel, $colonnes);
         $emplacement = Emplacement::all();
-         $active_tab='stock';
-        return view('materiel.liste', compact('detail_materiel', 'emplacement', 'colonnes', 'i','active_tab'));
+        $active_tab = 'stock';
+        return view('materiel.liste', compact('detail_materiel', 'emplacement', 'colonnes', 'i', 'active_tab'));
     }
+    public function afficheMaterielspartype_par_centre($type, $id_emplacement)
+    {
+        // dd($id_emplacement);
+        if (Auth::User()->role == 'Super Admin' or Auth::User()->role == 'Admin IT') {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('type', $type)->where('status', 'disponible')->where('id_emplacement', $id_emplacement)->get();
+        } else {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('type', $type)->where('status', 'disponible')->where('id_emplacement', Auth::User()->id_emplacement)->get();
+        }
+
+        $colonnes = $this->recupererColonnes('caracteristique_supplementaires', 'cle');
+        $i = $colonnes;
+        $detail_materiel = $this->recupererLesInfoMateriels($materiel, $colonnes);
+        $emplacement = Emplacement::all();
+        $active_tab = 'stock';
+        return view('materiel.liste', compact('detail_materiel', 'emplacement', 'colonnes', 'i', 'active_tab'));
+    }
+
     private function ajoutPhoto(Materiel $materiel)
     {
         // si une image est recu
@@ -155,86 +216,128 @@ class MaterielController extends Controller
     }
     public function ajoutMateriel(Request $request)
     {
-        // dd($request);
+
         $this->validate($request, [
             'id_emplacement' => 'required',
             'id_utilisateur' => 'nullable',
-            'code_interne' => 'required',
+            'code_interne' => 'nullable',
             'type' => 'required',
-            'marque' => 'required',
-            'model' => 'required',
-            'num_serie' => 'required',
+            'quantite' => 'required',
+            'nbr_poste' => 'nullable',
+            'categorie' => 'required',
+            'marque' => 'nullable',
+            'model' => 'nullable',
+            'num_serie' => 'nullable',
             'status' => 'required',
-            'image' => 'sometimes|image',
+            'image' => 'nullable',
             'date_aquisition' => 'required',
         ]);
 
 
-        // $count = count($cles);
-        $objetMateriel = Materiel::create([
-            'id_emplacement' => $request['id_emplacement'],
-            'code_interne' => $request['code_interne'],
-            'type' => $request['type'],
-            'marque' => $request['marque'],
-            'model' => $request['model'],
-            'num_serie' => $request['num_serie'],
-            'status' => $request['status'],
-            'image' => $request['image'],
-            'date_aquisition' => $request['date_aquisition'],
+        // dd($request['categorie']);
+        // $notification = [];
 
-        ]);
-        $this->ajoutPhoto($objetMateriel);
-        $mouvementstock = new MouvementStock();
-        $mouvementstock->id_materiel = $objetMateriel->id;
-        $mouvementstock->type_mouvement = 'entree';
-        $mouvementstock->emplacement_destination = $request['id_emplacement'];
-        // dd($mouvementstock);
-        MouvementStock::create(
-            [
+        $nombreAjout = $request['quantite'];
+        for ($i = 0; $i < $nombreAjout; $i++) {
+
+            $objetMateriel = Materiel::create([
+                'id_emplacement' => $request['id_emplacement'],
+                // 'code_interne' =>$code_interne ,
+                'type' => $request['type'],
+                'categorie' => $request['categorie'],
+                'quantite' => 1,
+                'marque' => $request['marque'],
+                'model' => $request['model'],
+                'num_serie' => $request['num_serie'],
+                'status' => $request['status'],
+                'image' => $request['image'],
+                'date_aquisition' => $request['date_aquisition'],
+
+            ]);
+            $this->ajoutPhoto($objetMateriel);
+            if ($i == 0) {
+                $mouvementstock = new MouvementStock();
+                $mouvementstock->id_materiel = $objetMateriel->id;
+                $mouvementstock->type_mouvement = 'entree';
+                $mouvementstock->emplacement_destination = $request['id_emplacement'];
+                // dd($mouvementstock);
+                //  quantiter recu a ajoute/ ajout colone quantite
+                MouvementStock::create(
+                    [
+                        'id_materiel' => $objetMateriel->id,
+                        'quantite' => $request['quantite'],
+                        'type_mouvement' => 'entree',
+                        'emplacement_destination' => $request['id_emplacement'],
+
+                    ]
+                );
+            }
+            // on ajout quantite utiliser egale  0 au debut where id= id materiel 
+            $affectation = Affectation::create([
                 'id_materiel' => $objetMateriel->id,
-                'type_mouvement' => 'entree',
-                'emplacement_destination' => $request['id_emplacement'],
+                'id_emplacement' => $request['id_emplacement'],
+                'id_utilisateur' => $request['id_utilisateur'],
+                'date_affectation' => $request['date_aquisition'],
+            ]);
+            // dd($affectation);
+            // MouvementStockController::CreatMouvementStock($mouvementstock);
+            $cles = $request->input('cles');
+            // dd($cles);
+            $valeurs = $request->input('valeurs');
 
-            ]
-        );
-        $affectation=Affectation::create([
-            'id_materiel' => $objetMateriel->id,
-            'id_emplacement' => $request['id_emplacement'],
-            'id_utilisateur' => $request['id_utilisateur'],
-            'date_affectation' => $request['date_aquisition'],
-        ]);
-        // dd($affectation);
-        // MouvementStockController::CreatMouvementStock($mouvementstock);
-        $cles = $request->input('cles');
-        $valeurs = $request->input('valeurs');
-        if (!empty($cles)) {
-            foreach ($cles as $index => $cle) {
-                CaracteristiqueSupplementaire::create([
-                    'id_materiel' => $objetMateriel->id,
-                    'cle' => $cles[$index],
-                    'valeur' => $valeurs[$index],
-                ]);
+            if (!empty($valeurs) and $valeurs != 'null') {
+
+                foreach ($valeurs as $index => $valeur) {
+                    if (!empty($valeur)) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle' => $cles[$index],
+                            'valeur' => $valeurs[$index],
+                        ]);
+                    }
+                }
             }
         }
+        $notification['success'] = "Materiel ajouté avec succès";
 
-        $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('status', 'disponible')->get();
+
+        if (Auth::User()->role == 'Super Admin' or Auth::User()->role == 'Admin IT') {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('status', 'disponible')->get();
+        } else {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('status', 'disponible')->where('id_emplacement', Auth::User()->id_emplacement)->get();
+        }
+
         $colonnes = $this->recupererColonnes('caracteristique_supplementaires', 'cle');
         $i = $colonnes;
         $detail_materiel = $this->recupererLesInfoMateriels($materiel, $colonnes);
+
         $materielpartype = collect($detail_materiel)
             ->groupBy('type')
             ->map(function ($materiel) {
+                $materielemplacement = collect($materiel)
+                    ->where('type', $materiel[0]['type'])
+                    ->groupBy('emplacement')
+                    ->map(function ($emplacement) {
+                        return [
+                            'nom_emplacement' => $emplacement[0]['emplacement'],
+                            'quantite' => $emplacement->count(),
+                            'emplacement' => $emplacement,
+                        ];
+                    })
+                    ->values();
                 return [
+                    'materielemplacement' => $materielemplacement,
                     'type' => $materiel[0]['type'],
                     'quantite' => $materiel->count(),
-                    'materiel' => $materiel // si tu veux garder la liste des matériels
+                    'materiel' => $materiel,
                 ];
             })
-            ->values(); // pour réindexer proprement
-        $notification = "Materiel ajouté avec succès";
+            ->values();
+        // dd('tonga');
         $emplacement = Emplacement::all();
-        $active_tab='stock';
-        return view('materiel.gestion', compact('materielpartype', 'emplacement', 'colonnes', 'i', 'notification','active_tab'));
+        $active_tab = 'stock';
+        // return view('materiel.gestion', compact('materielpartype', 'emplacement', 'colonnes', 'i', 'notification', 'active_tab'));
+        return redirect()->route('gestionMateriels', ['id_emplacement' => Auth::user()->id_emplacement, 'role' => Auth::user()->role])->with('notification', 'Le matériel est ajouté avec succès !', 'active_tab', 'stock');
     }
 
     public function editMateriel($id)
@@ -247,71 +350,132 @@ class MaterielController extends Controller
         $detail_materiel = $this->recupererLesInfoMateriels($materiel, $colonnes);
         $emplacement = Emplacement::all();
         $materiel = $detail_materiel[0];
-        $active_tab='stock';
+        $active_tab = 'stock';
         // dd($detail_materiel);
-        return view('materiel.modifier', compact('materiel', 'emplacement', 'colonnes','active_tab'));
+        return view('materiel.modifier', compact('materiel', 'emplacement', 'colonnes', 'active_tab'));
     }
     public function modifierMateriel(Request $request)
     {
-// dd($request);
+        // dd($request);
         $this->validate($request, [
             'id_emplacement' => 'required',
             'id_utilisateur' => 'nullable',
             'type' => 'required',
-            'marque' => 'required',
-            'model' => 'required',
-            'num_serie' => 'required',
+            'quantite' => 'required',
+            'marque' => 'nullable',
+            'model' => 'nullable',
+            'num_serie' => 'nullable',
             'status' => 'required',
-            // 'image'=>'sometimes|image',
+            'image' => 'nullable',
             'date_aquisition' => 'required',
         ]);
         $id = $request['idmateriel'];
         //  dd($id);
         $materielData = $request->all();
+
         $materielData = $request->except('image');
-        //update post data
         Materiel::find($id)->update($materielData);
-        // $notification = 'Materiel modifié avec succès';
-        // $materiel = Materiel::with('caracteristiques', 'utilisateurs')->get();
-        // $colonnes = $this->recupererColonnes('caracteristique_supplementaires', 'cle');
-        // $i = $colonnes;
-        // $detail_materiel = $this->recupererLesInfoMateriels($materiel, $colonnes);
-        // $materielpartype = collect($detail_materiel)
-        //     ->groupBy('type')
-        //     ->map(function ($materiel) {
-        //         return [
-        //             'type' => $materiel[0]['type'],
-        //             'quantite' => $materiel->count(),
-        //             'materiel' => $materiel // si tu veux garder la liste des matériels
-        //         ];
-        //     })
-        //     ->values();
-        // return view('materiel.gestion', compact('materielpartype', 'notification'));
-       
-return redirect()->route('materiel.partype_centre', ['type' => $request['type']])->with('notification', 'Le matériel a été ajouté avec succès !');
+        if (request('image')) {
+            Materiel::find($id)->update([
+                'image' => request('image')->store('imageMateriel', 'public')
+            ]);
+        }
+        // $keys = array_keys($materielData); // récupère toutes les clés
+        // dd($keys[4]);
+        //   $taille=count($materielData);
+        //   dd($taille);
+        // $caracteristique = CaracteristiqueSupplementaire::where('id_materiel',$id)->get();
 
+        // for($i=0;$i<$taille;$i++){
+        //          foreach($caracteristique as $caracteristique){
+        //         $caracteristique_modifier=CaracteristiqueSupplementaire::findOrFail($caracteristique->id);
+        //         // $caracteristique_modifier->$keys[$i];
+        //         $caracteristique_modifier->save();
+        //     }
+
+        // }
+        //     dd($caracteristique);
+
+        return redirect()->route('materiel.partype_centre', ['type' => $request['type']])->with('notification', 'Le matériel a été modifié avec succès !');
     }
-    protected function delete(Materiel $id)
+    //     protected function delete(Materiel $id)
+    //     {
+    //         $id->delete();
+
+    //         $materiel = Materiel::with('caracteristiques', 'utilisateurs')->get();
+    //         $colonnes = $this->recupererColonnes('caracteristique_supplementaires', 'cle');
+    //         $i = $colonnes;
+    //         $detail_materiel = $this->recupererLesInfoMateriels($materiel, $colonnes);
+    //         $materielpartype = collect($detail_materiel)
+    //             ->groupBy('type')
+    //             ->map(function ($materiel) {
+    //                 return [
+    //                     'type' => $materiel[0]['type'],
+    //                     'quantite' => $materiel->count(),
+    //                     'materiel' => $materiel // si tu veux garder la liste des matériels
+    //                 ];
+    //             })
+    //             ->values();
+    //         $notification = 'Materiel supprimé avec succès';
+    // $active_tab='stock';
+    //         return view('materiel.gestion', compact('materielpartype', 'notification','active_tab'));
+    //     }
+
+    public function delete(Request $request, Materiel $id)
     {
-        //dd($pub)
-        $id->delete();
+        if ($request->ajax()) {
+            try {
+                $id->delete();
 
-        $materiel = Materiel::with('caracteristiques', 'utilisateurs')->get();
-        $colonnes = $this->recupererColonnes('caracteristique_supplementaires', 'cle');
-        $i = $colonnes;
-        $detail_materiel = $this->recupererLesInfoMateriels($materiel, $colonnes);
-        $materielpartype = collect($detail_materiel)
-            ->groupBy('type')
-            ->map(function ($materiel) {
-                return [
-                    'type' => $materiel[0]['type'],
-                    'quantite' => $materiel->count(),
-                    'materiel' => $materiel // si tu veux garder la liste des matériels
-                ];
-            })
-            ->values();
-        $notification = 'Materiel supprimé avec succès';
-$active_tab='stock';
-        return view('materiel.gestion', compact('materielpartype', 'notification','active_tab'));
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Materiel supprimé avec succès.',
+                    'id' => $id->id
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la suppression.',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+
+        // Si ce n'est pas une requête AJAX
+        abort(403, 'Requête non autorisée.');
     }
+public function distribuer(Request $request)
+{
+    $request->validate([
+        'ids' => 'required|array',
+        'id_emplacement' => 'required|integer',
+    ]);
+
+    try {
+        // ✅ Filtrer uniquement les IDs numériques (on enlève 'tous' ou autres valeurs non numériques)
+        $idsValides = array_filter($request->ids, fn($id) => is_numeric($id));
+
+        if (!empty($idsValides)) {
+            // ✅ Mettre à jour tous les matériels sélectionnés
+            Materiel::whereIn('id', $idsValides)->update([
+                'id_emplacement' => $request->id_emplacement,
+            ]);
+
+            // ✅ Enregistrer un mouvement global pour la distribution
+            MouvementStock::create([
+                // Ici, tu peux enregistrer le premier ID ou un champ symbolique
+                'id_materiel' => $idsValides[0], // facultatif, selon ton modèle
+                'quantite' => count($idsValides),
+                'type_mouvement' => 'entree',
+                'source' => 'GLOBALE',
+                'emplacement_destination' => $request->id_emplacement,
+            ]);
+        }
+
+        return response()->json(['message' => 'Mise à jour réussie.'], 200);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Erreur : ' . $e->getMessage()], 500);
+    }
+}
+
 }

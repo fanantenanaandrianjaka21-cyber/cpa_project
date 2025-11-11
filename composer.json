@@ -7,15 +7,16 @@
     "require": {
         "php": "^7.3|^8.0",
         "arcanedev/log-viewer": "^8.3",
-        "binshops/laravel-ticket": "^1.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.4",
+        "phpoffice/phpspreadsheet": "^5.1",
         "simplesoftwareio/simple-qrcode": "^2.0",
         "spatie/laravel-activitylog": "^4.7",
+        "spatie/laravel-enum": "^3.2",
         "spatie/simple-excel": "^3.2"
     },
     "require-dev": {

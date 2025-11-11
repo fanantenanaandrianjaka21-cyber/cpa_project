@@ -1,5 +1,6 @@
 table.dataTable{clear:both;margin-top:6px !important;margin-bottom:6px !important;max-width:none !important;border-collapse:separate !important;border-spacing:0}
-table.dataTable th{background: rgba(0, 162, 255, 0.342);text-align: center !important;}
+/* table.dataTable th{background: rgba(0, 162, 255, 0.342);text-align: center !important;} */
+table.dataTable th{text-align: center !important;}
 table.dataTable td,table.dataTable th{-webkit-box-sizing:content-box;box-sizing:content-box;align-content: center !important;}
 table.dataTable td.dataTables_empty,table.dataTable th.dataTables_empty{text-align:center}
 table.dataTable.nowrap th,table.dataTable.nowrap td{white-space:nowrap}
