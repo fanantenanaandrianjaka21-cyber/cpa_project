@@ -33,6 +33,7 @@ class HomeController extends Controller
     public function index()
     {
         $active_tab = 'dashboard';
+        dd('welcome to dd test');
         $role = Auth::user()->role;
         $userId = Auth::id();
         if ($role == "Super Admin") {
