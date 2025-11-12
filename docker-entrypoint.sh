@@ -1,44 +1,53 @@
 #!/bin/bash
+set -e
 
-# Configuration Render : Assurer que le port Render est défini.
-# Render utilise la variable $PORT. Laravel utilise le port 8000 par défaut.
-# On utilise $PORT s'il est défini, sinon 8000 (ce qui devrait être 8000 si $PORT n'est pas défini)
+# ------------------------------
+# 1. Préparation de l'environnement
+# ------------------------------
 LISTEN_PORT=${PORT:-8000}
 
-# 1. Effectuer les migrations de la base de données
-# Assurez-vous d'utiliser l'option --force en environnement de production
-php artisan migrate --force
+# Copier le .env si inexistant
+if [ ! -f /var/www/html/.env ]; then
+    echo "📋 Copie du fichier .env.example..."
+    cp /var/www/html/.env.example /var/www/html/.env
+fi
 
-# 2. Lancer l'application Laravel sur le port d'écoute de Render
-# L'option --host 0.0.0.0 est essentielle pour écouter toutes les interfaces réseau
-echo "Starting Laravel on 0.0.0.0:${LISTEN_PORT}"
-exec php artisan serve --host 0.0.0.0 --port "${LISTEN_PORT}"
-# #!/bin/bash
-# set -e
+# ------------------------------
+# 2. Attendre la base de données PostgreSQL
+# ------------------------------
+if [ -n "$DB_HOST" ]; then
+    echo "⏳ Attente de PostgreSQL à $DB_HOST:$DB_PORT..."
+    until pg_isready -h "$DB_HOST" -p "${DB_PORT:-5432}" -U "$DB_USERNAME" >/dev/null 2>&1; do
+        sleep 2
+    done
+    echo "✅ PostgreSQL est prêt."
+fi
 
-# # Copier .env.example si .env n’existe pas
-# if [ ! -f /var/www/html/.env ]; then
-#     cp /var/www/html/.env.example /var/www/html/.env
-# fi
+# ------------------------------
+# 3. Maintenance Laravel
+# ------------------------------
+echo "🧹 Nettoyage du cache Laravel..."
+php artisan config:clear || true
+php artisan cache:clear || true
+php artisan view:clear || true
+php artisan route:clear || true
 
-# # Attendre la base de données PostgreSQL
-# echo "⏳ Waiting for PostgreSQL..."
-# until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USERNAME" >/dev/null 2>&1; do
-#   sleep 2
-# done
-# echo "✅ Database is ready!"
+echo "🔑 Génération de la clé d’application..."
+php artisan key:generate --force || true
 
-# # Générer la clé Laravel si nécessaire
-# php artisan key:generate --force
+echo "🗄️  Exécution des migrations..."
+php artisan migrate --force || true
 
-# # Effectuer les migrations
-# php artisan migrate --force
+# ------------------------------
+# 4. Mise en cache des optimisations
+# ------------------------------
+echo "⚡ Mise en cache de la configuration et des routes..."
+php artisan config:cache || true
+php artisan route:cache || true
+php artisan view:cache || true
 
-# # Mettre en cache la config/routes/views
-# php artisan config:cache
-# php artisan route:cache
-# php artisan view:cache
-
-# # Lancer Laravel
-# echo "🚀 Starting Laravel on port 8000..."
-# php artisan serve --host=0.0.0.0 --port=8000
+# ------------------------------
+# 5. Démarrage du serveur
+# ------------------------------
+echo "🚀 Démarrage de Laravel sur 0.0.0.0:${LISTEN_PORT}"
+exec php artisan serve --host=0.0.0.0 --port="${LISTEN_PORT}"
