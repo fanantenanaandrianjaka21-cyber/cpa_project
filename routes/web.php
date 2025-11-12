@@ -141,7 +141,7 @@ Route::get('/detailsTicketTechnicien/{id}', [App\Http\Controllers\TicketControll
 
 
 // ************* Dashboard******************//
-Route::get('/Dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
+Route::get('/Dashboard', [App\Http\Controllers\HomeController::class, 'index'])->middleware('auth')->name('dashboard');
 
 //********************TicketUtilisateur***********************//
 Route::get('listeTicketUtilisateur', [App\Http\Controllers\TicketController::class, 'listeTicketUtilisateur'])->name('listeTicketUtilisateur');
