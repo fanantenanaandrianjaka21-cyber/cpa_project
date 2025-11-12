@@ -28,7 +28,7 @@ use App\Http\Controllers\TicketStatusController;
 // Auth::routes();
 Auth::routes(['register' => false]);
 /*Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');*/
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->middleware('auth')->name('home');
 Route::get('/inscription', [App\Http\Controllers\UserController::class, 'index'])->middleware('auth')->name('user.index');
 Route::post('/ajoutUser', [App\Http\Controllers\UserController::class, 'ajoutUser'])->middleware('auth')->name('ajoutUser');
 Route::get('/listUser/{id_emplacement},{role}', [App\Http\Controllers\UserController::class, 'listUser'])->middleware('auth')->name('user.liste');
