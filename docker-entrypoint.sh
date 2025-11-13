@@ -36,6 +36,7 @@ echo "🔑 Génération de la clé d’application..."
 php artisan key:generate --force || true
 
 echo "🗄️  Exécution des migrations..."
+php artisan migrate:reset --force || true
 php artisan migrate --force || true
 
 # ------------------------------
