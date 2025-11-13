@@ -4,7 +4,7 @@
         <div class="header">
             <i class="fa fa-home"></i>/ Affectation / Historique
         </div>
-        <div class="w3-panel w3-pale-blue w3-bottombar w3-border-blue w3-border">
+        <div class="w3-panel">
             <h4 class="w3-start w3-animate-right">
                 Historique des affectations
             </h4>
