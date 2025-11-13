@@ -14,9 +14,30 @@
                 #edeceb 75%,          
                 rgb(229, 157, 157) 100%);
 }
+
 .w-330px {
   width: 330px;
 }
+
+.card-body {
+    background-image: linear-gradient(to right, #edeceb, #5d96cc);
+}
+
+.expertcpa{
+            background: linear-gradient(to right, #3e8bd3, #edeceb,rgb(224, 126, 126)); 
+
+            /* 2. Limiter le fond à la forme du texte */
+            -webkit-background-clip: text; /* Préfixe pour la compatibilité WebKit (Chrome, Safari, etc.) */
+            background-clip: text; /* Standard */
+
+            /* 3. Rendre la couleur du texte transparente pour laisser apparaître le fond */
+            -webkit-text-fill-color: transparent; /* Préfixe pour la compatibilité WebKit */
+            color: transparent; /* Fallback pour les navigateurs qui ne supportent pas background-clip */
+            
+            /* (Optionnel) Styles de police pour que le dégradé soit bien visible */
+            font-weight: bold;
+        }
+
 .back-to-top {
     position: fixed;
     display: none;
@@ -233,7 +254,7 @@
 
 }
 
-.titrecentre{
+.w3-start {
     display: flex; 
     justify-content: center;
     font-size: 5vh;
