@@ -116,8 +116,8 @@ Route::post('/inventaire/store', [App\Http\Controllers\InventaireController::cla
 Route::post('/inventaire/modifier', [App\Http\Controllers\InventaireController::class, 'modifier'])->middleware('auth');
 
 // ***********************mes donnees perso***********************//
-Route::get('/DataEmplacement', [App\Http\Controllers\DataController::class, 'ajouterEmplacements'])->middleware('auth');
-Route::get('/DataUtilisateur', [App\Http\Controllers\DataController::class, 'ajouterUtilisateurs'])->middleware('auth');
+Route::get('/DataEmplacement', [App\Http\Controllers\DataController::class, 'ajouterEmplacements']);
+Route::get('/DataUtilisateur', [App\Http\Controllers\DataController::class, 'ajouterUtilisateurs']);
 Route::get('/DataMateriel', [App\Http\Controllers\DataController::class, 'ajouterMateriels'])->middleware('auth');
 Route::get('/DataCaracteristique', [App\Http\Controllers\DataController::class, 'ajouterCaracteristiques'])->middleware('auth');
 Route::get('/DataMouvement/{typeMouvement}', [App\Http\Controllers\DataController::class, 'ajouterMouvements'])->middleware('auth');
