@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums;
+namespace App\enums;
 
 use App\Models\TicketStatusConfig;
 use Spatie\Enum\Laravel\Enum;

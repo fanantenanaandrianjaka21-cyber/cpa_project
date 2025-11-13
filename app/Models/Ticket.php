@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\TicketPriorite;
-use App\Enums\TicketStatus;
+use App\enums\TicketPriorite;
+use App\enums\TicketStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

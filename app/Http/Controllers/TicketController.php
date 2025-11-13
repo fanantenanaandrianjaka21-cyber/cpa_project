@@ -9,7 +9,7 @@ use App\Models\Materiel;
 use App\enums\TicketStatus;
 use App\Mail\nouveauTicket;
 use Illuminate\Http\Request;
-use App\Enums\TicketPriorite;
+use App\enums\TicketPriorite;
 use App\Models\TicketPrioriteConfig;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -122,7 +122,7 @@ class TicketController extends Controller
         
         // $ticket = Ticket::find(1);
         // dd($ticket->statut->color());
-        // dd($ticket->statut instanceof \App\Enums\TicketStatus);
+        // dd($ticket->statut instanceof \App\enums\TicketStatus);
         $users = User::all();
         $materiels = Materiel::all();
         $userId = Auth::id();

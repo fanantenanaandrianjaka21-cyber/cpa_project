@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums;
+namespace App\enums;
 
 use App\Models\TicketPrioriteConfig;
 use Spatie\Enum\Laravel\Enum;
