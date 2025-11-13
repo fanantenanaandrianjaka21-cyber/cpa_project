@@ -29,6 +29,9 @@ if [ -n "$DB_HOST" ]; then
     if php -r "try {
         \$pdo = new PDO('pgsql:host=${DB_HOST};port=${DB_PORT:-5432};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}');
         echo \"✅ Connexion PostgreSQL réussie depuis PHP.\n\";
+        \$stmt = \$pdo->query('SELECT current_database();');
+        \$db = \$stmt->fetchColumn();
+        echo \"📦 Base de données connectée : \$db\n\";
     } catch (Exception \$e) {
         echo \"❌ Échec de connexion PostgreSQL : \" . \$e->getMessage() . \"\n\";
         exit(1);
