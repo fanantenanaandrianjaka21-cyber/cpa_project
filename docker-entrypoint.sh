@@ -21,6 +21,22 @@ if [ -n "$DB_HOST" ]; then
         sleep 2
     done
     echo "✅ PostgreSQL est prêt."
+
+    # ------------------------------
+    # 2b. Test de connexion à la base de données Laravel
+    # ------------------------------
+    echo "🔍 Test de la connexion Laravel à la base de données..."
+    if php -r "try {
+        \$pdo = new PDO('pgsql:host=${DB_HOST};port=${DB_PORT:-5432};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}');
+        echo \"✅ Connexion PostgreSQL réussie depuis PHP.\n\";
+    } catch (Exception \$e) {
+        echo \"❌ Échec de connexion PostgreSQL : \" . \$e->getMessage() . \"\n\";
+        exit(1);
+    }"; then
+        echo "✅ Test de connexion réussi."
+    else
+        echo "❌ Impossible de se connecter à la base de données."
+    fi
 fi
 
 # ------------------------------
@@ -47,7 +63,13 @@ php artisan route:cache || true
 php artisan view:cache || true
 
 # ------------------------------
-# 5. Démarrage du serveur
+# 5. Test rapide Laravel (optionnel)
+# ------------------------------
+echo "🧪 Vérification rapide de la connexion via Laravel..."
+php artisan tinker --execute="DB::select('SELECT NOW() as time');" || true
+
+# ------------------------------
+# 6. Démarrage du serveur
 # ------------------------------
 echo "🚀 Démarrage de Laravel sur 0.0.0.0:${LISTEN_PORT}"
 exec php artisan serve --host=0.0.0.0 --port="${LISTEN_PORT}"
