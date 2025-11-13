@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Ticket;
 use App\Mail\mailTicket;
 use App\Models\Materiel;
-use App\Enums\TicketStatus;
+use App\enums\TicketStatus;
 use App\Mail\nouveauTicket;
 use Illuminate\Http\Request;
 use App\Enums\TicketPriorite;
