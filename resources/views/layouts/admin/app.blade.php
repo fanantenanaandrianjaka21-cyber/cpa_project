@@ -70,7 +70,7 @@
             <nav class="navbar">
                 <a class="navbar-brand mb-4" href="{{ url('/') }}">
                     {{-- <img src="{{ asset('asset/logocpa.png') }}" style="height:50px;width: auto;" alt="Logo cpa"> --}}
-                    <h2 class="text-primary"><i class="fa fa-user-edit me-2"></i>Expert CPA</h2>
+                    <h2 class="expertcpa"><i class="fa fa-user-edit me-2"></i>Expert CPA</h2>
                 </a>
                 <?php
                 $active_tab = $active_tab ?? 'ticket';
