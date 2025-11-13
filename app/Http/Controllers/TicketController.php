@@ -119,7 +119,6 @@ class TicketController extends Controller
     public function ajouterTicketUtilisateur(Request $data)
     {
         // dd(request('nom_fichier'));
-// dd($data);
         
         // $ticket = Ticket::find(1);
         // dd($ticket->statut->color());
@@ -138,6 +137,8 @@ class TicketController extends Controller
                 'assignement' => 'nullable',
             ]
         );
+// dd($data['type']);
+
         $ticket = Ticket::create([
             'type' => $data['type'],
             'objet' => $data['objet'],
