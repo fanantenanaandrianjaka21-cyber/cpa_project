@@ -23,6 +23,12 @@
     background-image: linear-gradient(to right, #edeceb, #5d96cc);
 }
 
+.w3-panel {
+    display: flex; 
+    justify-content: center;
+    font-size: 5vh;
+}
+
 .expertcpa{
             background: linear-gradient(to right, #3e8bd3, #edeceb,rgb(224, 126, 126)); 
 
@@ -348,7 +354,6 @@
     border-radius: 220px 0px 0px 0px;
     gap: 5px;
     min-width: 34%;
-    color: #ffffff;
 }
 
 
