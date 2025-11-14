@@ -4,7 +4,7 @@
         <i class="fa fa-home"></i>/ Dashboard / Configuration alerte
 
     </div>
-    <div class="w3-panel w3-pale-blue w3-bottombar w3-border-blue w3-border">
+    <div class="w3-panel">
         <h4 class="w3-start w3-animate-right">
             Configuration alerte stock minimal et Envoie email automatique
         </h4>
