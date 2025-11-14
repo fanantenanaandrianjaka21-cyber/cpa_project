@@ -1,0 +1,51 @@
+(function(_ds){var window=this;var qEa=async function(a,b){const c=a.o;let d;const e=b.id!==((d=a.qa)==null?void 0:d.id);e&&(a.className=b.id,a.eventLabel=`devsite-callout-${b.id}`,a.o=new _ds.XG(b.origin,a.eventLabel));a.qa=b;c&&e&&await _ds.WG(c)},rEa=async function(a){a.eventHandler.listen(document.body,"devsite-before-page-change",()=>{a.hide()})},sEa=async function(a,b){let c;((c=a.callout)==null?0:c.Fk)&&a.callout.Fk(b);await a.hide();a.Da({category:"Site-Wide Custom Events",action:"callout-dismiss",label:a.eventLabel})},
+ZS=async function(a,b){let c;((c=a.callout)==null?0:c.hk)&&a.callout.hk(b);let d;((d=a.callout)==null?0:d.Hr)||await a.hide();a.Da({category:"Site-Wide Custom Events",action:"callout-action",label:a.eventLabel})},tEa=function(a){let b,c;if(((b=a.callout)==null?0:b.ph)&&`${(c=a.callout)==null?void 0:c.ph}`){let d,e;return(0,_ds.L)`<div class="devsite-callout-branding">
+          <img
+            class="devsite-callout-branding-image"
+            src="${(d=a.callout)==null?void 0:d.ph}"
+            alt="${((e=a.callout)==null?void 0:e.xk)||""}" />
+        </div>
+        <hr />`}return(0,_ds.L)``},uEa=function(a){let b,c;if(((b=a.callout)==null?0:b.hx)&&`${(c=a.callout)==null?void 0:c.hx}`){let d,e;return(0,_ds.L)`<div class="devsite-callout-hero">
+        <img
+          class="devsite-callout-hero-image"
+          src="${(d=a.callout)==null?void 0:d.hx}"
+          alt="${((e=a.callout)==null?void 0:e.mK)||""}" />
+      </div>`}return(0,_ds.L)``},vEa=function(a){let b;if((b=a.callout)==null?0:b.fC)return(0,_ds.L)``;let c;return(0,_ds.L)` <div class="devsite-callout-header">
+        <h2>${((c=a.callout)==null?void 0:c.title)||""}</h2>
+      </div>`},wEa=function(a){let b;if((b=a.callout)==null?0:b.loading)return(0,_ds.L)`<div class="devsite-callout-body"
+        ><devsite-spinner size="24"></devsite-spinner
+      ></div>`;let c,d;var e;if(((c=a.callout)==null?0:c.body)&&`${(d=a.callout)==null?void 0:d.body}`){{let f;if(((f=a.callout)==null?void 0:f.body)instanceof _ds.tf){let g;a=(0,_ds.L)`${(0,_ds.iG)((g=a.callout)==null?void 0:g.body)}`}else a=(0,_ds.L)`${(e=a.callout)==null?void 0:e.body}`}e=(0,_ds.L)`<div class="devsite-callout-body">
+        ${a}
+      </div>`}else e=(0,_ds.L)``;return e},xEa=function(a){var b;const c=(0,_ds.mt)({button:!0,"button-primary":!0,"devsite-callout-action":!0,"button-disabled":((b=a.callout)==null?void 0:b.dB)||!1});let d;b=(d=a.callout)==null?void 0:d.mH;let e;if((e=a.callout)==null?0:e.Nm){let g,h;return(0,_ds.L)`<a
+        @click=${k=>{ZS(a,k)}}
+        href="${((g=a.callout)==null?void 0:g.Nm)||""}"
+        class="${c}"
+        aria-label=${b!=null?b:_ds.nu}
+        data-title=${b!=null?b:_ds.nu}>
+        ${((h=a.callout)==null?void 0:h.hg)||""}
+      </a>`}let f;return(0,_ds.L)`<button
+        @click=${g=>{ZS(a,g)}}
+        class="${c}"
+        aria-label=${b!=null?b:_ds.nu}
+        data-title=${b!=null?b:_ds.nu}>
+        ${((f=a.callout)==null?void 0:f.hg)||""}
+      </button>`},$S=class extends _ds.nv{set callout(a){qEa(this,a)}get callout(){return this.qa}get open(){let a;return((a=this.oa.value)==null?void 0:a.open)||!1}constructor(){super(["devsite-spinner"]);this.eventHandler=new _ds.D;this.eventLabel="";this.qa=this.ea=this.o=null;this.oa=new _ds.eG}connectedCallback(){super.connectedCallback();rEa(this)}disconnectedCallback(){super.disconnectedCallback();let a;(a=this.o)==null||a.cancel()}Wa(){return this}async ready(){await this.j}async show(){await this.ready();
+if(!this.open){var a;await ((a=this.o)==null?void 0:a.schedule(()=>{document.activeElement instanceof HTMLElement&&(this.ea=document.activeElement);var b;(b=this.oa.value)==null||b.show();let c;(c=this.querySelector(".devsite-callout-action"))==null||c.focus();let d;b={message:"Bo\u00eete de dialogue "+(((d=this.callout)==null?void 0:d.title)||"")+" ouverte."};document.body.dispatchEvent(new CustomEvent("devsite-a11y-announce",{detail:b}));this.Da({category:"Site-Wide Custom Events",action:"callout-impression",
+label:this.eventLabel,nonInteraction:!0})},()=>{let b;(b=this.oa.value)==null||b.close();let c;(c=this.querySelector(".devsite-callout-action"))==null||c.blur();this.ea&&this.ea.focus()}))}}async hide(){await this.ready();let a;await ((a=this.o)==null?void 0:_ds.WG(a))}render(){if(!this.callout)return(0,_ds.L)``;let a;return(0,_ds.L)`
+      <dialog
+        closedby="none"
+        ${(0,_ds.gG)(this.oa)}
+        aria-label="${((a=this.callout)==null?void 0:a.title)||""}"
+        class="devsite-callout">
+        ${tEa(this)} ${uEa(this)}
+        ${vEa(this)} ${wEa(this)}
+        <div class="devsite-callout-buttons">
+          <button
+            @click=${b=>{sEa(this,b)}}
+            class="button button-dismiss devsite-callout-dismiss">
+            ${"Ignorer"}
+          </button>
+          ${xEa(this)}
+        </div>
+      </dialog>
+    `}};_ds.w([_ds.F({Ha:!1}),_ds.y("design:type",Object),_ds.y("design:paramtypes",[Object])],$S.prototype,"callout",null);try{customElements.define("devsite-callout",$S)}catch(a){console.warn("Unrecognized DevSite custom element - DevsiteCallout",a)};})(_ds_www);
