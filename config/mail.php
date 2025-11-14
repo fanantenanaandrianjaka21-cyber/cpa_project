@@ -44,7 +44,9 @@ return [
             'timeout' => null,
             'auth_mode' => null,
         ],
-
+        'brevo' => [
+            'transport' => 'brevo',
+        ],
         'ses' => [
             'transport' => 'ses',
         ],
@@ -79,6 +81,9 @@ return [
             ],
         ],
     ],
+    'brevo' => [
+    'key' => env('BREVO_API_KEY'),
+],
 
     /*
     |--------------------------------------------------------------------------
