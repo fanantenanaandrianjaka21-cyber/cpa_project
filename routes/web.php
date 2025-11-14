@@ -181,3 +181,11 @@ Route::put('/alerte/{id}', [App\Http\Controllers\DashboardController::class, 'up
 
 // mail log
 Route::get('/mail-logs', [App\Http\Controllers\MailLogController::class, 'index'])->name('mail.logs');
+Route::get('/test-brevo', function () {
+    Mail::raw('<h1>Test Brevo</h1>', function ($message) {
+        $message->to('fanantenanaandrianjaka21@gmail.com');
+        $message->subject('Test Brevo API');
+    });
+
+    return 'Email envoyé !';
+});
