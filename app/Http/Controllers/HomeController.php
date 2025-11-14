@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BrevoService;
 use App\Models\Alert;
 use App\Models\Emplacement;
 use App\Models\Materiel;
@@ -32,6 +33,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        BrevoService::sendEmail('fanantenanaandrianjaka21@gmail.com', 'Sujet', '<h1>Bonjour Njaka</h1>');
         $active_tab = 'dashboard';
         //dd('welcome to dd test');
         $role = Auth::user()->role;
