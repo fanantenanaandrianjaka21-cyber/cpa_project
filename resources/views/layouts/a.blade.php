@@ -43,6 +43,22 @@
     <script src="stylenet/plugins/chart.js/Chart.min.js"></script>
     <script src="stylenet/dist/js/demo.js"></script>
     <!--<script src="stylenet/dist/js/pages/dashboard3.js"></script>-->
+    <style>
+        .expertcpa {
+            background: linear-gradient(to right, #3e8bd3, #edeceb,rgb(224, 126, 126)); 
+
+            /* 2. Limiter le fond à la forme du texte */
+            -webkit-background-clip: text; /* Préfixe pour la compatibilité WebKit (Chrome, Safari, etc.) */
+            background-clip: text; /* Standard */
+
+            /* 3. Rendre la couleur du texte transparente pour laisser apparaître le fond */
+            -webkit-text-fill-color: transparent; /* Préfixe pour la compatibilité WebKit */
+            color: transparent; /* Fallback pour les navigateurs qui ne supportent pas background-clip */
+            
+            /* (Optionnel) Styles de police pour que le dégradé soit bien visible */
+            font-weight: bold;
+        }
+    </style>
 
 
 
@@ -53,8 +69,9 @@
         <!-- Sidebar Start -->
         <div class="sidebar pe-4 pb-3">
             <nav class="navbar ">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    <img src="{{ asset('asset/logocpa.png') }}" style="height:50px;width: auto;" alt="Logo cpa">
+                <a class="navbar-brand mb-4" href="{{ url('/') }}">
+                    {{-- <img src="{{ asset('asset/logocpa.png') }}" style="height:50px;width: auto;" alt="Logo cpa"> --}}
+                    <h2 class="expertcpa"><i class="fa fa-user-edit me-2"></i>Expert CPA</h2>
                 </a>
 
                 <div class="navbar-nav w-100">

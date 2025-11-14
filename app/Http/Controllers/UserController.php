@@ -66,8 +66,10 @@ class UserController extends Controller
     public function detailsUtilisateur($id)
     {
         $utilisateur = User::where('id', $id)->get()->first();
-         $active_tab='utilisateur';
-        return view('users.details', compact('utilisateur','active_tab'));
+        $emplacement = Emplacement::where('id', $utilisateur->id_emplacement)->get()->first();
+        $utilisateur['emplacement'] = $emplacement->emplacement;
+        $active_tab='utilisateur';
+        return view('users.details', compact('utilisateur','active_tab', 'emplacement'));
     }
     public function editUtilisateur($id)
     {

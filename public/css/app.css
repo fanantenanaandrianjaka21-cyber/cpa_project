@@ -3958,8 +3958,18 @@ textarea.form-control-lg {
   text-decoration: none;
   white-space: nowrap;
 }
+
 .navbar-brand:hover, .navbar-brand:focus {
   color: var(--bs-navbar-brand-hover-color);
+}
+
+.text-center-logo {
+    /* Assure que le conteneur utilise le modèle flexbox */
+    display: flex;
+    /* Centre horizontalement l'image à l'intérieur du lien <a> */
+    justify-content: center;
+    /* Assure que le lien prend la largeur nécessaire pour centrer */
+    width: 100%; 
 }
 
 .navbar-nav {
@@ -4363,10 +4373,18 @@ textarea.form-control-lg {
   height: var(--bs-card-height);
   color: var(--bs-body-color);
   word-wrap: break-word;
-  background-color: var(--bs-card-bg);
+  background-color: rgba(131, 182, 200, 0.736);
+  /* background-image: url("/asset/logocpa.png"); */
+  /* background-repeat: no-repeat;
+  background-size: 80%; */
   background-clip: border-box;
-  border: var(--bs-card-border-width) solid var(--bs-card-border-color);
-  border-radius: var(--bs-card-border-radius);
+  border-color: rgba(0, 0, 0, 0.685);
+  /* rgb(120, 194, 218) */
+  border-radius: 10px;
+  border-width: 4px;
+  border-style: solid; 
+  /* border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+  border-radius: var(--bs-card-border-radius); */
 }
 .card > hr {
   margin-right: 0;
