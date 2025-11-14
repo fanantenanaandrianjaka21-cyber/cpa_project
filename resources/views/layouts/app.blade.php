@@ -8,31 +8,55 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('Expert CPA', 'Expert CPA') }}</title>
 
-    <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
-    <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-   
-    <!-- Styles -->
+    
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <style>
+        body {
+            /* background-color: azure; */
+            background-image: url("{{ asset('asset/Parcpc7.jpeg') }}");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100%;
+            /* Assure que le body occupe toute la hauteur de la vue */
+            min-height: 87vh; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        #app {
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* CSS CORRIGÉ : Centrage vertical et horizontal */
+        .content-center {
+            display: flex;
+            align-items: center; /* Centrage vertical */
+            justify-content: center; /* Centrage horizontal */
+            flex-grow: 1; /* Permet à main de prendre tout l'espace sous la navbar */
+            /* Retirez le padding vertical si vous utilisez full-height-center pour un centrage parfait */
+            padding-top: 0 !important; 
+            padding-bottom: 0 !important; 
+        }
+    </style>
 
 
 </head>
 
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light">
 
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    <img src="{{ asset('asset/logocpa.png') }}" style="height:60px;width: auto;" alt="Logo cpa">
-                </a>
+                
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -40,26 +64,12 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
 
                     </ul>
 
-                    <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
                         @guest
-                            <!-- @if (Route::has('login'))
-    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('login') }}">{{ __('Se connecter') }}</a>
-                                    </li>
-    @endif
-
-                                @if (Route::has('register'))
-    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('register') }}">{{ __('S\'inscrire') }}</a>
-                                    </li>
-    @endif-->
                         @else
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle smooth-scroll" href="#" id="navbarDropdownMenuLink"
@@ -123,7 +133,7 @@
                                 <div class="dropdown-menu dropdown-cust" aria-labelledby="navbarDropdownMenuLink">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                         onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                                        document.getElementById('logout-form').submit();">
                                         {{ __('Deconnection') }}
                                     </a>
 
@@ -140,14 +150,13 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="py-4 content-center">
             @yield('content')
         </main>
     </div>
 
 </body>
 
-<!-- Plugin JavaScript -->
 <script src="{{ asset('cpa/js/custom.js') }}"></script>
 
 </html>
