@@ -18,6 +18,7 @@
         "phpoffice/phpspreadsheet": "^5.1",
         "psr/http-factory": "^1.1",
         "railsware/mailtrap-php": "^1.9",
+        "sendinblue/api-v3-sdk": "^8.4",
         "simplesoftwareio/simple-qrcode": "^2.0",
         "spatie/laravel-activitylog": "^4.7",
         "spatie/laravel-enum": "^3.2",

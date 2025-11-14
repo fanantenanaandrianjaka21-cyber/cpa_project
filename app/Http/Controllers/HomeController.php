@@ -33,7 +33,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        BrevoService::sendEmail('fanantenanaandrianjaka21@gmail.com', 'Sujet', '<h1>Bonjour Njaka</h1>');
+        $brevo = new BrevoService();
+    $brevo->sendEmail(
+        'fanantenanaandrianjaka21@gmail.com',
+        'Sujet test',
+        '<h1>Bonjour Njaka</h1>'
+    );
         $active_tab = 'dashboard';
         //dd('welcome to dd test');
         $role = Auth::user()->role;
