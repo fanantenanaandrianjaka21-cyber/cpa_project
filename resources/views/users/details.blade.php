@@ -43,26 +43,55 @@
         </div>
     </div>
 </div> --}}
-                                                    <div class="row">
-                                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                                            <div class="form-group">
-                                                                <strong>Nom :</strong>
-                                                                {{ $utilisateur->nom_utilisateur }}
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                                            <div class="form-group">
-                                                                <strong>prenom:</strong>
-                                                                {{ $utilisateur->prenom_utilisateur }}
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                                            <div class="form-group">
-                                                                <strong>Equipe:</strong>
-                                                                {{ $utilisateur->equipe }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <table class="table table-bordered table-striped">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th>
+                                                                    Matricule :
+
+                                                                </th>
+                                                                <td>
+                                                                    {{ $utilisateur->id }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>
+                                                                    Nom :
+
+                                                                </th>
+                                                                <td>
+                                                                    {{ $utilisateur->nom_utilisateur }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>
+                                                                    prenom :
+
+                                                                </th>
+                                                                <td>
+                                                                    {{ $utilisateur->prenom_utilisateur }}
+                                                                </td>
+                                                            </tr>
+                                                                                                                        <tr>
+                                                                <th>
+                                                                    Societe :
+
+                                                                </th>
+                                                                <td>
+                                                                    {{ $utilisateur->societe }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>
+                                                                    Equipe :
+
+                                                                </th>
+                                                                <td>
+                                                                    {{ $utilisateur->equipe }}
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
 
 
 
