@@ -11,6 +11,7 @@ use App\Models\Utilisateur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -123,13 +124,13 @@ class SimpleExcelController extends Controller
             return back()->with('error', 'Erreur lors de l’importation : ' . $e->getMessage());
         }
     }
-        public function importUtilisateur(Request $request)
+    public function importUtilisateur(Request $request)
     {
+
         // 1. Validation du fichier (uniquement .xlsx autorisé)
         $request->validate([
             'fichier' => 'required|file|mimes:xlsx'
         ]);
-
         // 2. Déplacement du fichier vers le dossier public temporairement
         $fichier = $request->file('fichier');
         $nomFichier = $fichier->hashName();
@@ -149,7 +150,7 @@ class SimpleExcelController extends Controller
             $rows = $sheet->toArray(null, true, true, true);
 
             // 🧩 Ligne d’en-tête (A8 → ligne 8)
-            $headerRow = 8;
+            $headerRow = 1;
 
             if (!isset($rows[$headerRow])) {
                 return back()->with('error', 'Impossible de trouver la ligne d’en-tête (A8).');
@@ -185,36 +186,42 @@ class SimpleExcelController extends Controller
             if (empty($data)) {
                 return back()->with('error', 'Aucune donnée trouvée après la ligne 8.');
             }
-            dd($data);
+            // dd($data);
 
-            foreach ($data as $poste) {
+            foreach ($data as $user) {
                 // On récupère la localisation depuis le tableau
-                $localisation = $poste['localisation'] ?? null;
+                $matricule = $user['id'] ?? null;
 
                 // On saute si la localisation est vide
-                if (!$localisation) continue;
-                // Récupérer les 3 premières lettres en majuscules, sans espaces ni caractères spéciaux
-                $code = Str::upper(Str::substr(Str::slug($localisation, ''), 0, 3));
-                // On crée un code unique pour la localisation (ex: LOC-001)
-                // $code = 'LOC-' . Str::padLeft(DB::table('emplacements')->count() + 1, 3, '0');
+                if (!$matricule) continue;
+
 
                 // Vérifie si cette localisation existe déjà
-                $exists = DB::table('emplacements')
-                    ->where('emplacement', $localisation)
+                $exists = DB::table('users')
+                    ->where('id', $matricule)
                     ->exists();
 
                 // Si elle n’existe pas, on insère
                 if (!$exists) {
-                    DB::table('emplacements')->insert([
-                        'code_emplacement' => $code,
-                        'emplacement' => $localisation,
+                    // dd($user);
+                    DB::table('users')->insert([
+                        'id' => $user['id'],
+                        'id_emplacement' => $user['id_emplacement'],
+                        'nom_utilisateur' => $user['nom_utilisateur'],
+                        'prenom_utilisateur' => $user['prenom_utilisateur'],
+                        'email' => $user['email'],
+                        'password' => Hash::make($user['password']),
+                        'equipe' => $user['equipe'],
+                        'societe' => $user['societe'],
+                        'role' => $user['role'],
+                        'contact_utilisateur' => $user['contact_utilisateur'],
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
                 }
             }
 
-
+            dd($user);
             // ✅ Succès
             return back()->with('success', 'Importation réussie avec succès !');
         } catch (\Exception $e) {
@@ -267,7 +274,7 @@ class SimpleExcelController extends Controller
         $resultats = [];
 
         $resultats = [];
-
+        /** @var \App\Models\User $u */
         foreach ($utilisateurs as $u) {
             // Matériels par type (re-indexés pour accès par indice)
             $pcs    = $u->materiels->where('type', 'Ordinateur portable')->values();

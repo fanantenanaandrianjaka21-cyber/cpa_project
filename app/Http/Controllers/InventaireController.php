@@ -52,13 +52,7 @@ class InventaireController extends Controller
         $active_tab = 'inventaire';
         return view('inventaire.inventaire', compact('colonnes', 'i', 'active_tab', 'detail_materiel', 'detail_materiel1'));
     }
-    public function generateQr($id)
-    {
-        $materiel = Materiel::findOrFail($id);
-        $qr = QrCode::size(200)->generate($materiel->code_interne);
-        $active_tab = 'inventaire';
-        return view('inventaire.qrcode', compact('materiel', 'qr', 'active_tab'));
-    }
+
     public function scanMateriel($code)
     {
         $colonnes = MaterielController::recupererColonnes('caracteristique_supplementaires', 'cle');
