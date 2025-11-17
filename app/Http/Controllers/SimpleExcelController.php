@@ -221,7 +221,7 @@ class SimpleExcelController extends Controller
                 }
             }
 
-            dd($user);
+            // dd($user);
             // ✅ Succès
             return back()->with('success', 'Importation réussie avec succès !');
         } catch (\Exception $e) {
