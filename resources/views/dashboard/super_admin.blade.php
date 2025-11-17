@@ -1,6 +1,8 @@
+
 @extends('layouts.dynamique')
 
 @section('content')
+
     <div class="col-lg-12">
         <div class="header">
             <i class="fa fa-home"></i>/ Tableau de Bord

@@ -182,11 +182,12 @@ Route::put('/alerte/{id}', [App\Http\Controllers\DashboardController::class, 'up
 // mail log
 Route::get('/mail-logs', [App\Http\Controllers\MailLogController::class, 'index'])->name('mail.logs');
 Route::get('/test-brevo', function () {
-
-    Mail::raw("Hello depuis Brevo API", function ($message) {
-        $message->to("tonemail@gmail.com")
-                ->subject("Test Brevo API Laravel");
+    Mail::raw('<h1>Test Brevo</h1>', function ($message) {
+        $message->to('fanantenanaandrianjaka21@gmail.com');
+        $message->subject('Test Brevo API');
     });
 
-    return "Email envoyé via Brevo API !";
+    return 'Email envoyé !';
 });
+
+// doit retourner 200

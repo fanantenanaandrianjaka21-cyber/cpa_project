@@ -80,6 +80,10 @@ return [
                 'log',
             ],
         ],
+        'brevo' => [
+            'transport' => 'brevo', // nom du transport Symfony
+            'api_key' => env('BREVO_API_KEY'),
+        ],
     ],
     'brevo' => [
     'key' => env('BREVO_API_KEY'),
