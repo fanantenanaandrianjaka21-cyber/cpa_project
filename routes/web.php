@@ -189,3 +189,5 @@ Route::get('/test-brevo', function () {
 
     return 'Email envoyé !';
 });
+
+// doit retourner 200

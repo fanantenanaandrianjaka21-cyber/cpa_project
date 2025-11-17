@@ -1,58 +1,32 @@
 <?php
 
-namespace App\enums;
+namespace App\Enums;
 
 use App\Models\TicketStatusConfig;
-use Spatie\Enum\Laravel\Enum;
 
-/**
- * @method static self NOUVEAU()
- * @method static self ATTRIBUE()
- * @method static self EN_COURS()
- * @method static self PLANIFIE()
- * @method static self EN_ATTENTE()
- * @method static self RESOLU()
- * @method static self FERME()
- */
-final class TicketStatus extends Enum
+enum TicketStatus: string
 {
-    /**
-     * Retourne la couleur associée à chaque statut.
-     */
-    // public function color(): string
-    // {
-    //     return match ($this->value) {
-    //         'NOUVEAU' => '#007bff',  // Bleu
-    //         'EN_COURS' => '#fd7e14', // Orange
-    //         'RESOLU' => '#28a745',   // Vert
-    //         'FERME' => '#6c757d',    // Gris
-    //         default => '#000000',
-    //     };
-    // }
+    case NOUVEAU = 'NOUVEAU';
+    case ATTRIBUE = 'ATTRIBUE';
+    case EN_COURS = 'EN_COURS';
+    case PLANIFIE = 'PLANIFIE';
+    case EN_ATTENTE = 'EN_ATTENTE';
+    case RESOLU = 'RESOLU';
+    case FERME = 'FERME';
 
     /**
-     * Retourne un label lisible.
+     * Retourne la couleur associée à ce statut.
      */
-    // public function label(): string
-    // {
-    //     return match ($this->value) {
-    //         'NOUVEAU' => 'Nouveau',
-    //         'EN_COURS' => 'En cours',
-    //         'RESOLU' => 'Résolu',
-    //         'FERME' => 'Fermé',
-    //         default => 'Inconnu',
-    //     };
-    // }
-
-    // code dynamique
     public function color(): string
-{
-    return TicketStatusConfig::find($this->value)?->color ?? '#000000';
-}
+    {
+        return TicketStatusConfig::find($this->value)?->color ?? '#000000';
+    }
 
-public function label(): string
-{
-    return TicketStatusConfig::find($this->value)?->label ?? 'Inconnu';
-}
-
+    /**
+     * Retourne le libellé associé à ce statut.
+     */
+    public function label(): string
+    {
+        return TicketStatusConfig::find($this->value)?->label ?? 'Inconnu';
+    }
 }

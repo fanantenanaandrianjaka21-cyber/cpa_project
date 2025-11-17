@@ -146,7 +146,7 @@ class TicketController extends Controller
             'priorite' => $data['priorite'],
             'description' => $data['description'],
             'assignement' => $data['assignement'],
-            'statut' => TicketStatus::NOUVEAU(),
+            'statut' => TicketStatus::NOUVEAU,
         ]);
         // dd(TicketStatus::NOUVEAU());
         if ($data->hasFile('nom_fichier')) {
@@ -285,7 +285,7 @@ $priorite=TicketPrioriteConfig::all();
         $ticket->assignement = $request->assignement;
         $dernierTickets = Ticket::latest()->first();
         // $ticket->statut = 'ouvert'; // change le statut du ticket
-        $ticket->statut = TicketStatus::ATTRIBUE(); //atao OUVERT
+        $ticket->statut = TicketStatus::ATTRIBUE; //atao OUVERT
         $ticket->save();
 $priorite=TicketPrioriteConfig::all();
 
@@ -300,7 +300,7 @@ $priorite=TicketPrioriteConfig::all();
         $ticket = Ticket::findOrFail($id);
         $dernierTickets = Ticket::latest()->first();
         // $ticket->statut = 'ouvert'; // change le statut du ticket
-        $ticket->statut = TicketStatus::EN_COURS(); //atao OUVERT
+        $ticket->statut = TicketStatus::EN_COURS; //atao OUVERT
         $ticket->save();
 $priorite=TicketPrioriteConfig::all();
 
@@ -314,7 +314,7 @@ $priorite=TicketPrioriteConfig::all();
         $ticket = Ticket::findOrFail($id);
         $ticket->solution = $request->solution;
         $dernierTickets = Ticket::latest()->first();
-        $ticket->statut = TicketStatus::FERME(); //atao OUVERT
+        $ticket->statut = TicketStatus::FERME; //atao OUVERT
         $ticket->save();
 $priorite=TicketPrioriteConfig::all();
 
