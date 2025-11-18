@@ -27,7 +27,7 @@
             <h2></h2>
             <div class="row mb-2">
                 <div class="col-md-12">
-                    <div class="card rounded-3 color-semi-secondary ">
+                    <div class="card rounded-3 ">
                         <div class="body m-4 d-flex">
                             <div class="p-2 bg-white bg-opacity-10 border-start border-5 border-success w-330px mr-4">
                                 <i class="fa fa-check-circle" style="color: #4caf50; font-size: 24px;"></i>
@@ -51,7 +51,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <div class="card rounded-3 color-semi-secondary mb-2">
+                    <div class="card rounded-3 mb-2">
                         <div class="body m-3">
                             <h7 class=" text-primary">Résumé Global</h7>
                             <div class="row p-2">
@@ -119,7 +119,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card rounded-3 color-semi-secondary mb-2">
+                    <div class="card rounded-3 mb-2">
                         <div class="body m-3">
                             <h7 class="text-center text-primary">Surveillance de sécurité et des accès</h7>
                             <div class="row p-2">
@@ -159,7 +159,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <div class="card rounded-3 color-semi-secondary mb-2">
+                    <div class="card rounded-3 mb-2">
                         <div class="body m-3">
                             <h7 class=" text-primary">Activité récente</h7>
                             <div class="row p-2">
@@ -186,7 +186,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card rounded-3 color-semi-secondary mb-2">
+                    <div class="card rounded-3 mb-2">
                         <div class="body m-3">
                             <h7 class="text-center text-primary">Gestion rapide</h7>
                             <div class="row p-2">

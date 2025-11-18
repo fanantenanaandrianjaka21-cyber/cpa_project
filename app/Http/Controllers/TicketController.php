@@ -316,6 +316,7 @@ $priorite=TicketPrioriteConfig::all();
         $dernierTickets = Ticket::latest()->first();
         $ticket->statut = TicketStatus::FERME; //atao OUVERT
         $ticket->save();
+        // materiel en service
 $priorite=TicketPrioriteConfig::all();
 
         // dd($ticket);

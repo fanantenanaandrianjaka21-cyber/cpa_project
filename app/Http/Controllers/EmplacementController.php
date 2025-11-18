@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Materiel;
 use App\Models\Emplacement;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 // use App\Http\Controllers;
@@ -112,13 +113,20 @@ class EmplacementController extends Controller
         $active_tab = 'emplacement';
         return view('localisation.localisation', compact('materiel','active_tab'));
     }
+
     public function detailsEmplacement($id)
     {
         $emplacement = Emplacement::where('id', $id)->get()->first();
+        $nbrmateriels = Materiel::where('id_emplacement', $id)
+                        ->select('type', DB::raw('COUNT(*) as total'))
+                        ->groupBy('type')
+                        ->get();
+        $nbrutilisateurs = User::where('id_emplacement', $id)->count();
         // dd($emplacement->id);
         $active_tab = 'emplacement';
-        return view('emplacement.details', compact('emplacement','active_tab'));
+        return view('emplacement.details', compact('emplacement','active_tab', 'nbrmateriels', 'nbrutilisateurs'));
     }
+
     public function editEmplacement($id)
     {
         $emplacement = Emplacement::where('id', $id)->get()->first();
