@@ -1,9 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\TicketStatusController;
 use App\Mail\WelcomeMail;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,12 +21,9 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::get('/a', function () {
-    return view('dashboard.test');
-});
-
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\TicketStatusController;
+// Route::get('/a', function () {
+//     return view('dashboard.test');
+// });
 
 
 
@@ -191,3 +193,8 @@ Route::get('/test-brevo', function () {
 });
 
 // doit retourner 200
+
+Route::get('/run-schedule', function () {
+    Artisan::call('schedule:run');
+    return 'OK';
+});
