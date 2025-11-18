@@ -18,19 +18,19 @@
                         <?php
                         if (isset($notification)) {
                             echo "<div class='alert alert-success'>
-                                                                                                                    <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                                                                                                                      <i class='fa fa-close'></i>
-                                                                                                                    </button>
-                                                                                                                    <span>
-                                                                                                                      <i class='fa fa-bell'></i><b>  Success - </b>" .
+                                                                                                                                            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                                                                                                                              <i class='fa fa-close'></i>
+                                                                                                                                            </button>
+                                                                                                                                            <span>
+                                                                                                                                              <i class='fa fa-bell'></i><b>  Success - </b>" .
                                 $notification .
                                 "</span>
-                                                                                                                  </div>";
+                                                                                                                                          </div>";
                         }
                         ?>
-<p>Sélectionnez un fichier Excel (.xlsx) pour importer une liste des "utilisateurs".<br>
+                        <p>Sélectionnez un fichier Excel (.xlsx) pour importer une liste des "utilisateurs".<br>
 
-                        <form method="POST" action="{{ route('utilisateurexcel.import') }}">
+                        <form method="POST" action="{{ route('utilisateurexcel.import') }}" enctype="multipart/form-data">
 
                             @csrf
 
