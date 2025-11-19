@@ -5,8 +5,8 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header"style="text-align:center">
-                    <h3>{{ __('Authentication') }}</h3>
+                <div class="card-header" style="text-align:center" id="GPTic">
+                    <h2 style="color : #001C3E; font-size: 40px">{{ __('GPTic CPA') }}</h2>
                 </div>
 
                 <div class="card-body">
