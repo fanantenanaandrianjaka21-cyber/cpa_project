@@ -46,6 +46,31 @@
 
                     </tr>
 
+                    <tr>
+                        <th>Nombre total de matériel :</th>
+                            @if ($nbrmateriels->isEmpty())      
+                                <td>0</td>
+                            @else 
+                                <td>
+                                    @foreach ($nbrmateriels as $materielpartype)
+                                        {{ $materielpartype->type }}: {{ $materielpartype->total }}<br>
+                                    @endforeach
+                                </td>
+                            @endif
+                    </tr>
+{{-- {{ dd($nbrmateriels)}} --}}
+                    <tr>
+                        <th>
+                            Nombre total d'utilisateur :
+                        </th>
+
+                        <td>
+
+                            {{ $nbrutilisateurs }}
+
+                        </td>
+                    </tr>
+
                 </tbody>
             </table>
         </div>
