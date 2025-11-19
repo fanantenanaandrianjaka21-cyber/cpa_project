@@ -6,11 +6,14 @@ use App\enums\TicketPriorite;
 use App\enums\TicketStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Ticket extends Model
 {
     use HasFactory;
-
+    use HasFactory, LogsActivity;
+    protected static $recordEvents = ['created', 'updated', 'deleted'];
     protected $fillable = [
         'type',
         'objet',
@@ -49,4 +52,14 @@ public function materiel()
 {
     return $this->belongsTo(User::class, 'assignement');
 }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['type', 'objet', 'id_utilisateur', 'description', 'assignement', 'statut', 'fichier'])
+            ->useLogName('ticket')
+            ->setDescriptionForEvent(fn(string $eventName) => "{$eventName}")
+            // ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 }

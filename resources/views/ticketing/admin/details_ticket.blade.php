@@ -189,7 +189,7 @@
                                     </div>
 
                                     <button type="submit" class="btn btn-success btn-xs">Terminer</button>
-                                    <a href="" class="btn btn-info btn-xs">Mettre en attente</a>
+                                    {{-- <a href="" class="btn btn-info btn-xs">Mettre en attente</a> --}}
                                     <a href="{{ route('listTicketAdmin') }}" class="btn btn-primary btn-xs">Revenir à la
                                         liste</a><br><br>
 

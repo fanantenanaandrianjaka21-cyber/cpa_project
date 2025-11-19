@@ -10,7 +10,7 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('Expert CPA', 'Expert CPA') }}</title>
+    <title>{{ config('GPTic CPA', 'GPTic CPA') }}</title>
 
     <script src="{{ asset('js/app.js') }}" defer></script>
 
