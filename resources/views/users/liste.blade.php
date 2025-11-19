@@ -44,6 +44,7 @@
                             class="display nowrap table table-hover table-responsive table-bordered">
                             <thead>
                                 <tr>
+                                    <th>Matricule</th>
                                     <th>Nom</th>
                                     <th>Equipe</th>
                                     <th>Societe</th>
@@ -53,6 +54,7 @@
                             <tbody>
                                 @foreach ($user as $user)
                                     <tr data-row-id="{{ $user->id }}">
+                                        <td>{{ $user->id }}</td>
                                         <td>{{ $user->nom_utilisateur }}</td>
                                         <td>{{ $user->equipe }}</td>
                                         <td>{{ $user->societe }}</td>

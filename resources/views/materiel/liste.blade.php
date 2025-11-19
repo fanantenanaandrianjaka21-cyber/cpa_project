@@ -26,12 +26,23 @@
                     @endif
 
                     <div id="filters" class="row mb-3"></div>
-                    <div id="bouton-distribuer-container" class="mb-3" style="display: none;">
-                        <button id="btn-distribuer" class="btn btn-success" data-bs-toggle="modal"
-                            data-bs-target="#modalDistribuer">
-                            <i class="fa fa-share"></i> Distribuer
-                        </button>
+                    <div class="row mb-2">
+                        <div class="d-flex align-items-center gap-3">
+
+                            <div id="totalSelectionnes" class="text-black">
+                                0 Materiel sélectionné(s)
+                            </div>
+
+                            <div id="bouton-distribuer-container" style="display: none;">
+                                <button id="btn-distribuer" class="btn btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#modalDistribuer">
+                                    <i class="fa fa-share"></i> Distribuer
+                                </button>
+                            </div>
+
+                        </div>
                     </div>
+
                     <table id="bootstrap-data-table-export" class="table table-hover table-responsive">
 
                         <thead>
@@ -125,43 +136,44 @@
     </div>
 </div> --}}
 
-<!-- ✅ Modal Bootstrap pour distribution -->
-<div class="modal fade" id="modalDistribuer" tabindex="-1" aria-labelledby="modalDistribuerLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalDistribuerLabel">
-                    <i class="fa fa-share"></i> Distribuer les matériels
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+    <!-- ✅ Modal Bootstrap pour distribution -->
+    <div class="modal fade" id="modalDistribuer" tabindex="-1" aria-labelledby="modalDistribuerLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalDistribuerLabel">
+                        <i class="fa fa-share"></i> Distribuer les matériels
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
 
-            <div class="modal-body">
-                {{-- <div class="mb-3 text-center">
+                <div class="modal-body">
+                    {{-- <div class="mb-3 text-center">
                     <p class="fw-bold">Matériels sélectionnés :</p>
                     <div id="liste-ids" class="alert alert-light"></div>
                 </div> --}}
 
-                <div class="mb-3">
-                    <label for="select-emplacement" class="form-label fw-bold">Choisir un emplacement :</label>
-                    <select id="select-emplacement" class="form-select">
-                        <option value="">-- Sélectionnez --</option>
-                        <option value="2">ANTSIRABE</option>
-                        <option value="3">BNI</option>
-                        <option value="4">MADAFIT</option>
-                        <option value="5">CENTRE</option>
-                        <option value="6">MATURA</option>
-                    </select>
+                    <div class="mb-3">
+                        <label for="select-emplacement" class="form-label fw-bold">Choisir un emplacement :</label>
+                        <select id="select-emplacement" class="form-select">
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="2">ANTSIRABE</option>
+                            <option value="3">BNI</option>
+                            <option value="4">MADAFIT</option>
+                            <option value="5">CENTRE</option>
+                            <option value="6">MATURA</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-success" id="btn-effectuer">Effectuer</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-success" id="btn-effectuer">Effectuer</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
     {{-- modal --}}
@@ -290,164 +302,167 @@
         //     }
         // });
 
-        document.addEventListener('DOMContentLoaded', function () {
-    const boutonDistribuerContainer = document.getElementById('bouton-distribuer-container');
-    const boutonDistribuer = document.getElementById('btn-distribuer');
-    const checkboxes = document.querySelectorAll('.checkbox-materiel');
-    const selectAll = document.getElementById('tous');
-    const listeIds = document.getElementById('liste-ids');
-    const btnEffectuer = document.getElementById('btn-effectuer');
-    const selectEmplacement = document.getElementById('select-emplacement');
+        document.addEventListener('DOMContentLoaded', function() {
+            const boutonDistribuerContainer = document.getElementById('bouton-distribuer-container');
+            const boutonDistribuer = document.getElementById('btn-distribuer');
+            const checkboxes = document.querySelectorAll('.checkbox-materiel');
+            const selectAll = document.getElementById('tous');
+            const listeIds = document.getElementById('liste-ids');
+            const btnEffectuer = document.getElementById('btn-effectuer');
+            const selectEmplacement = document.getElementById('select-emplacement');
 
-    function toggleBoutonDistribuer() {
-        const auMoinsUnCoche = Array.from(checkboxes).some(cb => cb.checked);
-        boutonDistribuerContainer.style.display = auMoinsUnCoche ? 'block' : 'none';
-    }
+            function toggleBoutonDistribuer() {
+                const auMoinsUnCoche = Array.from(checkboxes).some(cb => cb.checked);
+                boutonDistribuerContainer.style.display = auMoinsUnCoche ? 'block' : 'none';
+            }
 
-    checkboxes.forEach(cb => cb.addEventListener('change', toggleBoutonDistribuer));
+            checkboxes.forEach(cb => cb.addEventListener('change', toggleBoutonDistribuer));
 
-    if (selectAll) {
-        selectAll.addEventListener('change', function () {
-            checkboxes.forEach(cb => cb.checked = selectAll.checked);
-            toggleBoutonDistribuer();
-        });
-    }
+            if (selectAll) {
+                selectAll.addEventListener('change', function() {
+                    checkboxes.forEach(cb => cb.checked = selectAll.checked);
+                    toggleBoutonDistribuer();
+                });
+            }
 
-    // ✅ Ouvrir le modal et afficher les IDs cochés
-    boutonDistribuer.addEventListener('click', function () {
-        const idsSelectionnes = Array.from(checkboxes)
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
+            // ✅ Ouvrir le modal et afficher les IDs cochés
+            boutonDistribuer.addEventListener('click', function() {
+                const idsSelectionnes = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
 
-        if (idsSelectionnes.length === 0) {
-            listeIds.innerHTML = `<span class="text-danger">Aucun matériel sélectionné.</span>`;
-        } else {
-            listeIds.innerHTML = idsSelectionnes.map(id => `
+                if (idsSelectionnes.length === 0) {
+                    listeIds.innerHTML = `<span class="text-danger">Aucun matériel sélectionné.</span>`;
+                } else {
+                    listeIds.innerHTML = idsSelectionnes.map(id => `
                 <span class="badge bg-secondary m-1">${id}</span>
             `).join('');
-        }
-    });
+                }
+            });
 
-    // ✅ Envoi vers Laravel au clic sur Effectuer
-    btnEffectuer.addEventListener('click', function () {
-        const idsSelectionnes = Array.from(checkboxes)
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
+            // ✅ Envoi vers Laravel au clic sur Effectuer
+            btnEffectuer.addEventListener('click', function() {
+                const idsSelectionnes = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
 
-        const idEmplacement = selectEmplacement.value;
+                const idEmplacement = selectEmplacement.value;
 
-        if (idsSelectionnes.length === 0) {
-            alert("Veuillez sélectionner au moins un matériel !");
-            return;
-        }
-        // else{
-        //                 alert("Taille "+idsSelectionnes.length);
-        //     return;
-        // }
+                if (idsSelectionnes.length === 0) {
+                    alert("Veuillez sélectionner au moins un matériel !");
+                    return;
+                }
+                // else{
+                //                 alert("Taille "+idsSelectionnes.length);
+                //     return;
+                // }
 
-        if (!idEmplacement) {
-            alert("Veuillez choisir un emplacement !");
-            return;
-        }
+                if (!idEmplacement) {
+                    alert("Veuillez choisir un emplacement !");
+                    return;
+                }
 
-        // ✅ Appel AJAX vers Laravel
-        fetch('/materiels/distribuer', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({
-                ids: idsSelectionnes,
-                id_emplacement: idEmplacement
-            })
-        })
-        .then(async res => {
-            if (res.ok) {
-                alert("Distribution effectuée avec succès !");
-                location.reload(); // rafraîchir la page
-            } else {
-                let data = await res.json();
-                alert("Erreur : " + data.message);
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Erreur réseau !");
+                // ✅ Appel AJAX vers Laravel
+                fetch('/materiels/distribuer', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            ids: idsSelectionnes,
+                            id_emplacement: idEmplacement
+                        })
+                    })
+                    .then(async res => {
+                        if (res.ok) {
+                            alert("Distribution effectuée avec succès !");
+                            location.reload(); // rafraîchir la page
+                        } else {
+                            let data = await res.json();
+                            alert("Erreur : " + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("Erreur réseau !");
+                    });
+            });
         });
-    });
-});
-
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-    const boutonDistribuerContainer = document.getElementById('bouton-distribuer-container');
-    const boutonDistribuer = document.getElementById('btn-distribuer');
-    const checkboxes = document.querySelectorAll('.checkbox-materiel');
-    const selectAll = document.getElementById('tous');
-    const listeIds = document.getElementById('liste-ids');
-    const confirmerBtn = document.getElementById('confirmer-distribution');
+        document.addEventListener('DOMContentLoaded', function() {
+            const boutonDistribuerContainer = document.getElementById('bouton-distribuer-container');
+            const boutonDistribuer = document.getElementById('btn-distribuer');
+            const checkboxes = document.querySelectorAll('.checkbox-materiel');
+            const selectAll = document.getElementById('tous');
+            const listeIds = document.getElementById('liste-ids');
+            const confirmerBtn = document.getElementById('confirmer-distribution');
+            // ✅ Fonction pour afficher / cacher le bouton Distribuer
+            function toggleBoutonDistribuer() {
+                const auMoinsUnCoche = Array.from(checkboxes).some(cb => cb.checked);
+                const nbrsSelectionnes = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value).length;
+                document.getElementById('totalSelectionnes').innerText =
+                    nbrsSelectionnes + " Materiel sélectionné(s)";
+                // alert(nbrsSelectionnes);
+                boutonDistribuerContainer.style.display = auMoinsUnCoche ? 'block' : 'none';
+            }
 
-    // ✅ Fonction pour afficher / cacher le bouton Distribuer
-    function toggleBoutonDistribuer() {
-        const auMoinsUnCoche = Array.from(checkboxes).some(cb => cb.checked);
-        boutonDistribuerContainer.style.display = auMoinsUnCoche ? 'block' : 'none';
-    }
+            // ✅ Quand on coche / décoche une case individuelle
+            checkboxes.forEach(cb => cb.addEventListener('change', toggleBoutonDistribuer));
 
-    // ✅ Quand on coche / décoche une case individuelle
-    checkboxes.forEach(cb => cb.addEventListener('change', toggleBoutonDistribuer));
+            // ✅ Quand on coche / décoche "Tous"
+            if (selectAll) {
+                selectAll.addEventListener('change', function() {
+                    checkboxes.forEach(cb => cb.checked = selectAll.checked);
+                    toggleBoutonDistribuer();
+                });
+            }
 
-    // ✅ Quand on coche / décoche "Tous"
-    if (selectAll) {
-        selectAll.addEventListener('change', function () {
-            checkboxes.forEach(cb => cb.checked = selectAll.checked);
-            toggleBoutonDistribuer();
-        });
-    }
+            // ✅ Quand on ouvre le modal (au clic sur "Distribuer")
+            boutonDistribuer.addEventListener('click', function() {
+                const idsSelectionnes = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
 
-    // ✅ Quand on ouvre le modal (au clic sur "Distribuer")
-    boutonDistribuer.addEventListener('click', function () {
-        const idsSelectionnes = Array.from(checkboxes)
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
-
-        if (idsSelectionnes.length === 0) {
-            listeIds.innerHTML = `<span class="text-danger">Aucun matériel sélectionné.</span>`;
-        } else {
-            listeIds.innerHTML = `
+                if (idsSelectionnes.length === 0) {
+                    listeIds.innerHTML = `<span class="text-danger">Aucun matériel sélectionné.</span>`;
+                } else {
+                    listeIds.innerHTML = `
                 <div class="alert alert-light">
                     ${idsSelectionnes.map(id => `<span class="badge bg-secondary m-1">${id}</span>`).join('')}
                 </div>
             `;
-        }
-    });
+                }
+            });
 
-    // ✅ (Optionnel) Si tu veux une action sur "Confirmer la distribution"
-    confirmerBtn.addEventListener('click', function () {
-        const idsSelectionnes = Array.from(checkboxes)
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
+            // ✅ (Optionnel) Si tu veux une action sur "Confirmer la distribution"
+            confirmerBtn.addEventListener('click', function() {
+                const idsSelectionnes = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
 
-        console.log("Liste des IDs à distribuer :", idsSelectionnes);
+                console.log("Liste des IDs à distribuer :", idsSelectionnes);
 
-        // Exemple d’envoi vers Laravel :
-        /*
-        fetch('/distribuer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ ids: idsSelectionnes })
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert('Distribution réussie !');
-            location.reload(); // recharger la page si besoin
+                // Exemple d’envoi vers Laravel :
+                /*
+                fetch('/distribuer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ ids: idsSelectionnes })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert('Distribution réussie !');
+                    location.reload(); // recharger la page si besoin
+                });
+                */
+            });
         });
-        */
-    });
-});
-
     </script>
 @endsection

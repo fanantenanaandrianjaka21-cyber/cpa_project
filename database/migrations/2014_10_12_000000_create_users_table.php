@@ -24,14 +24,14 @@ class CreateUsersTable extends Migration
 
             $table->string('nom_utilisateur');
             $table->string('prenom_utilisateur');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('equipe');
-            $table->string('societe');
+            $table->string('equipe')->nullable();
+            $table->string('societe')->nullable();
             $table->enum('role',['Utilisateur','Technicien IT','Responsable Site','Admin IT','Super Admin'])
                 ->default('Utilisateur');
-            $table->string('contact_utilisateur');
+            $table->string('contact_utilisateur')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

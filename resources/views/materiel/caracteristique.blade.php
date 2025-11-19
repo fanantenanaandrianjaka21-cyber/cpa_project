@@ -142,10 +142,10 @@
         </th>
         <td colspan="2">
             @if ($detail_materiel['id_utilisateur'])
-                          {{ $detail_materiel['nom_utilisateur'] }} {{ $detail_materiel['prenom_utilisateur'] }}, Equipe
-            {{ $detail_materiel['equipe'] }}
+                {{ $detail_materiel['nom_utilisateur'] }} {{ $detail_materiel['prenom_utilisateur'] }}, Equipe
+                {{ $detail_materiel['equipe'] }}
             @else
-            Aucun Utilisateur  
+                Aucun Utilisateur
             @endif
 
 
@@ -200,9 +200,12 @@
                 onclick="document.getElementById('id01').style.display='block'"
                 >Affecter
                 à un utilisateur</a> --}}
-            <a href="#" class="btn btn-info  btn-sm m-2" data-bs-toggle="modal"
+                @if ($detail_materiel['emplacement']!='GLOBALE')
+                                <a href="#" class="btn btn-info  btn-sm m-2" data-bs-toggle="modal"
                 data-bs-target="#modal-affectation">Affecter
                 à un utilisateur</a>
+                @endif
+
             {{-- @if ($detail_materiel['Verification_physique'] == 'false') --}}
             {{-- @endif --}}
 
@@ -241,13 +244,13 @@
 
     {{-- </div> --}}
 
-    <div id="affichagelog" class="collapse mt-4">
+    <div id="affichagelogmateriel" class="collapse mt-4">
         <div class="col-lg-12">
             <table class="table table-dark">
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Responsable</th>
+                        {{-- <th>Responsable</th> --}}
                         <th>Description</th>
                         <th>Utilisateur</th>
                         <th>Status</th>
@@ -257,8 +260,14 @@
                     @foreach ($activities as $activity)
                         <tr>
                             <td>{{ $activity->created_at }}</td>
-                            <td>{{ optional($activity->causer)->nom_utilisateur ?? 'Système' }}</td>
-                            <td>{{ $activity->description }}</td>
+                            {{-- <td>{{ optional($activity->causer)->nom_utilisateur ?? 'Système' }}</td> --}}
+                            @if ($activity->description == 'Matériel created')
+                                <td>Crée par {{ optional($activity->causer)->nom_utilisateur ?? 'Système' }}</td>
+                            @elseif ($activity->description == 'Matériel updated')
+                                <td>Modifié par {{ optional($activity->causer)->nom_utilisateur ?? 'Système' }}</td>
+                            @elseif ($activity->description == 'Matériel deleted')
+                                <td>Supprimé par {{ optional($activity->causer)->nom_utilisateur ?? 'Système' }}</td>
+                            @endif
                             <td>{{ $activity->nom_utilisateur }}</td>
                             <td>{{ $activity->properties['attributes']['status'] ?? '-' }}</td>
                         </tr>
@@ -268,9 +277,43 @@
 
         </div>
     </div>
-    <a href="#" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#affichagelog">Voir
-        Log</a>
+        <div id="affichagelogticketing" class="collapse mt-4">
+        <div class="col-lg-12">
+            <table class="table table-dark">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        {{-- <th>Responsable</th> --}}
+                        <th>Description</th>
+                        <th>Utilisateur</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($activities as $activity)
+                        <tr>
+                            <td>{{ $activity->created_at }}</td>
+                            {{-- <td>{{ optional($activity->causer)->nom_utilisateur ?? 'Système' }}</td> --}}
+                            @if ($activity->description == 'Matériel created')
+                                <td>Crée par {{ optional($activity->causer)->nom_utilisateur ?? 'Système' }}</td>
+                            @elseif ($activity->description == 'Matériel updated')
+                                <td>Modifié par {{ optional($activity->causer)->nom_utilisateur ?? 'Système' }}</td>
+                            @elseif ($activity->description == 'Matériel deleted')
+                                <td>Supprimé par {{ optional($activity->causer)->nom_utilisateur ?? 'Système' }}</td>
+                            @endif
+                            <td>{{ $activity->nom_utilisateur }}</td>
+                            <td>{{ $activity->properties['attributes']['status'] ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
 
+        </div>
+    </div>
+    <a href="#" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#affichagelogmateriel">Voir
+        Log Materiel</a>
+    <a href="#" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#affichagelogticketing">Voir
+        Log Ticketing</a>
 
     <!-- modal affectation -->
     <div class="modal" id="modal-affectation">
@@ -352,149 +395,147 @@
     </div>
     <script>
         const btnModifier = document.getElementById("modifier");
-if (btnModifier) {
-    btnModifier.addEventListener("click", function() {
-            const id_materiel = {!! $jsId_materiel !!};
-            fetch('/inventaire/getColonnes/' + encodeURIComponent(id_materiel))
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
+        if (btnModifier) {
+            btnModifier.addEventListener("click", function() {
+                const id_materiel = {!! $jsId_materiel !!};
+                fetch('/inventaire/getColonnes/' + encodeURIComponent(id_materiel))
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
 
-                        alert(data.error);
-                        return;
-                    }
-                    // alert(data.id);
+                            alert(data.error);
+                            return;
+                        }
+                        // alert(data.id);
 
-                    // Nettoyer toutes les colonnes avant
-                    var col = data.colonnes;
-                    var valeur = [];
-                    // il faut que tu ajoute le reset scanner ici
-                    for (let x in col) {
-                        // document.getElementById(x).innerText = "";
-                        valeur[x] = document.getElementById(`${col[x]}`).value;
-                        // alert(col[x]+'valeur '+valeur[x]);
-                    }
+                        // Nettoyer toutes les colonnes avant
+                        var col = data.colonnes;
+                        var valeur = [];
+                        // il faut que tu ajoute le reset scanner ici
+                        for (let x in col) {
+                            // document.getElementById(x).innerText = "";
+                            valeur[x] = document.getElementById(`${col[x]}`).value;
+                            // alert(col[x]+'valeur '+valeur[x]);
+                        }
 
-                    fetch('/inventaire/modifier', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                id_materiel: id_materiel,
-                                composant_manquant: 'ceci un un nouveau composant manquant',
-                                composant_non_enregistre: 'ceci un un nouveau composant non enregistre',
-                                // etat: document.getElementById("Etat").value,
-                                etat: 'nouvel etat',
-                                // observation: document.getElementById("observation").value,
-                                observation: 'ceci un un nouveau observation',
-                                anciencle: col,
-                                valeur: valeur,
+                        fetch('/inventaire/modifier', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    id_materiel: id_materiel,
+                                    composant_manquant: 'ceci un un nouveau composant manquant',
+                                    composant_non_enregistre: 'ceci un un nouveau composant non enregistre',
+                                    // etat: document.getElementById("Etat").value,
+                                    etat: 'nouvel etat',
+                                    // observation: document.getElementById("observation").value,
+                                    observation: 'ceci un un nouveau observation',
+                                    anciencle: col,
+                                    valeur: valeur,
 
+                                })
                             })
-                        })
-                        .then(async res => {
-                            let data = await res.json();
-                            if (res.ok) {
-                                alert("Mise à jour enregistré avec succès !");
-                            } else if (res.status === 422) {
-                                // ⚠️ Erreur de validation Laravel
-                                if (data.errors && data.errors.id_materiel) {
-                                    alert("⚠️ " + data.errors.id_materiel[0]);
+                            .then(async res => {
+                                let data = await res.json();
+                                if (res.ok) {
+                                    alert("Mise à jour enregistré avec succès !");
+                                } else if (res.status === 422) {
+                                    // ⚠️ Erreur de validation Laravel
+                                    if (data.errors && data.errors.id_materiel) {
+                                        alert("⚠️ " + data.errors.id_materiel[0]);
+                                    } else {
+                                        alert("⚠️" + data.error);
+                                        // alert("ancien cle :" + data.anciencle);
+                                        // alert("valeur :" + data.valeur);
+                                    }
                                 } else {
-                                    alert("⚠️" + data.error);
-                                    // alert("ancien cle :" + data.anciencle);
-                                    // alert("valeur :" + data.valeur);
+
+
+                                    alert("Erreur serveur : " + (data.message || "inconnue"));
                                 }
-                            } else {
-
-
-                                alert("Erreur serveur : " + (data.message || "inconnue"));
-                            }
-                        })
-                        .catch(err => {
-                            alert("❌ Erreur réseau : " + err);
-                        });
-
-                });
-    });
-}
-
-const btnEnregistrer = document.getElementById("enregistrer");
-if (btnEnregistrer) {
-    btnEnregistrer.addEventListener("click", function() {
-            const id_materiel = {!! $jsId_materiel !!};
-            fetch('/inventaire/getColonnes/' + encodeURIComponent(id_materiel))
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-
-                        alert(data.error);
-                        return;
-                    }
-                    // alert(data.id);
-
-                    // Nettoyer toutes les colonnes avant
-                    var col = data.colonnes;
-                    var valeur = [];
-                    // il faut que tu ajoute le reset scanner ici
-                    for (let x in col) {
-                        // document.getElementById(x).innerText = "";
-                        valeur[x] = document.getElementById(`${col[x]}`).value;
-                        // alert(col[x]+'valeur '+valeur[x]);
-                    }
-
-                    fetch('/inventaire/store', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                id_materiel: id_materiel,
-                                composant_manquant: 'ceci un un nouveau composant manquant',
-                                composant_non_enregistre: 'ceci un un nouveau composant non enregistre',
-                                // etat: document.getElementById("Etat").value,
-                                etat: 'nouvel etat',
-                                // observation: document.getElementById("observation").value,
-                                observation: 'ceci un un nouveau observation',
-                                anciencle: col,
-                                valeur: valeur,
-
                             })
-                        })
-                        .then(async res => {
-                            let data = await res.json();
-                            if (res.ok) {
-                                alert("inventaire enregistré avec succès !");
-                                window.location.href = "/inventaire";
-                            } else if (res.status === 422) {
-                                // ⚠️ Erreur de validation Laravel
-                                if (data.errors && data.errors.id_materiel) {
-                                    alert("⚠️ " + data.errors.id_materiel[0]);
+                            .catch(err => {
+                                alert("❌ Erreur réseau : " + err);
+                            });
+
+                    });
+            });
+        }
+
+        const btnEnregistrer = document.getElementById("enregistrer");
+        if (btnEnregistrer) {
+            btnEnregistrer.addEventListener("click", function() {
+                const id_materiel = {!! $jsId_materiel !!};
+                fetch('/inventaire/getColonnes/' + encodeURIComponent(id_materiel))
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+
+                            alert(data.error);
+                            return;
+                        }
+                        // alert(data.id);
+
+                        // Nettoyer toutes les colonnes avant
+                        var col = data.colonnes;
+                        var valeur = [];
+                        // il faut que tu ajoute le reset scanner ici
+                        for (let x in col) {
+                            // document.getElementById(x).innerText = "";
+                            valeur[x] = document.getElementById(`${col[x]}`).value;
+                            // alert(col[x]+'valeur '+valeur[x]);
+                        }
+
+                        fetch('/inventaire/store', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    id_materiel: id_materiel,
+                                    composant_manquant: 'ceci un un nouveau composant manquant',
+                                    composant_non_enregistre: 'ceci un un nouveau composant non enregistre',
+                                    // etat: document.getElementById("Etat").value,
+                                    etat: 'nouvel etat',
+                                    // observation: document.getElementById("observation").value,
+                                    observation: 'ceci un un nouveau observation',
+                                    anciencle: col,
+                                    valeur: valeur,
+
+                                })
+                            })
+                            .then(async res => {
+                                let data = await res.json();
+                                if (res.ok) {
+                                    alert("inventaire enregistré avec succès !");
+                                    window.location.href = "/inventaire";
+                                } else if (res.status === 422) {
+                                    // ⚠️ Erreur de validation Laravel
+                                    if (data.errors && data.errors.id_materiel) {
+                                        alert("⚠️ " + data.errors.id_materiel[0]);
+                                    } else {
+                                        alert("⚠️" + data.error);
+                                        // alert("ancien cle :" + data.anciencle);
+                                        // alert("valeur :" + data.valeur);
+                                    }
                                 } else {
-                                    alert("⚠️" + data.error);
-                                    // alert("ancien cle :" + data.anciencle);
-                                    // alert("valeur :" + data.valeur);
+
+
+                                    alert("Erreur serveur : " + (data.message || "inconnue"));
                                 }
-                            } else {
+                            })
+                            .catch(err => {
+                                alert("❌ Erreur réseau : " + err);
+                            });
 
-
-                                alert("Erreur serveur : " + (data.message || "inconnue"));
-                            }
-                        })
-                        .catch(err => {
-                            alert("❌ Erreur réseau : " + err);
-                        });
-
-                });
-    });
-}
-     
-    
+                    });
+            });
+        }
     </script>
     {{-- 
         <script>

@@ -118,7 +118,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body bg-primary text-white">
+                    <div class="modal-body">
                         <form method="POST" action="{{ route('emplacement.ajout') }}" id="register-form"
                             onsubmit="return validateForm()" class="needs-validation" novalidate>
                             @csrf

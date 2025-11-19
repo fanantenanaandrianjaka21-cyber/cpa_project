@@ -8,7 +8,11 @@
                 <div class="card-header" style="text-align:center" id="GPTic">
                     <h2 style="color : #001C3E; font-size: 40px">{{ __('GPTic CPA') }}</h2>
                 </div>
-
+@if ($errors->has('login'))
+    <div class="alert alert-danger">
+        {{ $errors->first('login') }}
+    </div>
+@endif
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}" id="login-form">
                         @csrf
@@ -17,13 +21,15 @@
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-
+                                {{-- <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus> --}}
+{{-- 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>Les identifiants saisis ne correspondent à aucun compte.</strong>
                                     </span>
-                                @enderror
+                                @enderror --}}
+                                <input type="text" id="login" name="login" class="form-control" placeholder="Email ou ID">
+
                             </div>
                         </div>
 

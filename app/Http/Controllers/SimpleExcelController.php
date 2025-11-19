@@ -87,7 +87,235 @@ class SimpleExcelController extends Controller
             if (empty($data)) {
                 return back()->with('error', 'Aucune donnée trouvée après la ligne 8.');
             }
-            dd($data);
+// --- LIRE A1 → A5 ET LEUR VALEUR correspondante dans B1 → B5 ---
+$colorToValue = [];
+
+for ($i = 1; $i <= 5; $i++) {
+    $cellA = 'A' . $i;
+    $color = strtoupper($sheet->getStyle($cellA)->getFill()->getStartColor()->getRGB());
+    $value = $sheet->getCell('B' . $i)->getValue();
+
+    if ($color !== 'FFFFFF' && $value !== null) {
+        $colorToValue[$color] = $value;
+    }
+}
+
+foreach ($data as $rowIndex => $ligne) {
+
+    $excelRow = $headerRow + 1 + $rowIndex;
+    $colonnes = array_keys($ligne);
+
+    foreach ($colonnes as $colIndex => $colKey) {
+
+        // lettre de la colonne
+        $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
+        $cell = $colLetter . $excelRow;
+
+        // couleur réelle
+        $color = strtoupper($sheet->getStyle($cell)->getFill()->getStartColor()->getRGB());
+
+        // valeur texte de la cellule Excel
+        $rawText = $sheet->getCell($cell)->getValue();
+
+
+        // 🟨🟨🟨 EXCEPTION : COLONNE Q → COMBINER COULEUR + TEXTE 🟨🟨🟨
+        if ($colLetter === 'Q') {
+
+            $parts = [];
+
+            // 1️⃣ valeur correspondant à la couleur si existe
+            if (isset($colorToValue[$color])) {
+                $parts[] = $colorToValue[$color];
+            }
+
+            // 2️⃣ texte réel de la cellule (propre)
+            if (!empty($rawText)) {
+                $cleanText = trim(str_replace(["\n", "\r"], ',', $rawText));
+                $parts[] = $cleanText;
+            }
+
+            // fusion des 2 valeurs séparées par virgule
+            if (!empty($parts)) {
+                $data[$rowIndex][$colKey] = implode(',', $parts);
+            }
+
+            continue; // on passe à la colonne suivante
+        }
+
+
+        // 🟩 Pour toutes les autres colonnes → règle normale couleur → valeur
+        if (isset($colorToValue[$color])) {
+            $data[$rowIndex][$colKey] = $colorToValue[$color];
+        }
+    }
+}
+
+
+            // dd($data);
+
+            foreach ($data as $poste) {
+                // On récupère la localisation depuis le tableau
+                $localisation = $poste['localisation'] ?? null;
+
+                // On saute si la localisation est vide
+                if (!$localisation) continue;
+                // Récupérer les 3 premières lettres en majuscules, sans espaces ni caractères spéciaux
+                $code = Str::upper(Str::substr(Str::slug($localisation, ''), 0, 3));
+                // On crée un code unique pour la localisation (ex: LOC-001)
+                // $code = 'LOC-' . Str::padLeft(DB::table('emplacements')->count() + 1, 3, '0');
+
+                // Vérifie si cette localisation existe déjà
+                $exists = DB::table('emplacements')
+                    ->where('emplacement', $localisation)
+                    ->exists();
+
+                // Si elle n’existe pas, on insère
+                if (!$exists) {
+                    DB::table('emplacements')->insert([
+                        'code_emplacement' => $code,
+                        'emplacement' => $localisation,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+
+
+
+            // ✅ Succès
+            return back()->with('success', 'Importation réussie avec succès !');
+        } catch (\Exception $e) {
+            // ⚠️ Gestion des erreurs
+            return back()->with('error', 'Erreur lors de l’importation : ' . $e->getMessage());
+        }
+    }
+     public function importEmp(Request $request)
+    {
+        // 1. Validation du fichier (uniquement .xlsx autorisé)
+        $request->validate([
+            'fichier' => 'required|file|mimes:xlsx'
+        ]);
+
+        // 2. Déplacement du fichier vers le dossier public temporairement
+        $fichier = $request->file('fichier');
+        $nomFichier = $fichier->hashName();
+        $cheminFichier = $fichier->move(public_path(), $nomFichier);
+
+        try {
+            // 🧩 Vérifier que le fichier est bien envoyé
+            if (!$request->hasFile('fichier')) {
+                return back()->with('error', 'Aucun fichier sélectionné.');
+            }
+
+
+            // 🧩 Charger le fichier Excel
+            $spreadsheet = IOFactory::load($cheminFichier->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            // 🧩 Convertir toutes les lignes en tableau
+            $rows = $sheet->toArray(null, true, true, true);
+
+            // 🧩 Ligne d’en-tête (A8 → ligne 8)
+            $headerRow = 8;
+
+            if (!isset($rows[$headerRow])) {
+                return back()->with('error', 'Impossible de trouver la ligne d’en-tête (A8).');
+            }
+
+
+            $headers = $rows[$headerRow];
+
+            // 🧩 Nettoyer les en-têtes
+            $keys = collect($headers)->map(function ($h) {
+                return strtolower(trim(str_replace(
+                    [' ', '/', 'é', 'è', 'à', 'ù', 'ô', 'ê', 'î'],
+                    ['_', '_', 'e', 'e', 'a', 'u', 'o', 'e', 'i'],
+                    $h
+                )));
+            })->values()->toArray();
+
+            // 🧩 Lire les données après la ligne 8
+            $data = [];
+            $highestRow = $sheet->getHighestRow();
+
+            for ($row = $headerRow + 1; $row <= $highestRow; $row++) {
+                $line = $rows[$row];
+
+                // Ignorer les lignes vides
+                if (!array_filter($line)) continue;
+
+                $values = array_values($line);
+                $data[] = array_combine($keys, $values);
+            }
+
+            // 🧩 Vérifier si on a des données
+            if (empty($data)) {
+                return back()->with('error', 'Aucune donnée trouvée après la ligne 8.');
+            }
+// --- LIRE A1 → A5 ET LEUR VALEUR correspondante dans B1 → B5 ---
+$colorToValue = [];
+
+for ($i = 1; $i <= 5; $i++) {
+    $cellA = 'A' . $i;
+    $color = strtoupper($sheet->getStyle($cellA)->getFill()->getStartColor()->getRGB());
+    $value = $sheet->getCell('B' . $i)->getValue();
+
+    if ($color !== 'FFFFFF' && $value !== null) {
+        $colorToValue[$color] = $value;
+    }
+}
+
+foreach ($data as $rowIndex => $ligne) {
+
+    $excelRow = $headerRow + 1 + $rowIndex;
+    $colonnes = array_keys($ligne);
+
+    foreach ($colonnes as $colIndex => $colKey) {
+
+        // lettre de la colonne
+        $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
+        $cell = $colLetter . $excelRow;
+
+        // couleur réelle
+        $color = strtoupper($sheet->getStyle($cell)->getFill()->getStartColor()->getRGB());
+
+        // valeur texte de la cellule Excel
+        $rawText = $sheet->getCell($cell)->getValue();
+
+
+        // 🟨🟨🟨 EXCEPTION : COLONNE Q → COMBINER COULEUR + TEXTE 🟨🟨🟨
+        if ($colLetter === 'Q') {
+
+            $parts = [];
+
+            // 1️⃣ valeur correspondant à la couleur si existe
+            if (isset($colorToValue[$color])) {
+                $parts[] = $colorToValue[$color];
+            }
+
+            // 2️⃣ texte réel de la cellule (propre)
+            if (!empty($rawText)) {
+                $cleanText = trim(str_replace(["\n", "\r"], ',', $rawText));
+                $parts[] = $cleanText;
+            }
+
+            // fusion des 2 valeurs séparées par virgule
+            if (!empty($parts)) {
+                $data[$rowIndex][$colKey] = implode(',', $parts);
+            }
+
+            continue; // on passe à la colonne suivante
+        }
+
+
+        // 🟩 Pour toutes les autres colonnes → règle normale couleur → valeur
+        if (isset($colorToValue[$color])) {
+            $data[$rowIndex][$colKey] = $colorToValue[$color];
+        }
+    }
+}
+
+
+            // dd($data);
 
             foreach ($data as $poste) {
                 // On récupère la localisation depuis le tableau
@@ -146,11 +374,23 @@ class SimpleExcelController extends Controller
             // 🧩 Charger le fichier Excel
             $spreadsheet = IOFactory::load($cheminFichier->getRealPath());
             $sheet = $spreadsheet->getActiveSheet();
-            // 🧩 Convertir toutes les lignes en tableau
-            $rows = $sheet->toArray(null, true, true, true);
+            // ⭐️ NOUVEAU : Sélectionner la feuille par son nom 'utilisateurs_articles'
+            // Ceci remplace $sheet = $spreadsheet->getActiveSheet();
+            $sheet = $spreadsheet->getSheetByName('utilisateurs_articles');
 
-            // 🧩 Ligne d’en-tête (A8 → ligne 8)
-            $headerRow = 1;
+            // ⚠️ Vérification : Si la feuille n'existe pas
+            if ($sheet === null) {
+                // Optionnel : Supprimer le fichier temporaire avant de retourner une erreur
+                unlink($cheminFichier->getRealPath());
+                return back()->with('error', 'La feuille "utilisateurs_articles" est introuvable dans le fichier.');
+            }
+
+            // 🧩 Convertir toutes les lignes de la feuille sélectionnée en tableau
+            $rows = $sheet->toArray(null, true, true, true);
+            // Ne conserver que les colonnes A → D
+            $rows = array_map(fn($row) => array_slice($row, 0, 4), $rows);
+            // 🧩 Ligne d’en-tête (A2 → ligne 2)
+            $headerRow = 2; // Ajustez cette valeur si l'en-tête n'est pas à la ligne 1 de cette feuille.
 
             if (!isset($rows[$headerRow])) {
                 return back()->with('error', 'Impossible de trouver la ligne d’en-tête (A8).');
@@ -171,7 +411,7 @@ class SimpleExcelController extends Controller
             // 🧩 Lire les données après la ligne 8
             $data = [];
             $highestRow = $sheet->getHighestRow();
-
+            // dd($highestRow);
             for ($row = $headerRow + 1; $row <= $highestRow; $row++) {
                 $line = $rows[$row];
 
@@ -186,12 +426,20 @@ class SimpleExcelController extends Controller
             if (empty($data)) {
                 return back()->with('error', 'Aucune donnée trouvée après la ligne 8.');
             }
+
             // dd($data);
 
             foreach ($data as $user) {
                 // On récupère la localisation depuis le tableau
-                $matricule = $user['id'] ?? null;
-
+                // $matricule = $user['id'] ?? null;
+                $prenom = preg_replace('/^(.*) \(\d+ \)$/', '$1', $user['prenoms_(id)']);
+                // preg_match('/\((\d+) \)/', $user['prenoms_(id)'], $matches);
+                preg_match('/\d+/', $user['prenoms_(id)'], $matches);
+                // $id = (isset($matches[1])) ? trim($matches[1]) : null;
+                $id = (isset($matches[0])) ? trim($matches[0]) : null;
+                $id_entier = (int)$id;
+                $matricule = $id_entier ?? null;
+                // dd($matches);
                 // On saute si la localisation est vide
                 if (!$matricule) continue;
 
@@ -205,23 +453,28 @@ class SimpleExcelController extends Controller
                 if (!$exists) {
                     // dd($user);
                     DB::table('users')->insert([
-                        'id' => $user['id'],
-                        'id_emplacement' => $user['id_emplacement'],
-                        'nom_utilisateur' => $user['nom_utilisateur'],
-                        'prenom_utilisateur' => $user['prenom_utilisateur'],
-                        'email' => $user['email'],
-                        'password' => Hash::make($user['password']),
-                        'equipe' => $user['equipe'],
-                        'societe' => $user['societe'],
-                        'role' => $user['role'],
-                        'contact_utilisateur' => $user['contact_utilisateur'],
+                        // 'id' => $user['id'],
+                        'id' => $matricule,
+                        // 'id_emplacement' => $user['id_emplacement'],
+                        'id_emplacement' => '1',
+                        // 'nom_utilisateur' => $user['nom_utilisateur'],
+                        'nom_utilisateur' => $user['utilisateur'],
+                        // 'prenom_utilisateur' => $user['prenom_utilisateur'],
+                        'prenom_utilisateur' => $prenom,
+                        // 'email' => $user['email'],
+                        'email' => $user['email'] ?? $matricule . '@gmail.com',
+                        'password' => Hash::make($user['password'] ?? '111111'),
+                        'equipe' => $user['equipe'] ?? null,
+                        'societe' => $user['societe'] ?? null,
+                        'role' => $user['role'] ?? 'Utilisateur',
+                        'contact_utilisateur' => $user['contact_utilisateur'] ?? null,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
                 }
             }
 
-            // dd($user);
+            // dd($data);
             // ✅ Succès
             return back()->with('success', 'Importation réussie avec succès !');
         } catch (\Exception $e) {
