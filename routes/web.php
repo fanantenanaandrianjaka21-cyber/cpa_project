@@ -57,6 +57,7 @@ Route::get('/mail', function () {
 // Importer un fichier Excel
 Route::post("simple-excel/import", [App\Http\Controllers\SimpleExcelController::class, 'import'])->middleware('auth')->name('excel.import');
 Route::post("utilisateur/import", [App\Http\Controllers\SimpleExcelController::class, 'importUtilisateur'])->middleware('auth')->name('utilisateurexcel.import');
+Route::post("etatmateriel/import", [App\Http\Controllers\SimpleExcelController::class, 'importEtatmateriel'])->middleware('auth')->name('etatmaterielexcel.import');
 
 // Exporter un fichier Excel
 Route::post("simple-excel/export", [App\Http\Controllers\SimpleExcelController::class, 'export'])->middleware('auth')->name('excel.export');
