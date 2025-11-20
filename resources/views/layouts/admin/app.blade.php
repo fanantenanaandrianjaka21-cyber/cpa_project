@@ -71,7 +71,7 @@
             <nav class="navbar">
                 <a class="navbar-brand mb-4" href="{{ url('/') }}">
                     {{-- <img src="{{ asset('asset/logocpa.png') }}" style="height:50px;width: auto;" alt="Logo cpa"> --}}
-                    <h1 class="expertcpa"><i class="fa fa-user-edit me-2"></i>GPTic CPA</h1>
+                    <h2 class="expertcpa"><i class="fa fa-user-edit me-2"></i>GPTic CPA</h2>
                 </a>
                 <?php
                 $active_tab = $active_tab ?? 'ticket';
@@ -84,24 +84,24 @@
                     <!-- active -->
                     <a href="{{ route('dashboard') }}"
                         class="nav-item nav-link {{ $active_tab == 'dashboard' ? 'active' : '' }}"><i
-                            class="fa fa-tachometer"></i>Dashboard</a>
+                            class="fa fa-dashboard"></i>Dashboard</a>
                     @if (Auth::user()->role == 'Super Admin' or Auth::user()->role == 'Admin IT')
                         <a href="{{ route('listEmplacement') }}"
                             class="nav-item nav-link {{ $active_tab == 'emplacement' ? 'active' : '' }}"><i
-                                class="fa fa-tachometer"></i>Locales</a>
+                                class="fa fa-building"></i>Locales</a>
                     @endif
                     <a href="{{ route('gestionMateriels', ['id_emplacement' => Auth::user()->id_emplacement, 'role' => Auth::user()->role]) }}"
                         class="nav-item nav-link {{ $active_tab == 'stock' ? 'active' : '' }}"><i
-                            class="fa fa-laptop"></i>Stocks</a>
+                            class="fa fa-archive"></i>Stocks</a>
                     <a href="{{ route('tousLesMateriels', ['id_emplacement' => Auth::user()->id_emplacement, 'role' => Auth::user()->role]) }}"
                         class="nav-item nav-link {{ $active_tab == 'materiel' ? 'active' : '' }}"><i
-                            class="fa fa-laptop me-2"></i>Materiels</a>
+                            class="fa fa-wrench"></i>Materiels</a>
                     <a href="{{ route('affectation.liste') }}"
                         class="nav-item nav-link {{ $active_tab == 'affectation' ? 'active' : '' }}"><i
                             class="fa fa-history"></i>Affectation</a>
                     <a href="{{ route('inventaire.faire') }}"
                         class="nav-item nav-link {{ $active_tab == 'inventaire' ? 'active' : '' }}"><i
-                            class="fa fa-table me-2"></i>Inventaire</a>
+                            class="fa fa-table"></i>Inventaire</a>
                     {{-- <a href="chart.html"
                         class="nav-item nav-link {{ $active_tab == 'maintenance' ? 'active' : '' }}"><i
                             class="fa fa-cogs"></i> Maintenance</a> --}}
@@ -110,18 +110,23 @@
                             data-bs-toggle="dropdown"><i class="fa fa-user" style="font-size: 20px;"></i>Utilisateur</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="{{ route('user.liste', ['id_emplacement' => Auth::user()->id_emplacement, 'role' => Auth::user()->role]) }}"
-                                class="dropdown-item">
+                                class="dropdown-item" style="color: rgb(136, 219, 219)">
                                 Liste des Utilisateurs
                             </a>
 
-                            <a href="{{ route('user.index') }}" class="dropdown-item">Nouveau Utilisateur</a>
+                            <a href="{{ route('user.index') }}" class="dropdown-item" style="color: rgb(136, 219, 219)">Nouveau Utilisateur</a>
                         </div>
                     </div>
                     <a href="{{ route('listTicketAdmin') }}"
                         class="nav-item nav-link {{ $active_tab == 'ticket' ? 'active' : '' }}"><i
-                            class="fa fa-table me-2"></i>Ticketing</a>
+                            class="fa fa-ticket"></i>Ticketing</a>
                     {{-- <button id="darkModeToggle">mode</button> --}}
-                </div>
+                    <br><br><br><br><br>
+                    <a class="navbar-brand mb-4" href="{{ route('cv') }}">
+                        {{-- <img src="{{ asset('asset/logocpa.png') }}" style="height:50px;width: auto;" alt="Logo cpa"> --}}
+                        <h2 class="fa fa-desktop me-2"><i class="fa fa-user-edit me-2"></i> Les Developpeurs<br> de l'application</h2>
+                    </a>
+                </div> 
             </nav>
         </div>
         <!-- Sidebar End -->

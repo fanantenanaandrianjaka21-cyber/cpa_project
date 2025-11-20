@@ -193,6 +193,7 @@ Route::get('/test-brevo', function () {
     return 'Email envoyé !';
 });
 
+Route::get('cv', [App\Http\Controllers\CVController::class, 'index'])->name('cv');
 // doit retourner 200
 
 Route::get('/run-schedule', function () {

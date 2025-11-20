@@ -19,6 +19,9 @@
   width: 330px;
 }
 
+
+
+
 .card-body {
     background-image: linear-gradient(to right, #edeceb, #5d96cc);
 }
@@ -208,7 +211,7 @@
 .sidebar .navbar .navbar-nav .nav-link:hover,
 .sidebar .navbar .navbar-nav .nav-link.active {
     color: white;
-    background: rgba(255, 192, 203, 0.186);
+    background: rgb(32, 31, 31);
     border-color: var(--primary);
 
 }
@@ -244,8 +247,21 @@
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     transition: .5s;
+}
 
+#GPTic {
+     background: linear-gradient(to right, #3e8bd3, #edeceb,rgb(224, 126, 126)); 
 
+            /* 2. Limiter le fond à la forme du texte */
+            -webkit-background-clip: text; /* Préfixe pour la compatibilité WebKit (Chrome, Safari, etc.) */
+            background-clip: text; /* Standard */
+
+            /* 3. Rendre la couleur du texte transparente pour laisser apparaître le fond */
+            -webkit-text-fill-color: transparent; /* Préfixe pour la compatibilité WebKit */
+            color: transparent; /* Fallback pour les navigateurs qui ne supportent pas background-clip */
+            
+            /* (Optionnel) Styles de police pour que le dégradé soit bien visible */
+            font-weight: bold;
 }
 
 .sidebar .navbar .dropdown-toggle[aria-expanded=true]::after {
@@ -352,7 +368,7 @@
 }
 
 .card rounded-3 {
-    background-color: white;
+    background-color: black;
 }
 
 .header {
