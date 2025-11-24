@@ -6,9 +6,19 @@
 
     </div>
     <div class="w3-panel">
-        <h4 class="w3-start w3-animate-right">
-            Liste de tous les Matériels
-        </h4>
+        
+            @if( Auth::User()->role == "Utilisateur")
+            
+                <h4 class="w3-start w3-animate-right">Liste de tous mes Matériels</h4>
+                
+            
+            @else
+            
+                <h4 class="w3-start w3-animate-right">Liste de tous les Matériels</h4>
+                
+            @endif
+            
+        
     </div>
     <div class="card">
         <div class="card-body bg-primary text-white">

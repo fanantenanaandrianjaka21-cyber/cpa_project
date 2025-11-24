@@ -171,7 +171,7 @@ class TicketController extends Controller
             Mail::to($demandeur->email)->send(new mailTicket($ticket, $demandeur));
         }
 
-        Mail::to('onjamalalasahala@gmail.com')->send(new nouveauTicket($ticket));
+        Mail::to('onjamalalasahala@gmail.com')->send(new nouveauTicket($ticket, $demandeur));
 
         // $tickets = Ticket::all();
         //  $dernierTickets = DB::table('tickets')
@@ -193,8 +193,9 @@ class TicketController extends Controller
             ->where('id_utilisateur', $userId)
             ->latest()
             ->first();
+            $active_tab = 'dashboard';
 $priorite=TicketPrioriteConfig::all();
-        return view('ticketing.utilisateur.app', compact('tickets', 'users', 'materiels', 'userId', 'demandeur', 'lienTicket', 'dernierTickets','priorite'));
+        return view('ticketing.utilisateur.app', compact('tickets', 'users', 'materiels', 'userId', 'demandeur', 'lienTicket', 'dernierTickets','priorite', 'active_tab'));
     }
 
     //fonction pour l'accueil cad celle qui montrera à l'utilisateur son ticket le plus récent ou ce qu'il vient d'envoyer
@@ -317,7 +318,7 @@ $priorite=TicketPrioriteConfig::all();
         $ticket->statut = TicketStatus::FERME; //atao OUVERT
         $ticket->save();
         // materiel en service
-$priorite=TicketPrioriteConfig::all();
+        $priorite=TicketPrioriteConfig::all();
 
         // dd($ticket);
 

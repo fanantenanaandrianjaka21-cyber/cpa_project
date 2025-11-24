@@ -167,6 +167,9 @@ Route::get('/alertes', [App\Http\Controllers\AlertController::class, 'index'])->
 Route::post('/alertes/{id}/update', [App\Http\Controllers\AlertController::class, 'update'])->name('alertes.update');
 Route::post('/alertes/{id}/updateDestinataire', [App\Http\Controllers\AlertController::class, 'updateDestinataire'])->name('alertes.updateDestinataire');
 Route::post('/alertes/{id}/updateAlerteTypes', [App\Http\Controllers\AlertController::class, 'updateAlerteTypes'])->name('alertes.updateAlerteTypes');
+Route::post('/ajoutmaildestinataire', [App\Http\Controllers\AlertController::class, 'insertionmailalert'])->name('ajoutmaildestinataire');
+Route::delete('/alertes/delete-destinataire/{id}', [App\Http\Controllers\AlertController::class, 'deleteDestinataire'])->name('alertes.deleteDestinataire');
+
 
 //************************TicketTechnicien*************************//
 Route::get('listeTicketTechnicien', [App\Http\Controllers\TicketController::class, 'listeTicketTechnicien'])->name('listeTicketTechnicien');

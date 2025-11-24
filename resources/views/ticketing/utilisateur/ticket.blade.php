@@ -6,18 +6,7 @@
          <div class="page-title">
              <div class="row">
                  <div class="col-12 col-md-6 order-md-1 order-last">
-                     <h3>Mes Tickets</h3>
-                 </div>
-                 <div class="col-12 col-md-6 order-md-2 order-first">
-                     <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                         <ol class="breadcrumb">
-                             <li class="breadcrumb-item">
-                                 <a href="/">Accueil</a>
-                             </li>
-                             <li class="breadcrumb-item active" aria-current="page">
-                                 Tickets
-                             </li>
-                     </nav>
+                     <h3 style="color: white">Tickets</h3>
                  </div>
              </div>
          </div>
@@ -26,19 +15,12 @@
                  <div class="col-12 col-md-12">
                      <div class="card">
                          <div class="card-header d-flex justify-content-between">
-                             <h4 class="card-title">Mes Tickets</h4>
-                             <form class="d-flex" action="./achat.php" method="get">
-                                 <input style="background-color:#35356f;" class="form-control me-2" type="search"
-                                     placeholder="Rechercher" aria-label="Search" name="rechercher" />
-                                 <button class="btn btn-outline-primary" type="submit">
-                                     Rechercher
-                                 </button>
-                             </form>
+                             <h4 class="card-title">Liste de mes Tickets</h4>
                          </div>
                          <div>
 
                              @if (isset($tickets) && $tickets->count() > 0)
-                                 <table class="table table-bordered">
+                                 <table id="bootstrap-data-table-export" class="table table-hover table-responsive ">
                                      <thead>
                                          <tr>
                                              <th>Numéro</th>
@@ -79,6 +61,8 @@
                                                  <td>
                                                     @if ($ticket->assignement)
                                                     {{ $ticket->technicien->nom_utilisateur }}</td>
+                                                    @else
+                                                    Elle n'est pas encore assigné à un technicien
                                                     @endif
                                                  <td>{{ $ticket->created_at }}</td>
                                              </tr>
