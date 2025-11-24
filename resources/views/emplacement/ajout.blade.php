@@ -10,7 +10,7 @@
                 <div class="card">
                     <div class="card-header" style="text-align:center">{{ __('Enregistrement d\'un nouveau Local') }}
                     </div>
-                    <div class="card-body bg-primary text-white">
+                    <div class="card-body bg-primary text-black">
                         <form method="POST" action="{{ route('emplacement.ajout') }}" id="register-form"
                             onsubmit="return validateForm()" class="needs-validation" novalidate>
                             @csrf

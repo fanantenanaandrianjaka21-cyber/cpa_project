@@ -11,7 +11,7 @@
     </div>
     <div class="card">
 
-        <div class="card-body bg-primary text-white" style="background-color:rgba(11, 5, 22, 0.137);">
+        <div class="card-body bg-primary text-black" style="background-color:rgba(11, 5, 22, 0.137);">
             <table class="table table-bordered table-striped table-responsive w3-card-4">
                 <tbody>
                     <tr>

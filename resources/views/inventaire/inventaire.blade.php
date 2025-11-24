@@ -12,7 +12,7 @@
     </div>
 
     <div class="card ">
-        <div class="card-body bg-primary text-white">
+        <div class="card-body bg-primary text-black">
             <p class="text-black">Sélectionnez un fichier Excel (.xlsx) contenant une liste des "etat materiels".</p>
 <div class="d-flex align-items-center gap-4">
 
@@ -112,7 +112,7 @@
         {{-- <h5 id="nom"></h5>
         <div id="details"></div>
         <div id="materiel-info" style="margin-top:20px;"></div>
-        <div class="card-body bg-primary text-white">
+        <div class="card-body bg-primary text-black">
             <div class="row mb-3">
                 <label for="nom_utilisateur" class="col-md-4 col-form-label text-md-end">Nom de l'utilisateur
                     :</label>

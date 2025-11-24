@@ -45,25 +45,25 @@
                     <?php
                     if (isset($notification['success'])) {
                         echo "<div class='alert alert-success'>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <i class='fa fa-close'></i>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <b><i class='fa fa-bell'></i>  Success - </b>" .
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class='fa fa-close'></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <b><i class='fa fa-bell'></i>  Success - </b>" .
                             $notification['success'] .
                             "</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>";
                     }
                     if (isset($notification['erreur'])) {
                         echo "<div class='alert alert-danger'>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <i class='fa fa-close'></i>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <b><i class='fa fa-bell'></i>  Erreur - </b> Materiel non enregistré : " .
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class='fa fa-close'></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <b><i class='fa fa-bell'></i>  Erreur - </b> Materiel non enregistré : " .
                             $notification['erreur'] .
                             "</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>";
                     }
                     ?>
                     {{-- <a href=""class="btn btn-success btn-round" data-toggle="modal" data-target="#modal-materiel"><i
@@ -195,7 +195,7 @@ $alerteCorrespondante = collect($alert)->firstWhere(
                 <form method="POST" action="{{ route('materiel.ajout_materiel') }}" id="register-form"
                     enctype="multipart/form-data" onsubmit="return validateForm()" class="needs-validation" novalidate>
                     @csrf
-                    <div class="modal-body color-secondary text-white">
+                    <div class="modal-body color-secondary text-black">
                         <div id="etape1">
                             <input type="hidden" name='id_utilisateur' value="">
                             <div class="form-group row">
@@ -315,7 +315,7 @@ $alerteCorrespondante = collect($alert)->firstWhere(
                             </div>
                             <div class="row mb-3">
                                 <label for="model"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('model :') }}</label>
+                                    class="col-md-4 col-form-label text-md-end">{{ __('Model : ') }}</label>
                                 <div class="col-md-6">
                                     <input id="model" type="text"
                                         class="form-control @error('model') is-invalid @enderror" name="model"
@@ -366,150 +366,152 @@ $alerteCorrespondante = collect($alert)->firstWhere(
                         </div>
                         <div id="etape2" style="display: none;">
                             <h5>Champs suplemantaire</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="text-md-start">Processeur : </label>
+                            <div id="pc">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="text-md-start">Processeur : </label>
 
-                                    <input type="hidden" name="cles[]" value="Processeur"class="form-control">
+                                        <input type="hidden" name="cles[]" value="Processeur"class="form-control">
 
-                                    <div class="col-md-12">
-                                        <input type="text" name="valeurs[]" class="form-control">
-                                        <div class="invalid-feedback">Champ obligatoire.</div>
+                                        <div class="col-md-12">
+                                            <input type="text" name="valeurs[]" class="form-control">
+                                            <div class="invalid-feedback">Champ obligatoire.</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-md-start">Ram : </label>
+
+                                        <input type="hidden" name="cles[]" value="Ram"class="form-control">
+
+                                        <div class="col-md-12">
+                                            <input type="text" name="valeurs[]" class="form-control">
+                                            <div class="invalid-feedback">Champ obligatoire.</div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="text-md-start">Ram : </label>
+                                <div class="row">
 
-                                    <input type="hidden" name="cles[]" value="Ram"class="form-control">
+                                    <div class="col-md-6">
+                                        <label class="text-md-start">Disque : </label>
 
-                                    <div class="col-md-12">
-                                        <input type="text" name="valeurs[]" class="form-control">
-                                        <div class="invalid-feedback">Champ obligatoire.</div>
+                                        <input type="hidden" name="cles[]" value="Disque"class="form-control">
+
+                                        <div class="col-md-12">
+                                            <input type="text" name="valeurs[]" class="form-control">
+                                            <div class="invalid-feedback">Champ obligatoire.</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-md-start">Etat Batterie : </label>
+
+                                        <input type="hidden" name="cles[]" value="Etat Baterie"class="form-control">
+
+                                        <div class="col-md-12">
+                                            <select class="form-select" name="valeurs[]" id="typeSelect">
+                                                <option value="">Choisir etat Batterie</option>
+                                                <option value="TRES BON">TRES BON</option>
+                                                <option value="BON">BON</option>
+                                                <option value="MOYEN">MOYEN</option>
+                                                <option value="MAUVAIS">MAUVAIS</option>
+                                                <option value="APPRENTI">APPRENTI</option>
+                                            </select>
+                                            <div class="invalid-feedback">Veuillez sélectionner un etat.</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="text-md-start">Etat HDMI : </label>
 
-                                <div class="col-md-6">
-                                    <label class="text-md-start">Disque : </label>
+                                        <input type="hidden" name="cles[]" value="Etat HDMI"class="form-control">
 
-                                    <input type="hidden" name="cles[]" value="Disque"class="form-control">
+                                        <div class="col-md-12">
+                                            <select class="form-select" name="valeurs[]" id="typeSelect">
+                                                <option value="">Choisir etat HDMI</option>
+                                                <option value="TRES BON">TRES BON</option>
+                                                <option value="BON">BON</option>
+                                                <option value="MOYEN">MOYEN</option>
+                                                <option value="MAUVAIS">MAUVAIS</option>
+                                                <option value="APPRENTI">APPRENTI</option>
+                                            </select>
+                                            <div class="invalid-feedback">Veuillez sélectionner un etat.</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-md-start">Etat Clavier : </label>
 
-                                    <div class="col-md-12">
-                                        <input type="text" name="valeurs[]" class="form-control">
-                                        <div class="invalid-feedback">Champ obligatoire.</div>
+                                        <input type="hidden" name="cles[]" value="Etat Clavier"class="form-control">
+
+                                        <div class="col-md-12">
+                                            <select class="form-select" name="valeurs[]" id="typeSelect">
+                                                <option value="">Choisir etat Clavier</option>
+                                                <option value="TRES BON">TRES BON</option>
+                                                <option value="BON">BON</option>
+                                                <option value="MOYEN">MOYEN</option>
+                                                <option value="MAUVAIS">MAUVAIS</option>
+                                                <option value="APPRENTI">APPRENTI</option>
+                                            </select>
+                                            <div class="invalid-feedback">Veuillez sélectionner un etat.</div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="text-md-start">Etat Batterie : </label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="text-md-start">Etat Souris : </label>
 
-                                    <input type="hidden" name="cles[]" value="Etat Baterie"class="form-control">
+                                        <input type="hidden" name="cles[]" value="Etat Souris"class="form-control">
 
-                                    <div class="col-md-12">
-                                        <select class="form-select" name="valeurs[]" id="typeSelect">
-                                            <option value="">Choisir etat Batterie</option>
-                                            <option value="TRES BON">TRES BON</option>
-                                            <option value="BON">BON</option>
-                                            <option value="MOYEN">MOYEN</option>
-                                            <option value="MAUVAIS">MAUVAIS</option>
-                                            <option value="APPRENTI">APPRENTI</option>
-                                        </select>
-                                        <div class="invalid-feedback">Veuillez sélectionner un etat.</div>
+                                        <div class="col-md-12">
+                                            <select class="form-select" name="valeurs[]" id="typeSelect">
+                                                <option value="">Choisir etat Souris</option>
+                                                <option value="TRES BON">TRES BON</option>
+                                                <option value="BON">BON</option>
+                                                <option value="MOYEN">MOYEN</option>
+                                                <option value="MAUVAIS">MAUVAIS</option>
+                                                <option value="APPRENTI">APPRENTI</option>
+                                            </select>
+                                            <div class="invalid-feedback">Veuillez sélectionner un etat.</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="text-md-start">Etat HDMI : </label>
+                                    <div class="col-md-6">
+                                        <label class="text-md-start">Etat Micro/Audio: </label>
 
-                                    <input type="hidden" name="cles[]" value="Etat HDMI"class="form-control">
+                                        <input type="hidden" name="cles[]" value="Etat Micro"class="form-control">
 
-                                    <div class="col-md-12">
-                                        <select class="form-select" name="valeurs[]" id="typeSelect">
-                                            <option value="">Choisir etat HDMI</option>
-                                            <option value="TRES BON">TRES BON</option>
-                                            <option value="BON">BON</option>
-                                            <option value="MOYEN">MOYEN</option>
-                                            <option value="MAUVAIS">MAUVAIS</option>
-                                            <option value="APPRENTI">APPRENTI</option>
-                                        </select>
-                                        <div class="invalid-feedback">Veuillez sélectionner un etat.</div>
+                                        <div class="col-md-12">
+                                            <select class="form-select" name="valeurs[]" id="typeSelect">
+                                                <option value="">Choisir etat Micro/Audio</option>
+                                                <option value="TRES BON">TRES BON</option>
+                                                <option value="BON">BON</option>
+                                                <option value="MOYEN">MOYEN</option>
+                                                <option value="MAUVAIS">MAUVAIS</option>
+                                                <option value="APPRENTI">APPRENTI</option>
+                                            </select>
+                                            <div class="invalid-feedback">Veuillez sélectionner un etat.</div>
+                                        </div>
                                     </div>
+
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="text-md-start">Etat Clavier : </label>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label class="text-md-start">Mots de passe PC : </label>
 
-                                    <input type="hidden" name="cles[]" value="Etat Clavier"class="form-control">
+                                        <input type="hidden" name="cles[]" value="Mdp PC"class="form-control">
 
-                                    <div class="col-md-12">
-                                        <select class="form-select" name="valeurs[]" id="typeSelect">
-                                            <option value="">Choisir etat Clavier</option>
-                                            <option value="TRES BON">TRES BON</option>
-                                            <option value="BON">BON</option>
-                                            <option value="MOYEN">MOYEN</option>
-                                            <option value="MAUVAIS">MAUVAIS</option>
-                                            <option value="APPRENTI">APPRENTI</option>
-                                        </select>
-                                        <div class="invalid-feedback">Veuillez sélectionner un etat.</div>
+                                        <div class="col-md-12">
+                                            <input type="text" name="valeurs[]" class="form-control">
+                                            <div class="invalid-feedback">Champ obligatoire.</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="text-md-start">Etat Souris : </label>
+                                    <div class="col-md-6">
+                                        <label class="text-md-start">Mots de passe ADMIN : </label>
 
-                                    <input type="hidden" name="cles[]" value="Etat Souris"class="form-control">
+                                        <input type="hidden" name="cles[]" value="Mdp Admin"class="form-control">
 
-                                    <div class="col-md-12">
-                                        <select class="form-select" name="valeurs[]" id="typeSelect">
-                                            <option value="">Choisir etat Souris</option>
-                                            <option value="TRES BON">TRES BON</option>
-                                            <option value="BON">BON</option>
-                                            <option value="MOYEN">MOYEN</option>
-                                            <option value="MAUVAIS">MAUVAIS</option>
-                                            <option value="APPRENTI">APPRENTI</option>
-                                        </select>
-                                        <div class="invalid-feedback">Veuillez sélectionner un etat.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="text-md-start">Etat Micro/Audio: </label>
-
-                                    <input type="hidden" name="cles[]" value="Etat Micro"class="form-control">
-
-                                    <div class="col-md-12">
-                                        <select class="form-select" name="valeurs[]" id="typeSelect">
-                                            <option value="">Choisir etat Micro/Audio</option>
-                                            <option value="TRES BON">TRES BON</option>
-                                            <option value="BON">BON</option>
-                                            <option value="MOYEN">MOYEN</option>
-                                            <option value="MAUVAIS">MAUVAIS</option>
-                                            <option value="APPRENTI">APPRENTI</option>
-                                        </select>
-                                        <div class="invalid-feedback">Veuillez sélectionner un etat.</div>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="text-md-start">Mots de passe PC : </label>
-
-                                    <input type="hidden" name="cles[]" value="Mdp PC"class="form-control">
-
-                                    <div class="col-md-12">
-                                        <input type="text" name="valeurs[]" class="form-control">
-                                        <div class="invalid-feedback">Champ obligatoire.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="text-md-start">Mots de passe ADMIN : </label>
-
-                                    <input type="hidden" name="cles[]" value="Mdp Admin"class="form-control">
-
-                                    <div class="col-md-12">
-                                        <input type="text" name="valeurs[]" class="form-control">
-                                        <div class="invalid-feedback">Champ obligatoire.</div>
+                                        <div class="col-md-12">
+                                            <input type="text" name="valeurs[]" class="form-control">
+                                            <div class="invalid-feedback">Champ obligatoire.</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -524,7 +526,7 @@ $alerteCorrespondante = collect($alert)->firstWhere(
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Fermer</button>
                         <button type="button" id="btn-precedent" class="btn btn-outline-secondary"
                             style="display:none;" onclick="afficherEtape(1)">← Précédent</button>
                         <button type="button" id="btn-suivant" class="btn btn-outline-primary"
@@ -765,6 +767,9 @@ $alerteCorrespondante = collect($alert)->firstWhere(
             const radio1 = document.getElementById('radio1');
             const radio2 = document.getElementById('radio2');
             const select = document.getElementById('typeSelect');
+            const pcDiv = document.getElementById('pc');
+            // Masqué par défaut
+            pcDiv.style.display = "none";
 
             function updateSelectOptions(options) {
                 // Vider les options existantes
@@ -780,6 +785,17 @@ $alerteCorrespondante = collect($alert)->firstWhere(
 
             // Chargement initial
             updateSelectOptions(typePoste);
+
+            // Quand le select change
+            select.addEventListener('change', function() {
+                const selectedType = this.value;
+
+                if (selectedType === "Ordinateur portable") {
+                    pcDiv.style.display = "block";
+                } else {
+                    pcDiv.style.display = "none";
+                }
+            });
             //toggleCodeInterne(true); // afficher par défaut car "poste" est coché
             toggleCodeInterne(false); //ne pas afficher le code interne par defaut
             // Écoute des changements sur les radios

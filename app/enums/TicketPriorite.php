@@ -6,7 +6,7 @@ use App\Models\TicketPrioriteConfig;
 
 enum TicketPriorite: string
 {
-    case TRES_BASSE = 'TRES_BASSE';
+    // case TRES_BASSE = 'TRES_BASSE';
     case BASSE = 'BASSE';
     case MOYENNE = 'MOYENNE';
     case URGENT = 'URGENT';

@@ -11,7 +11,7 @@
     </div>
     <div class="card">
 
-        <div class="card-body bg-primary text-white">
+        <div class="card-body bg-primary text-black">
             <div class="row">
                 <div class="col-12">
                     @if (session('notification'))

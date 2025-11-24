@@ -41,52 +41,73 @@ class HomeController extends Controller
             $total_utilisateurs = User::All()->count();
             $total_locales = Emplacement::All()->count();
             $total_materiels = Materiel::All()->sum('quantite');
-            $total_tickets = Ticket::All()->count();
+            $total_tickets = Ticket::count(); // pas besoin de All()->count(), plus performant
+            $ticketsOuverts = Ticket::where('statut', 'NOUVEAU')->count();
+            $ticketsEncours = Ticket::where('statut', 'EN_COURS')->count();
+            $ticketsResolus = Ticket::where('statut', 'FERME')->count();
+
+            $pourcentageFermes = 0;
+
+            if ($total_tickets > 0) {
+                $pourcentageFermes = ($ticketsResolus / $total_tickets) * 100;
+            }
+            $pourcentageFermes = round($pourcentageFermes, 2);
+
             $materiels_affecte = Materiel::where('status', 'utiliser')->get()->sum('quantite');
             $materiels_disponible = Materiel::where('status', 'disponible')->get()->sum('quantite');
             if ($materiels_affecte != 0) {
                 $taux_utilisation_stock = ($materiels_affecte / $total_materiels) * 100;
-                $taux_utilisation_stock=round($taux_utilisation_stock, 2);
+                $taux_utilisation_stock = round($taux_utilisation_stock, 2);
             } else if ($materiels_disponible != 0 and $materiels_affecte == 0) {
                 $taux_utilisation_stock = 0;
             } else {
                 $taux_utilisation_stock = '-';
             }
-            $alert=Alert::where('id', 1)->get()->first();
+            $alert = Alert::where('id', 1)->get()->first();
             $emplacement = Emplacement::all();
-     $utilisateur = User::orderBy('id', 'desc')->first();
-            return view('dashboard.super_admin', compact('emplacement','utilisateur',
-            'active_tab','alert', 'total_utilisateurs', 'total_locales', 'total_materiels', 'total_tickets', 'taux_utilisation_stock'));
+            $utilisateur = User::orderBy('id', 'desc')->first();
+            return view('dashboard.super_admin', compact(
+                'emplacement',
+                'utilisateur',
+                'active_tab',
+                'alert',
+                'total_utilisateurs',
+                'total_locales',
+                'total_materiels',
+                'total_tickets',
+                'taux_utilisation_stock',
+                'pourcentageFermes'
+            ));
         } elseif ($role == "Admin IT") {
             return view('home', compact('active_tab'));
         } elseif ($role == "Responsable Site") {
             return view('home', compact('active_tab'));
         } elseif ($role == "Technicien IT") {
-                    $userId = Auth::id(); // ID de l'utilisateur connecté
-        $materiels = Materiel::all();
-        $users = User::all();
+            $userId = Auth::id(); // ID de l'utilisateur connecté
+            $materiels = Materiel::all();
+            $users = User::all();
 
-        // $tickets = DB::table('tickets')
-        //     ->join('users', 'users.id', '=', 'tickets.id_utilisateur')
-        //     ->join('materiels', 'materiels.id', '=', 'tickets.id_materiel')
-        //     ->select(
-        //         'tickets.id',
-        //         'tickets.objet',
-        //         'tickets.priorite',
-        //         'tickets.description',
-        //         'tickets.assignement',
-        //         'tickets.statut',
-        //         'tickets.created_at',
-        //         'users.prenom_utilisateur as utilisateur',
-        //         'materiels.type as type'
-        //     )
-        //     ->where('tickets.assignement', $userId)
-        //     ->get();
-                   $tickets = Ticket::with(['utilisateur', 'materiel'])
+            // $tickets = DB::table('tickets')
+            //     ->join('users', 'users.id', '=', 'tickets.id_utilisateur')
+            //     ->join('materiels', 'materiels.id', '=', 'tickets.id_materiel')
+            //     ->select(
+            //         'tickets.id',
+            //         'tickets.objet',
+            //         'tickets.priorite',
+            //         'tickets.description',
+            //         'tickets.assignement',
+            //         'tickets.statut',
+            //         'tickets.created_at',
+            //         'users.prenom_utilisateur as utilisateur',
+            //         'materiels.type as type'
+            //     )
+            //     ->where('tickets.assignement', $userId)
+            //     ->get();
+            $tickets = Ticket::with(['utilisateur', 'materiel'])
                 ->where('assignement', $userId)
                 ->get();
-// dd($tickets );
-     return view('ticketing.technicien.liste', compact('tickets', 'materiels', 'users'));
+            // dd($tickets );
+            return view('ticketing.technicien.liste', compact('tickets', 'materiels', 'users'));
         } else {
             $materiels = Materiel::all();
             $users = User::all();
@@ -106,10 +127,10 @@ class HomeController extends Controller
                 ->where('id_utilisateur', $userId)
                 ->latest()
                 ->first();
-$priorite=TicketPrioriteConfig::all();
-// dd($priorite);
+            $priorite = TicketPrioriteConfig::all();
+            // dd($priorite);
             // dd($dernierTickets);
-            return view('ticketing.utilisateur.app', compact('materiels', 'dernierTickets', 'active_tab','priorite'));
+            return view('ticketing.utilisateur.app', compact('materiels', 'dernierTickets', 'active_tab', 'priorite'));
             // return view('dashboard.utilisateur');
         }
     }

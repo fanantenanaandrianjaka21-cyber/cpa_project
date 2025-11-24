@@ -11,7 +11,7 @@
                     <div class="card-header" style="text-align:center">{{ __('Modification d\'un Locale') }}
                     </div>
 
-                    <div class="card-body bg-primary text-white">
+                    <div class="card-body bg-primary text-black">
                         <form method="POST" action="{{ route('emplacement.modifier') }}" id="register-form"
                             onsubmit="return validateForm()" class="needs-validation" novalidate>
                             @csrf
