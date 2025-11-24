@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header" style="text-align:center">{{ __('Enregistrement d\'un nouveau utilisateur') }}
                     </div>
-                    <div class="card-body bg-primary text-white">
+                    <div class="card-body bg-primary text-black">
                         <form method="POST" action="/ajoutUser" id="register-form">
                             @csrf
 

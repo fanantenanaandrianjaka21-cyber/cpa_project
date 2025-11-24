@@ -17,7 +17,7 @@
                 </div>
                 <div class="card">
 
-                    <div class="card-body bg-primary text-white">
+                    <div class="card-body bg-primary text-black">
                         <form method="POST" action="{{ route('utilisateur.modifier') }}" id="register-form">
                             @csrf
                             <input type="hidden" name="idutilisateur" value="{{ $utilisateur->id }}">

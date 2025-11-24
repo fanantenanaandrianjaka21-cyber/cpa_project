@@ -9,7 +9,7 @@
         <div class="card-header">
             Ticket numero : {{ $ticket->id }}
         </div>
-        <div class="card-body bg-primary text-white" style="background-color:rgba(11, 5, 22, 0.137);">
+        <div class="card-body bg-primary text-black" style="background-color:rgba(11, 5, 22, 0.137);">
             <table class="table table-bordered table-striped">
                 <tbody>
                     <tr>

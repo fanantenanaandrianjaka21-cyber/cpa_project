@@ -14,7 +14,7 @@
                     </h4>
                 </div>
                 <div class="card">
-                    <div class="card-body bg-primary text-white">
+                    <div class="card-body bg-primary text-black">
                         <form method="POST" action="{{ route('materiel.modifier') }}" id="register-form"
                             enctype="multipart/form-data" onsubmit="return validateForm()" class="needs-validation"
                             novalidate>

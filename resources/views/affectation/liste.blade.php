@@ -11,7 +11,7 @@
         </div>
         <div class="card">
 
-            <div class="card-body bg-info text-white">
+            <div class="card-body bg-info text-black">
                 <div class="row">
                     <div class="col-12">
                         <?php

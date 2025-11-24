@@ -31,7 +31,7 @@
                         <div class="body m-4 d-flex">
                             <div class="p-2 bg-white bg-opacity-10 border-start border-5 border-success w-330px mr-4">
                                 <i class="fa fa-check-circle" style="color: #4caf50; font-size: 24px;"></i>
-                                <div style="font-size: 14px; font-weight: bold;">86%</div>
+                                <div style="font-size: 14px; font-weight: bold;">{{ $pourcentageFermes }} %</div>
                                 <div>Tickets résolus</div>
                             </div>
                             <div class="p-2 bg-white bg-opacity-10 border-start border-5 border-warning w-330px mr-4">

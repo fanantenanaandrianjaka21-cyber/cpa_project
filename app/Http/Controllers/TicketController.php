@@ -196,7 +196,7 @@ class TicketController extends Controller
             ->first();
             $active_tab = 'dashboard';
 $priorite=TicketPrioriteConfig::all();
-        return view('ticketing.utilisateur.app', compact('tickets', 'users', 'materiels', 'userId', 'demandeur', 'lienTicket', 'dernierTickets','priorite', 'active_tab'));
+        return view('ticketing.utilisateur.app', compact('tickets', 'users', 'materiels', 'userId', 'demandeur', 'lienTicket', 'dernierTickets','priorite'));
     }
 
     //fonction pour l'accueil cad celle qui montrera à l'utilisateur son ticket le plus récent ou ce qu'il vient d'envoyer
