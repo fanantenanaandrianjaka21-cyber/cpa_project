@@ -6,7 +6,7 @@
     </div>
     <div class="w3-panel">
         <h4 class="w3-start w3-animate-right">
-            Inforamtion Locale
+            Information Locale
         </h4>
     </div>
     <div class="card">

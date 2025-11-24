@@ -200,7 +200,7 @@
                 onclick="document.getElementById('id01').style.display='block'"
                 >Affecter
                 à un utilisateur</a> --}}
-                @if ($detail_materiel['emplacement']!='GLOBALE')
+                @if ($detail_materiel['emplacement']!='GLOBALE' & Auth::User()->role != "Utilisateur")
                                 <a href="#" class="btn btn-info  btn-sm m-2" data-bs-toggle="modal"
                 data-bs-target="#modal-affectation">Affecter
                 à un utilisateur</a>
@@ -310,10 +310,12 @@
 
         </div>
     </div>
+    @if( Auth::User()->role != "Utilisateur")
     <a href="#" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#affichagelogmateriel">Voir
         Log Materiel</a>
     <a href="#" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#affichagelogticketing">Voir
         Log Ticketing</a>
+    @endif
 
     <!-- modal affectation -->
     <div class="modal" id="modal-affectation">

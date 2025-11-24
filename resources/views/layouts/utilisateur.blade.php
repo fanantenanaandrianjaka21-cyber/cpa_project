@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap4.min.css">
     <!-- ✅ jQuery et Bootstrap JS en ligne -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    
     {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> --}}
 
     <!-- ✅ DataTables et Buttons JS en ligne -->
@@ -41,7 +42,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-    {{-- enddatatable --}}
     <style>
         #filters {
             text-align: end;
@@ -88,7 +88,7 @@
                         class="nav-item nav-link {{ $active_tab == 'materiel' ? 'active' : '' }}"><i
                             class="fa fa-laptop me-2"></i>Materiels</a>
 
-                    <a href="{{ route('listTicketAdmin') }}"
+                    <a href="{{ route('listeTicketUtilisateur') }}"
                         class="nav-item nav-link {{ $active_tab == 'ticket' ? 'active' : '' }}"><i
                             class="fa fa-table me-2"></i>Ticketing</a>
 

@@ -17,9 +17,11 @@ class nouveauTicket extends Mailable
      * @return void
      */
     public $ticket;
-    public function __construct($ticket)
+    public $demandeur;
+    public function __construct($ticket, $demandeur)
     {
         $this->ticket = $ticket;
+        $this->demandeur = $demandeur;
     }
 
     /**

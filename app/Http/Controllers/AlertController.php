@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Alert;
+use App\Models\Alertes_destinataires;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -53,6 +54,7 @@ class AlertController extends Controller
         $active_tab = 'dashbord';
             return redirect()->route('dashboard')->with('notification', $notification,'active_tab',$active_tab);
     }
+
     // Afficher la liste des alertes
     public function index()
     {
@@ -62,8 +64,11 @@ class AlertController extends Controller
         // dd($destinataires);
         // $alertes = Alert::with(['types','destinataires']);
         // dd($alertes);
-        return view('alertes.index', compact('alerte','types','destinataires'));
+        $active_tab = 'dashbord';
+        return view('alertes.index', compact('alerte','types','destinataires'))->with('active_tab',$active_tab);
     }
+
+
 
     // Mettre à jour une alerte
     public function updateAlerteTypes(Request $request, $id)
@@ -118,6 +123,7 @@ class AlertController extends Controller
 
         return redirect()->back()->with('success', 'Alerte mise à jour avec succès.');
     }
+
         public function updateDestinataire(Request $request, $id)
     {
         $request->validate([
@@ -131,4 +137,30 @@ class AlertController extends Controller
 
         return redirect()->back()->with('success', 'Destinataire mise à jour avec succès.');
     }
+
+    public function insertionmailalert(Request $data)
+    {
+        $this->validate($data, [
+            'email_destinataire' => 'required',
+        ]);
+
+        Alertes_destinataires::create([
+            'alerte_id' => 1,
+            'email_destinataire' => $data['email_destinataire'],
+        ]);
+
+        $active_tab = 'dashbord';
+
+        return redirect()->route('alertes.index')->with('active_tab',$active_tab);
+        // return view('alertes.index', compact('alerte', 'destinataires'));
+    }
+
+    public function deleteDestinataire($id)
+    {
+        Alertes_destinataires::destroy($id);
+        $active_tab = 'dashbord';
+
+        return back()->with('success', 'Email supprimé avec succès !')->with('active_tab',$active_tab);
+    }
+
 }
