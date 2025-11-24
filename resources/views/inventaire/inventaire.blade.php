@@ -11,20 +11,37 @@
         </h4>
     </div>
 
-    <div class="card">
+    <div class="card ">
         <div class="card-body bg-primary text-white">
-            <form method="POST" action="{{ route('inventaireexcel.export') }}">
+            <p class="text-black">Sélectionnez un fichier Excel (.xlsx) contenant une liste des "etat materiels".</p>
+<div class="d-flex align-items-center gap-4">
 
-                @csrf
+    <!-- Formulaire Import -->
+    <div class="d-flex align-items-center gap-2">
+        <form method="POST" action="{{ route('etatmaterielexcel.import') }}" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
+            @csrf
+            <input type="file" name="fichier" class="form-control">
+            <button type="submit" class="btn btn-success">Importer</button>
+        </form>
+    </div>
+
+    <!-- Formulaire Export -->
+    <div class="d-flex align-items-center gap-2">
+        <form method="POST" action="{{ route('inventaireexcel.export') }}" class="d-flex align-items-center gap-2">
+            @csrf
+            <button type="submit" class="btn btn-success">Export Excel</button>
+
+            <select name="extension" class="form-select" style="width: auto;">
+                <option value="xlsx">.xlsx</option>
+                <option value="csv">.csv</option>
+            </select>
+        </form>
+    </div>
+
+</div>
 
 
-
-                <button type="submit" class="btn btn-success">Export Excel</button>
-                <select name="extension">
-                    <option value="xlsx">.xlsx</option>
-                    <option value="csv">.csv</option>
-                </select>
-            </form>
+           
             <div id="filters" class="row mb-3"></div>
             <table id="bootstrap-data-table-export" class="table table-hover table-responsive">
                 <thead>

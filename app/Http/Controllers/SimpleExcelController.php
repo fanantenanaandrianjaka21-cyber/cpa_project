@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Affectation;
+use App\Models\CaracteristiqueSupplementaire;
+
 use App\Models\Emplacement;
 use App\Models\Materiel;
-
 use App\Models\MouvementStock;
 use App\Models\User;
 use App\Models\Utilisateur;
@@ -25,13 +27,12 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 class SimpleExcelController extends Controller
 {
     // Importer les données
-    public function import(Request $request)
+    public function importEtatmateriel(Request $request)
     {
         // 1. Validation du fichier (uniquement .xlsx autorisé)
         $request->validate([
             'fichier' => 'required|file|mimes:xlsx'
         ]);
-
         // 2. Déplacement du fichier vers le dossier public temporairement
         $fichier = $request->file('fichier');
         $nomFichier = $fichier->hashName();
@@ -87,98 +88,361 @@ class SimpleExcelController extends Controller
             if (empty($data)) {
                 return back()->with('error', 'Aucune donnée trouvée après la ligne 8.');
             }
-// --- LIRE A1 → A5 ET LEUR VALEUR correspondante dans B1 → B5 ---
-$colorToValue = [];
+            // foreach ($data as $poste) {
+            //     // On récupère la localisation depuis le tableau
+            //     $localisation = $poste['localisation'] ?? null;
 
-for ($i = 1; $i <= 5; $i++) {
-    $cellA = 'A' . $i;
-    $color = strtoupper($sheet->getStyle($cellA)->getFill()->getStartColor()->getRGB());
-    $value = $sheet->getCell('B' . $i)->getValue();
+            //     // On saute si la localisation est vide
+            //     if (!$localisation) continue;
+            //     // Récupérer les 3 premières lettres en majuscules, sans espaces ni caractères spéciaux
+            //     $code = Str::upper(Str::substr(Str::slug($localisation, ''), 0, 3));
+            //     // On crée un code unique pour la localisation (ex: LOC-001)
+            //     // $code = 'LOC-' . Str::padLeft(DB::table('emplacements')->count() + 1, 3, '0');
 
-    if ($color !== 'FFFFFF' && $value !== null) {
-        $colorToValue[$color] = $value;
-    }
-}
+            //     // Vérifie si cette localisation existe déjà
+            //     $exists = DB::table('emplacements')
+            //         ->where('emplacement', $localisation)
+            //         ->exists();
 
-foreach ($data as $rowIndex => $ligne) {
+            //     // Si elle n’existe pas, on insère
+            //     if (!$exists) {
+            //         DB::table('emplacements')->insert([
+            //             'code_emplacement' => $code,
+            //             'emplacement' => $localisation,
+            //             'created_at' => now(),
+            //             'updated_at' => now(),
+            //         ]);
+            //     }
+            // }
+            // --- LIRE A1 → A5 ET LEUR VALEUR correspondante dans B1 → B5 ---
+            $colorToValue = [];
 
-    $excelRow = $headerRow + 1 + $rowIndex;
-    $colonnes = array_keys($ligne);
+            for ($i = 1; $i <= 5; $i++) {
+                $cellA = 'A' . $i;
+                $color = strtoupper($sheet->getStyle($cellA)->getFill()->getStartColor()->getRGB());
+                $value = $sheet->getCell('B' . $i)->getValue();
 
-    foreach ($colonnes as $colIndex => $colKey) {
-
-        // lettre de la colonne
-        $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
-        $cell = $colLetter . $excelRow;
-
-        // couleur réelle
-        $color = strtoupper($sheet->getStyle($cell)->getFill()->getStartColor()->getRGB());
-
-        // valeur texte de la cellule Excel
-        $rawText = $sheet->getCell($cell)->getValue();
-
-
-        // 🟨🟨🟨 EXCEPTION : COLONNE Q → COMBINER COULEUR + TEXTE 🟨🟨🟨
-        if ($colLetter === 'Q') {
-
-            $parts = [];
-
-            // 1️⃣ valeur correspondant à la couleur si existe
-            if (isset($colorToValue[$color])) {
-                $parts[] = $colorToValue[$color];
+                if ($color !== 'FFFFFF' && $value !== null) {
+                    $colorToValue[$color] = $value;
+                }
             }
 
-            // 2️⃣ texte réel de la cellule (propre)
-            if (!empty($rawText)) {
-                $cleanText = trim(str_replace(["\n", "\r"], ',', $rawText));
-                $parts[] = $cleanText;
+            foreach ($data as $rowIndex => $ligne) {
+
+                $excelRow = $headerRow + 1 + $rowIndex;
+                $colonnes = array_keys($ligne);
+
+                foreach ($colonnes as $colIndex => $colKey) {
+
+                    // lettre de la colonne
+                    $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
+                    $cell = $colLetter . $excelRow;
+
+                    // couleur réelle
+                    $color = strtoupper($sheet->getStyle($cell)->getFill()->getStartColor()->getRGB());
+
+                    // valeur texte de la cellule Excel
+                    $rawText = $sheet->getCell($cell)->getValue();
+
+
+                    // 🟨🟨🟨 EXCEPTION : COLONNE Q → COMBINER COULEUR + TEXTE 🟨🟨🟨
+                    if ($colLetter === 'Q') {
+
+                        $parts = [];
+
+                        // 1️⃣ valeur correspondant à la couleur si existe
+                        if (isset($colorToValue[$color])) {
+                            $parts[] = $colorToValue[$color];
+                        } else {
+                            $parts[] = 'aucun';
+                        }
+                        // 2️⃣ texte réel de la cellule (propre)
+                        if (!empty($rawText)) {
+                            $cleanText = trim(str_replace(["\n", "\r"], ',', $rawText));
+                            $parts[] = $cleanText;
+                        } else {
+                            $parts[] = 'aucun';
+                        }
+
+
+                        // fusion des 2 valeurs séparées par virgule
+                        if (!empty($parts)) {
+                            // $data[$rowIndex][$colKey] = implode(',', $parts);
+                            $data[$rowIndex][$colKey] = $parts;
+                            // dd($data[$rowIndex][$colKey]);
+                        }
+
+                        continue; // on passe à la colonne suivante
+                    }
+
+
+                    // 🟩 Pour toutes les autres colonnes → règle normale couleur → valeur
+                    if (isset($colorToValue[$color])) {
+                        $data[$rowIndex][$colKey] = $colorToValue[$color];
+                    }
+                }
             }
 
-            // fusion des 2 valeurs séparées par virgule
-            if (!empty($parts)) {
-                $data[$rowIndex][$colKey] = implode(',', $parts);
+            $nouveauTableau = [];
+            // dd($data);
+            foreach ($data as $item) {
+                $Emplacement = $item['localisation'] ?? null; // OU autre champ selon ton besoin
+                if ($Emplacement == "ANTSIRABE") {
+                    $idEmplacement = '2';
+                } elseif ($Emplacement == "BNI") {
+                    $idEmplacement = '3';
+                } elseif ($Emplacement == "MADAFIT") {
+                    $idEmplacement = '4';
+                } elseif ($Emplacement == "CENTRE") {
+                    $idEmplacement = '5';
+                } elseif ($Emplacement == "MATURA") {
+                    $idEmplacement = '6';
+                } else {
+                    $idEmplacement = '1';
+                }
+                $idUtilisateur = $item['id'] ?? null;
+                $date_aquisition = $item['date_pc'] ?? now();
+
+                $caracteristique_recu = $item['caracteristique'] ?? $item['caracteristique_'] ?? null;
+                // dd($caracteristique_recu);
+                $caracteristique = $this->parseCaracteristiques($caracteristique_recu) ?? null;
+                $marque_pc = $caracteristique['marque'];
+                $processeur = $caracteristique['processeur'];
+                $ram = $caracteristique['ram'];
+                $disque_dure = $caracteristique['disque_dure'];
+                $marque_ecran = $item['ecran'] ?? null;
+                // dd($data);
+                // dd($data[4]);
+
+                // Première ligne = PC
+                if (!$item['code_pc']) continue;
+                $nouveauTableau[] = [
+                    'id_emplacement' => $idEmplacement,
+                    'id_utilisateur' => $idUtilisateur,
+                    'code_interne'   => $item['code_pc'],
+                    'type'   => 'Ordinateur portable',
+                    'quantite'   => '1',
+                    'marque'   => $marque_pc,
+                    'status'   => 'utiliser',
+                    'date_aquisition'   => $date_aquisition,
+                ];
+                // Vérifie si cette code interne existe déjà
+                $exists_materiel = DB::table('materiels')
+                    ->where('code_interne', $item['code_pc'])
+                    ->exists();
+                $exists_utilisateur = DB::table('users')
+                    ->where('id', $idUtilisateur)
+                    ->exists();
+                if (!$exists_utilisateur) continue;
+                // Si elle n’existe pas, on insère
+                if (!$exists_materiel) {
+                    // dd('$data');
+                    $objetMateriel = Materiel::create([
+                        'id_emplacement' => $idEmplacement,
+                        'id_utilisateur' => $idUtilisateur,
+                        'code_interne' => $item['code_pc'],
+                        'existe_code_interne' => true,
+                        'type' => 'Ordinateur portable',
+                        'categorie' => 'poste',
+                        'quantite' => 1,
+                        'marque' => $marque_pc,
+                        'status' => 'utiliser',
+                        'date_aquisition' => $date_aquisition,
+
+                    ]);
+                    // dd('tonga');
+
+                    MouvementStock::create(
+                        [
+                            'id_materiel' => $objetMateriel->id,
+                            'quantite' => '1',
+                            'type_mouvement' => 'entree',
+                            'emplacement_destination' => $idEmplacement,
+
+                        ]
+                    );
+                    Affectation::create([
+                        'id_materiel' => $objetMateriel->id,
+                        'id_emplacement' => $idEmplacement,
+                        'id_utilisateur' => $idUtilisateur,
+                        'date_affectation' => $date_aquisition,
+                    ]);
+
+                    if (!empty($processeur)) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Processeur',
+                            'valeur'      => $caracteristique['processeur'],
+                        ]);
+                    }
+                    CaracteristiqueSupplementaire::create([
+                        'id_materiel' => $objetMateriel->id,
+                        'cle'         => 'Verification_physique',
+                        'valeur'      => false,
+                    ]);
+
+
+
+
+
+
+
+
+
+
+
+                    if (!empty($ram)) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Ram',
+                            'valeur'      => $caracteristique['ram'],
+                        ]);
+                    }
+                    if (!empty($disque_dure)) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Disque',
+                            'valeur'      => $caracteristique['disque_dure'],
+                        ]);
+                    }
+                    if (!empty($item['hdmi'])) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Etat HDMI',
+                            'valeur'      => $item['hdmi'],
+                        ]);
+                    }
+                    if (!empty($item['clavier'])) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Etat Clavier',
+                            'valeur'      => $item['clavier'],
+                        ]);
+                    }
+                    if (!empty($item['souris'])) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Etat Souris',
+                            'valeur'      => $item['souris'],
+                        ]);
+                    }
+                    if (!empty($item['micro_audio'])) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Etat Micro',
+                            'valeur'      => $item['micro_audio'],
+                        ]);
+                    }
+                    if (!empty($item['etat_du_pc'])) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Etat',
+                            'valeur'      => $item['etat_du_pc'],
+                        ]);
+                    }
+                    if (!empty($item['mdp_pc'])) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Mdp PC',
+                            'valeur'      => $item['mdp_pc'],
+                        ]);
+                    }
+                    if (!empty($item['mdp_admin'])) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Mdp Admin',
+                            'valeur'      => $item['mdp_admin'],
+                        ]);
+                    }
+                    // dd($item['etat_de_la_batterie'][0] ?? $item['etat_de_la_batterie_'][0]);
+                    if (!empty($item['etat_de_la_batterie'][0] ?? $item['etat_de_la_batterie_'][0])) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Etat Baterie',
+                            'valeur'      => $item['etat_de_la_batterie'][0] ?? $item['etat_de_la_batterie_'][0],
+                        ]);
+                    }
+                    if (!empty($item['etat_de_la_batterie'][1] ?? $item['etat_de_la_batterie_'][1])) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Duree Baterie',
+                            'valeur'      => $item['etat_de_la_batterie'][1] ?? $item['etat_de_la_batterie_'][1],
+                        ]);
+                    }
+                    if (!empty($item['commentaire'])) {
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Commentaire',
+                            'valeur'      => $item['commentaire'],
+                        ]);
+                    }
+                }
+                // Deuxième ligne = Écran
+                $nouveauTableau[] = [
+                    'id_emplacement' => $idEmplacement,
+                    'id_utilisateur' => $idUtilisateur,
+                    'code_interne'   => $item['code_ecran'],
+                    'type'   => 'Écran plat',
+                    'categorie' => 'poste',
+                    'quantite'   => '1',
+                    'marque'   => $marque_ecran,
+                    'status'   => 'utiliser',
+                    'date_aquisition'   => $date_aquisition,
+
+                ];
+                if (!empty($item['code_ecran'])) {
+
+                    // Vérifie si cette code interne existe déjà
+                    $exists_materiel = DB::table('materiels')
+                        ->where('code_interne', $item['code_ecran'])
+                        ->exists();
+
+                    // Si elle n’existe pas, on insère
+                    if (!$exists_materiel) {
+                        // dd('mbola');
+
+                        $objetMateriel = Materiel::create([
+                            'id_emplacement' => $idEmplacement,
+                            'id_utilisateur' => $idUtilisateur,
+                            'code_interne' => $item['code_ecran'],
+                            'existe_code_interne' => true,
+                            'type' => 'Écran plat',
+                            'categorie' => 'Matériel Informatique',
+                            'quantite' => 1,
+                            'marque' => $marque_ecran,
+                            'status' => 'utiliser',
+                            'date_aquisition' => $date_aquisition,
+
+                        ]);
+                        MouvementStock::create(
+                            [
+                                'id_materiel' => $objetMateriel->id,
+                                'quantite' => '1',
+                                'type_mouvement' => 'entree',
+                                'emplacement_destination' => $idEmplacement,
+
+                            ]
+                        );
+                        Affectation::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'id_emplacement' => $idEmplacement,
+                            'id_utilisateur' => $idUtilisateur,
+                            'date_affectation' => $date_aquisition,
+                        ]);
+                        CaracteristiqueSupplementaire::create([
+                            'id_materiel' => $objetMateriel->id,
+                            'cle'         => 'Verification_physique',
+                            'valeur'      => false,
+                        ]);
+                    }
+                }
             }
-
-            continue; // on passe à la colonne suivante
-        }
-
-
-        // 🟩 Pour toutes les autres colonnes → règle normale couleur → valeur
-        if (isset($colorToValue[$color])) {
-            $data[$rowIndex][$colKey] = $colorToValue[$color];
-        }
-    }
-}
-
 
             // dd($data);
 
-            foreach ($data as $poste) {
-                // On récupère la localisation depuis le tableau
-                $localisation = $poste['localisation'] ?? null;
+            // dd($nouveauTableau);
 
-                // On saute si la localisation est vide
-                if (!$localisation) continue;
-                // Récupérer les 3 premières lettres en majuscules, sans espaces ni caractères spéciaux
-                $code = Str::upper(Str::substr(Str::slug($localisation, ''), 0, 3));
-                // On crée un code unique pour la localisation (ex: LOC-001)
-                // $code = 'LOC-' . Str::padLeft(DB::table('emplacements')->count() + 1, 3, '0');
 
-                // Vérifie si cette localisation existe déjà
-                $exists = DB::table('emplacements')
-                    ->where('emplacement', $localisation)
-                    ->exists();
-
-                // Si elle n’existe pas, on insère
-                if (!$exists) {
-                    DB::table('emplacements')->insert([
-                        'code_emplacement' => $code,
-                        'emplacement' => $localisation,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
 
 
 
@@ -189,7 +453,53 @@ foreach ($data as $rowIndex => $ligne) {
             return back()->with('error', 'Erreur lors de l’importation : ' . $e->getMessage());
         }
     }
-     public function importEmp(Request $request)
+    function parseCaracteristiques($carac)
+    {
+        // Séparer par /
+        $parts = array_map('trim', explode('/', $carac));
+
+        // Résultat final
+        $result = [
+            'marque'       => null,
+            'processeur'   => null,
+            'ram'          => null,
+            'disque_dure'  => null,
+        ];
+
+        foreach ($parts as $p) {
+
+            // Détection RAM
+            if (preg_match('/\b(\d+)\s*(Go|G|GB)\b/i', $p)) {
+                $result['ram'] = $p;
+                continue;
+            }
+
+            // Détection Disque Dur
+            if (
+                str_contains(strtolower($p), 'ssd') ||
+                str_contains(strtolower($p), 'hdd') ||
+                preg_match('/\b(\d+)\s*(Go|To|TB)\b/i', $p)
+            ) {
+                $result['disque_dure'] = $p;
+                continue;
+            }
+
+            // Détection Processeur (Intel, AMD, etc.)
+            if (preg_match('/(i[0-9]|ryzen|intel|amd)/i', $p)) {
+                $result['processeur'] = $p;
+                continue;
+            }
+
+            // Si rien détecté → Marque
+            if ($result['marque'] === null) {
+                $result['marque'] = $p;
+            }
+        }
+
+        return $result;
+    }
+
+    public function importEmp(Request $request)
     {
         // 1. Validation du fichier (uniquement .xlsx autorisé)
         $request->validate([
@@ -251,68 +561,68 @@ foreach ($data as $rowIndex => $ligne) {
             if (empty($data)) {
                 return back()->with('error', 'Aucune donnée trouvée après la ligne 8.');
             }
-// --- LIRE A1 → A5 ET LEUR VALEUR correspondante dans B1 → B5 ---
-$colorToValue = [];
+            // --- LIRE A1 → A5 ET LEUR VALEUR correspondante dans B1 → B5 ---
+            $colorToValue = [];
 
-for ($i = 1; $i <= 5; $i++) {
-    $cellA = 'A' . $i;
-    $color = strtoupper($sheet->getStyle($cellA)->getFill()->getStartColor()->getRGB());
-    $value = $sheet->getCell('B' . $i)->getValue();
+            for ($i = 1; $i <= 5; $i++) {
+                $cellA = 'A' . $i;
+                $color = strtoupper($sheet->getStyle($cellA)->getFill()->getStartColor()->getRGB());
+                $value = $sheet->getCell('B' . $i)->getValue();
 
-    if ($color !== 'FFFFFF' && $value !== null) {
-        $colorToValue[$color] = $value;
-    }
-}
-
-foreach ($data as $rowIndex => $ligne) {
-
-    $excelRow = $headerRow + 1 + $rowIndex;
-    $colonnes = array_keys($ligne);
-
-    foreach ($colonnes as $colIndex => $colKey) {
-
-        // lettre de la colonne
-        $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
-        $cell = $colLetter . $excelRow;
-
-        // couleur réelle
-        $color = strtoupper($sheet->getStyle($cell)->getFill()->getStartColor()->getRGB());
-
-        // valeur texte de la cellule Excel
-        $rawText = $sheet->getCell($cell)->getValue();
-
-
-        // 🟨🟨🟨 EXCEPTION : COLONNE Q → COMBINER COULEUR + TEXTE 🟨🟨🟨
-        if ($colLetter === 'Q') {
-
-            $parts = [];
-
-            // 1️⃣ valeur correspondant à la couleur si existe
-            if (isset($colorToValue[$color])) {
-                $parts[] = $colorToValue[$color];
+                if ($color !== 'FFFFFF' && $value !== null) {
+                    $colorToValue[$color] = $value;
+                }
             }
 
-            // 2️⃣ texte réel de la cellule (propre)
-            if (!empty($rawText)) {
-                $cleanText = trim(str_replace(["\n", "\r"], ',', $rawText));
-                $parts[] = $cleanText;
+            foreach ($data as $rowIndex => $ligne) {
+
+                $excelRow = $headerRow + 1 + $rowIndex;
+                $colonnes = array_keys($ligne);
+
+                foreach ($colonnes as $colIndex => $colKey) {
+
+                    // lettre de la colonne
+                    $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
+                    $cell = $colLetter . $excelRow;
+
+                    // couleur réelle
+                    $color = strtoupper($sheet->getStyle($cell)->getFill()->getStartColor()->getRGB());
+
+                    // valeur texte de la cellule Excel
+                    $rawText = $sheet->getCell($cell)->getValue();
+
+
+                    // 🟨🟨🟨 EXCEPTION : COLONNE Q → COMBINER COULEUR + TEXTE 🟨🟨🟨
+                    if ($colLetter === 'Q') {
+
+                        $parts = [];
+
+                        // 1️⃣ valeur correspondant à la couleur si existe
+                        if (isset($colorToValue[$color])) {
+                            $parts[] = $colorToValue[$color];
+                        }
+
+                        // 2️⃣ texte réel de la cellule (propre)
+                        if (!empty($rawText)) {
+                            $cleanText = trim(str_replace(["\n", "\r"], ',', $rawText));
+                            $parts[] = $cleanText;
+                        }
+
+                        // fusion des 2 valeurs séparées par virgule
+                        if (!empty($parts)) {
+                            $data[$rowIndex][$colKey] = implode(',', $parts);
+                        }
+
+                        continue; // on passe à la colonne suivante
+                    }
+
+
+                    // 🟩 Pour toutes les autres colonnes → règle normale couleur → valeur
+                    if (isset($colorToValue[$color])) {
+                        $data[$rowIndex][$colKey] = $colorToValue[$color];
+                    }
+                }
             }
-
-            // fusion des 2 valeurs séparées par virgule
-            if (!empty($parts)) {
-                $data[$rowIndex][$colKey] = implode(',', $parts);
-            }
-
-            continue; // on passe à la colonne suivante
-        }
-
-
-        // 🟩 Pour toutes les autres colonnes → règle normale couleur → valeur
-        if (isset($colorToValue[$color])) {
-            $data[$rowIndex][$colKey] = $colorToValue[$color];
-        }
-    }
-}
 
 
             // dd($data);
@@ -452,16 +762,30 @@ foreach ($data as $rowIndex => $ligne) {
                 // Si elle n’existe pas, on insère
                 if (!$exists) {
                     // dd($user);
-                    DB::table('users')->insert([
-                        // 'id' => $user['id'],
+                    // DB::table('users')->insert([
+                    //     // 'id' => $user['id'],
+                    //     'id' => $matricule,
+                    //     // 'id_emplacement' => $user['id_emplacement'],
+                    //     'id_emplacement' => '1',
+                    //     // 'nom_utilisateur' => $user['nom_utilisateur'],
+                    //     'nom_utilisateur' => $user['utilisateur'],
+                    //     // 'prenom_utilisateur' => $user['prenom_utilisateur'],
+                    //     'prenom_utilisateur' => $prenom,
+                    //     // 'email' => $user['email'],
+                    //     'email' => $user['email'] ?? $matricule . '@gmail.com',
+                    //     'password' => Hash::make($user['password'] ?? '111111'),
+                    //     'equipe' => $user['equipe'] ?? null,
+                    //     'societe' => $user['societe'] ?? null,
+                    //     'role' => $user['role'] ?? 'Utilisateur',
+                    //     'contact_utilisateur' => $user['contact_utilisateur'] ?? null,
+                    //     'created_at' => now(),
+                    //     'updated_at' => now(),
+                    // ]);
+                    User::create([
                         'id' => $matricule,
-                        // 'id_emplacement' => $user['id_emplacement'],
                         'id_emplacement' => '1',
-                        // 'nom_utilisateur' => $user['nom_utilisateur'],
                         'nom_utilisateur' => $user['utilisateur'],
-                        // 'prenom_utilisateur' => $user['prenom_utilisateur'],
                         'prenom_utilisateur' => $prenom,
-                        // 'email' => $user['email'],
                         'email' => $user['email'] ?? $matricule . '@gmail.com',
                         'password' => Hash::make($user['password'] ?? '111111'),
                         'equipe' => $user['equipe'] ?? null,
@@ -518,17 +842,16 @@ foreach ($data as $rowIndex => $ligne) {
         ]);
         $date = now()->format('Y-m-d H:i:s');
         $name = 'Inventaire du ' . $date;
-
         $utilisateurs = User::with([
             'emplacement',
             'materiels.caracteristiqueSupplementaire', // <-- inclure l’état
-        ])->get(); //Écran plat
+        ])->get();
         // dd($utilisateurs);
         $resultats = [];
-
-        $resultats = [];
         /** @var \App\Models\User $u */
+        // dd($utilisateurs);
         foreach ($utilisateurs as $u) {
+            // dd($utilisateurs[1]->materiels);
             // Matériels par type (re-indexés pour accès par indice)
             $pcs    = $u->materiels->where('type', 'Ordinateur portable')->values();
             $ecrans = $u->materiels->where('type', 'Écran plat')->values();
@@ -543,7 +866,6 @@ foreach ($data as $rowIndex => $ligne) {
                 $ecrans->count(),
                 //  $hdmis->count()
             );
-
             // Si aucun matériel du tout — on ajoute une ligne vide pour l'utilisateur
             if ($max === 0) {
                 $resultats[] = [
@@ -575,6 +897,7 @@ foreach ($data as $rowIndex => $ligne) {
                 ];
                 continue;
             }
+            // dd($ecrans);
 
             // Sinon, parcourir en parallèle et construire les lignes
             for ($i = 0; $i < $max; $i++) {
@@ -584,7 +907,9 @@ foreach ($data as $rowIndex => $ligne) {
                 //                 $disque=$pcs[$i]?->caracteristiques?->firstWhere('cle', 'Disque')?->valeur ?? '';
                 // $caracteristique=$marque_pc.'/'.$processeur.'/'.$ram.'/'.$disque;
 
+
                 $marque_pc  = $pcs[$i]->marque ?? null;
+                // dd($pcs[0]);
                 $processeur = $pcs[$i]?->caracteristiques?->firstWhere('cle', 'Processeur')?->valeur ?? null;
                 $ram        = $pcs[$i]?->caracteristiques?->firstWhere('cle', 'Ram')?->valeur ?? null;
                 $disque     = $pcs[$i]?->caracteristiques?->firstWhere('cle', 'Disque')?->valeur ?? null;
@@ -595,7 +920,26 @@ foreach ($data as $rowIndex => $ligne) {
                 $caracteristique = collect([$marque_pc, $processeur, $ram, $disque])
                     ->filter(fn($v) => filled($v)) // garde seulement les valeurs non nulles et non vides
                     ->implode('/');
+                $etat_batterie = [];
+                // 1️⃣ valeur correspondant à la couleur si existe
+                if (isset($pcs[$i]?->caracteristiques?->firstWhere('cle', 'Etat Baterie')?->valeur)) {
+                    $etat_batterie[] = $pcs[$i]?->caracteristiques?->firstWhere('cle', 'Etat Baterie')?->valeur;
+                } else {
+                    $etat_batterie[] = 'aucun';
+                }
+                // 2️⃣ texte réel de la cellule (propre)
+                if (!empty($pcs[$i]?->caracteristiques?->firstWhere('cle', 'Duree Baterie')?->valeur)) {
 
+                    $etat_batterie[] = $pcs[$i]?->caracteristiques?->firstWhere('cle', 'Duree Baterie')?->valeur;
+                } else {
+                    $etat_batterie[] = 'aucun';
+                }
+                // fusion des 2 valeurs séparées par virgule
+                if (!empty($etat_batterie)) {
+                    $etat_et_duree_batterie = implode(',', $etat_batterie);
+                    // dd($data[$rowIndex][$colKey]);
+                }
+                // dd($etat_batterie);
                 $resultats[] = [
                     // 'utilisateur' => $u->nom_utilisateur,
                     // 'code_pc'     => $pcs[$i]->code_interne ?? null,
@@ -622,7 +966,8 @@ foreach ($data as $rowIndex => $ligne) {
                     'Localisation' => $u->emplacement->emplacement ?? null,
                     'Mdp PC' => $pcs[$i]?->caracteristiques?->firstWhere('cle', 'Mdp PC')?->valeur ?? null,
                     'Mdp Admin' => $pcs[$i]?->caracteristiques?->firstWhere('cle', 'Mdp Admin')?->valeur ?? null,
-                    'Etat de la battérie' => $pcs[$i]?->caracteristiques?->firstWhere('cle', 'Etat Baterie')?->valeur ?? null,
+                    // 'Etat de la battérie' => $pcs[$i]?->caracteristiques?->firstWhere('cle', 'Etat Baterie')?->valeur ?? null,
+                    'Etat de la battérie' => $etat_et_duree_batterie ?? null,
 
                     'Commentaire' => null,
                 ];
@@ -873,11 +1218,11 @@ foreach ($data as $rowIndex => $ligne) {
         $sheet->mergeCells('A7:R7');
 
         // ✅ Écrire le texte
-        $sheet->setCellValue('A7', 'ETAT MATERIEL INFORMATIQUE');
+        $sheet->setCellValue('A7', 'ETAT DU MATERIEL INFORMATIQUE');
 
         // ✅ Appliquer le style (fond gris, texte centré, gras, majuscule)
         $style = $sheet->getStyle('A7:R7');
-        $style->getFont()->setBold(true)->setSize(12)->setName('Calibri');
+        $style->getFont()->setBold(true)->setSize(13)->setName('Calibri');
         $style->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_CENTER)
             ->setVertical(Alignment::VERTICAL_CENTER);
@@ -929,11 +1274,34 @@ foreach ($data as $rowIndex => $ligne) {
         //         //     ->getStartColor()->setARGB('FF00FF00');
         //     }
         // }
+        $ligne = 8;
 
+        $sheet->getStyle('A' . $ligne . ':R' . $ligne)->applyFromArray([
+            'font' => [
+                'bold' => true,
+                // 'name' => 'Arial Black', 
+                'name' => 'Calibri Black', // police très épaisse
+                // 'size' => 11,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => '000000'], // Noir
+                ],
+            ],
+        ]);
 
         // 🔹 Boucle sur toutes les lignes du tableau (à partir de la 8e ligne)
         for ($row = 9; $row <= $highestRow; $row++) {
-
+            // Exemple : tableau de A à R
+            $sheet->getStyle('A' . $row . ':R' . $row)->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'color' => ['argb' => '000000'], // Noir
+                    ],
+                ],
+            ]);
             // Lis les valeurs des colonnes concernées
             // ON TESTE INDIQUE LE COLONNE A CHERCHER
             $HDMI = trim($sheet->getCell('I' . $row)->getValue());
@@ -946,115 +1314,159 @@ foreach ($data as $rowIndex => $ligne) {
                 // ON TESTE INDIQUE LE COLONNE A COLORER
                 $sheet->getStyle('I' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('0070C0'); // Vert
+                $sheet->setCellValue('I' . $row, '');
             } elseif ($HDMI === 'BON') {
                 // ON TESTE INDIQUE LE COLONNE A COLORER
                 $sheet->getStyle('I' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('00B050'); // Vert
+                $sheet->setCellValue('I' . $row, '');
             } elseif ($HDMI === 'MOYEN') {
                 $sheet->getStyle('I' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FFFF00');
+                $sheet->setCellValue('I' . $row, '');
             } elseif ($HDMI === 'MAUVAIS') {
                 $sheet->getStyle('I' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FF0000');
+                $sheet->setCellValue('I' . $row, '');
             } elseif ($HDMI === 'APPRENTI') {
                 $sheet->getStyle('I' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('5B87C5');
+                $sheet->setCellValue('I' . $row, '');
             }
 
             if ($etatPC === 'TRES BON') {
                 // ON TESTE INDIQUE LE COLONNE A COLORER
                 $sheet->getStyle('M' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('0070C0'); // Vert
+                $sheet->setCellValue('M' . $row, '');
             } elseif ($etatPC === 'BON') {
                 // ON TESTE INDIQUE LE COLONNE A COLORER
                 $sheet->getStyle('M' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('00B050'); // Vert
+                $sheet->setCellValue('M' . $row, '');
             } elseif ($etatPC === 'MOYEN') {
                 $sheet->getStyle('M' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FFFF00');
+                $sheet->setCellValue('M' . $row, '');
             } elseif ($etatPC === 'MAUVAIS') {
                 $sheet->getStyle('M' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FF0000');
+                $sheet->setCellValue('M' . $row, '');
             } elseif ($etatPC === 'APPRENTI') {
                 $sheet->getStyle('M' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('5B87C5');
+                $sheet->setCellValue('M' . $row, '');
             }
 
             if ($clavier === 'TRES BON') {
                 // ON TESTE INDIQUE LE COLONNE A COLORER
                 $sheet->getStyle('J' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('0070C0'); // Vert
+                $sheet->setCellValue('J' . $row, '');
             } elseif ($clavier === 'BON') {
                 // ON TESTE INDIQUE LE COLONNE A COLORER
                 $sheet->getStyle('J' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('00B050'); // Vert
+                $sheet->setCellValue('J' . $row, '');
             } elseif ($clavier === 'MOYEN') {
                 $sheet->getStyle('J' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FFFF00');
+                $sheet->setCellValue('J' . $row, '');
             } elseif ($clavier === 'MAUVAIS') {
                 $sheet->getStyle('J' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FF0000');
+                $sheet->setCellValue('J' . $row, '');
             } elseif ($clavier === 'APPRENTI') {
                 $sheet->getStyle('J' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('5B87C5');
+                $sheet->setCellValue('J' . $row, '');
             }
 
             if ($souris === 'TRES BON') {
                 // ON TESTE INDIQUE LE COLONNE A COLORER
                 $sheet->getStyle('K' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('0070C0'); // Vert
+                $sheet->setCellValue('K' . $row, '');
             } elseif ($souris === 'BON') {
                 // ON TESTE INDIQUE LE COLONNE A COLORER
                 $sheet->getStyle('K' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('00B050'); // Vert
+                $sheet->setCellValue('K' . $row, '');
             } elseif ($souris === 'MOYEN') {
                 $sheet->getStyle('K' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FFFF00');
+                $sheet->setCellValue('K' . $row, '');
             } elseif ($souris === 'MAUVAIS') {
                 $sheet->getStyle('K' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FF0000');
+                $sheet->setCellValue('K' . $row, '');
             } elseif ($souris === 'APPRENTI') {
                 $sheet->getStyle('K' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('5B87C5');
+                $sheet->setCellValue('K' . $row, '');
             }
 
             if ($micro_audio === 'TRES BON') {
                 // ON TESTE INDIQUE LE COLONNE A COLORER
                 $sheet->getStyle('L' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('0070C0'); // Vert
+                $sheet->setCellValue('L' . $row, '');
             } elseif ($micro_audio === 'BON') {
                 // ON TESTE INDIQUE LE COLONNE A COLORER
                 $sheet->getStyle('L' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('00B050'); // Vert
+                $sheet->setCellValue('L' . $row, '');
             } elseif ($micro_audio === 'MOYEN') {
                 $sheet->getStyle('L' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FFFF00');
+                $sheet->setCellValue('L' . $row, '');
             } elseif ($micro_audio === 'MAUVAIS') {
                 $sheet->getStyle('L' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FF0000');
+                $sheet->setCellValue('L' . $row, '');
             } elseif ($micro_audio === 'APPRENTI') {
                 $sheet->getStyle('L' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('5B87C5');
+                $sheet->setCellValue('L' . $row, '');
+            }
+            // On découpe par virgule
+            if (!empty($etat_batterie)) {
+                list($etat_bat, $duree_bat) = explode(',', $etat_batterie);
+                // dd($duree_bat);
+
+                if ($etat_bat === 'TRES BON') {
+                    // ON TESTE INDIQUE LE COLONNE A COLORER
+                    $sheet->getStyle('Q' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('0070C0'); // Vert
+                    $sheet->setCellValue('Q' . $row, $duree_bat);
+                    // $sheet->getStyle('Q' . $row)->getFont()->getColor()->setARGB('FFFFFF');
+
+                } elseif ($etat_bat === 'BON') {
+                    // ON TESTE INDIQUE LE COLONNE A COLORER
+                    $sheet->getStyle('Q' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('00B050'); // Vert
+                    $sheet->setCellValue('Q' . $row, $duree_bat);
+                } elseif ($etat_bat === 'MOYEN') {
+                    $sheet->getStyle('Q' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('FFFF00');
+                    $sheet->setCellValue('Q' . $row, $duree_bat);
+                } elseif ($etat_bat === 'MAUVAIS') {
+                    $sheet->getStyle('Q' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('FF0000');
+                    $sheet->setCellValue('Q' . $row, $duree_bat);
+                } elseif ($etat_bat === 'APPRENTI') {
+                    $sheet->getStyle('Q' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
+                        ->getStartColor()->setARGB('5B87C5');
+                    $sheet->setCellValue('Q' . $row, $duree_bat);
+                } elseif ($etat_bat === 'aucun') {
+                    if ($duree_bat != 'aucun') {
+                        $sheet->setCellValue('Q' . $row, $duree_bat);
+                    } else {
+                        $sheet->setCellValue('Q' . $row, '');
+                    }
+                }
             }
 
-            if ($etat_batterie === 'TRES BON') {
-                // ON TESTE INDIQUE LE COLONNE A COLORER
-                $sheet->getStyle('Q' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('0070C0'); // Vert
-            } elseif ($etat_batterie === 'BON') {
-                // ON TESTE INDIQUE LE COLONNE A COLORER
-                $sheet->getStyle('Q' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('00B050'); // Vert
-            } elseif ($etat_batterie === 'MOYEN') {
-                $sheet->getStyle('Q' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFFF00');
-            } elseif ($etat_batterie === 'MAUVAIS') {
-                $sheet->getStyle('Q' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FF0000');
-            } elseif ($etat_batterie === 'APPRENTI') {
-                $sheet->getStyle('Q' . $row)->getFill()->setFillType(Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('5B87C5');
-            }
             // Colonne O = Mot de passe
             // $sheet->setCellValue('O'.$row, str_repeat('*', 8)); // remplace par 8 étoiles
         }

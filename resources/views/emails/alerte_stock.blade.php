@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <title>Alerte de stock</title>
@@ -9,32 +10,64 @@
             border-collapse: collapse;
             font-family: Arial, sans-serif;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 8px;
         }
+
         th {
             background-color: #f4f4f4;
             text-align: center;
         }
+
         .badge {
             padding: 4px 8px;
             border-radius: 6px;
             color: white;
         }
-        .bg-success { background-color: #28a745; }
-        .bg-warning { background-color: #ffc107; color: black; }
-        .bg-danger  { background-color: #dc3545; }
-        .bg-secondary { background-color: #6c757d; }
+
+        .bg-success {
+            background-color: #28a745;
+        }
+
+        .bg-warning {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .bg-danger {
+            background-color: #dc3545;
+        }
+
+        .bg-secondary {
+            background-color: #6c757d;
+        }
     </style>
 </head>
+
 <body>
 
-    
-    <h2>📊 Rapport d’alerte de stock du <?php echo now();?></h2>
+
+    <h2>📊 Rapport d’alerte de stock du <?php echo now(); ?></h2>
     Bonjour,
     <p>Voici la situation actuelle des matériels par type et par centre :</p>
+    <h3>
+        Legende :
+    </h3>
+    Seuil Minimal :
+    <span class="badge bg-danger p-2 mr-2" style="width:2%">
 
+    </span>
+    Seuil Critique :
+    <span class="badge bg-warning p-2 mr-2" style="width:2%">
+
+    </span>
+    Stock Optimal :
+    <span class="badge bg-success p-2 mr-2" style="width:2%">
+
+    </span>
     <table>
         <thead>
             <tr>
@@ -69,7 +102,9 @@
                                 @if ($alerteCorrespondante)
                                     @if ($materielemplacement['quantite'] > 0 && $materielemplacement['quantite'] <= $alerteCorrespondante->niveau_seuil)
                                         <span class="badge bg-danger">{{ $materielemplacement['quantite'] }}</span>
-                                    @elseif ($materielemplacement['quantite'] > $alerteCorrespondante->niveau_seuil && $materielemplacement['quantite'] <= $alerteCorrespondante->niveau_critique)
+                                    @elseif (
+                                        $materielemplacement['quantite'] > $alerteCorrespondante->niveau_seuil &&
+                                            $materielemplacement['quantite'] <= $alerteCorrespondante->niveau_critique)
                                         <span class="badge bg-warning">{{ $materielemplacement['quantite'] }}</span>
                                     @else
                                         <span class="badge bg-success">{{ $materielemplacement['quantite'] }}</span>
@@ -85,60 +120,61 @@
         </tbody>
     </table>
     <h2>📊 Rapport du Mouvement de stock</h2>
-                        <table id="bootstrap-data-table-export"
-                        class="table table-striped table-striped-bg-default table-hover table-responsive">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Materiel</th>
-                                <th>Quantite</th>
-                                <th>Mouvement</th>
-                                <th>Source</th>
-                                <th>Destination</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($detail_mouvements as $mouvement)
-                                <tr>
-                                    <td>{{ $mouvement['id'] }}</td>
-                                    <td class="text-center ">
-                                        {{-- <img class="card-img-top"
+    <table id="bootstrap-data-table-export"
+        class="table table-striped table-striped-bg-default table-hover table-responsive">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Materiel</th>
+                <th>Quantite</th>
+                <th>Mouvement</th>
+                <th>Source</th>
+                <th>Destination</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($detail_mouvements as $mouvement)
+                <tr>
+                    <td>{{ $mouvement['id'] }}</td>
+                    <td class="text-center ">
+                        {{-- <img class="card-img-top"
                                             style="background-size: cover;min-height: 50px; max-height: 50px;max-width:100px"src="{{ asset('storage/' . $mouvement['image']) }}"><br> --}}
-                                        {{ $mouvement['type'] }}
-                                    </td>
-                                    <td class="text-center">
-                                        {{ $mouvement['quantite'] }}
-                                    </td>
-                                    @if ($mouvement['type_mouvement'] == 'entree')
-                                        <td class="text-center w3-text-green">{{ $mouvement['type_mouvement'] }}</td>
-                                    @else
-                                        <td class="text-center" style="color: rgba(255, 0, 0, 0.7)">
-                                            {{ $mouvement['type_mouvement'] }}</td>
-                                    @endif
+                        {{ $mouvement['type'] }}
+                    </td>
+                    <td class="text-center">
+                        {{ $mouvement['quantite'] }}
+                    </td>
+                    @if ($mouvement['type_mouvement'] == 'entree')
+                        <td class="text-center w3-text-green">{{ $mouvement['type_mouvement'] }}</td>
+                    @else
+                        <td class="text-center" style="color: rgba(255, 0, 0, 0.7)">
+                            {{ $mouvement['type_mouvement'] }}</td>
+                    @endif
 
-                                    <td>
-                                        @if (empty($mouvement['source']))
-                                            Achat
-                                        @else
-                                            {{ $mouvement['source'] }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($mouvement['type_mouvement'] == 'sortie')
-                                            {{ $mouvement['email'] }}
-                                        @else
-                                            {{ $mouvement['destination'] }}
-                                            {{-- soloina ny emplacement dans emplacements --}}
-                                        @endif
-                                    </td>
-                                    <td>{{ $mouvement['date_mouvement'] }}</td>
+                    <td>
+                        @if (empty($mouvement['source']))
+                            Achat
+                        @else
+                            {{ $mouvement['source'] }}
+                        @endif
+                    </td>
+                    <td>
+                        @if ($mouvement['type_mouvement'] == 'sortie')
+                            {{ $mouvement['email'] }}
+                        @else
+                            {{ $mouvement['destination'] }}
+                            {{-- soloina ny emplacement dans emplacements --}}
+                        @endif
+                    </td>
+                    <td>{{ $mouvement['date_mouvement'] }}</td>
 
-                                </tr>
-                            @endforeach
+                </tr>
+            @endforeach
 
-                        </tbody>
-                    </table>
+        </tbody>
+    </table>
     <p style="margin-top:20px;">Merci,<br><strong>{{ config('app.name') }}</strong></p>
 </body>
+
 </html>

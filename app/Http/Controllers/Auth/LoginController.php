@@ -63,18 +63,33 @@ class LoginController extends Controller
     /**
      * On détecte si l'utilisateur utilise un email ou un ID
      */
-    protected function credentials(Request $request)
-    {
-        $login = $request->input('login');
+protected function credentials(Request $request)
+{
+    $login = $request->input('login');
 
-        // Vérifier si c'est un email ou un ID
-        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'id';
-
+    // 1. Vérifier si email
+    if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
         return [
-            $field => $login,
+            'email' => $login,
             'password' => $request->input('password'),
         ];
     }
+
+    // 2. Vérifier si c'est un ID numérique
+    if (ctype_digit($login)) {
+        return [
+            'id' => (int) $login, // Sécurisé
+            'password' => $request->input('password'),
+        ];
+    }
+
+    // 3. Sinon → pas email + pas ID → login impossible
+    return [
+        'id' => 0, // Aucun utilisateur n'a id=0 → safe & évite crash PostgreSQL
+        'password' => $request->input('password'),
+    ];
+}
+
 
     /**
      * Validation du formulaire

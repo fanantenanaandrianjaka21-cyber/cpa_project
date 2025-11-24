@@ -18,27 +18,32 @@
                         <?php
                         if (isset($notification)) {
                             echo "<div class='alert alert-success'>
-                                                                                                                                            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                                                                                                                                              <i class='fa fa-close'></i>
-                                                                                                                                            </button>
-                                                                                                                                            <span>
-                                                                                                                                              <i class='fa fa-bell'></i><b>  Success - </b>" .
+                                                                                                                                                                                            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                                                                                                                                                                              <i class='fa fa-close'></i>
+                                                                                                                                                                                            </button>
+                                                                                                                                                                                            <span>
+                                                                                                                                                                                              <i class='fa fa-bell'></i><b>  Success - </b>" .
                                 $notification .
                                 "</span>
-                                                                                                                                          </div>";
+                                                                                                                                                                                          </div>";
                         }
                         ?>
-                        <p>Sélectionnez un fichier Excel (.xlsx) pour importer une liste des "utilisateurs".<br>
-
+                        <p class="text-black">Sélectionnez le fichier Excel (Mouvement materiel.xlsx) pour importer une liste des
+                            "utilisateurs".<br>
                         <form method="POST" action="{{ route('utilisateurexcel.import') }}" enctype="multipart/form-data">
 
                             @csrf
+                            <div class="d-flex align-items-center gap-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="file" name="fichier" class="form-control">
+                                </div>
 
-                            <input type="file" name="fichier">
-
-
-                            <button type="submit" class="btn btn-success">Importer</button>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="submit" class="btn btn-success">Importer</button>
+                                </div>
+                            </div>
                         </form>
+
                         <div id="filters" class="row mb-3"></div>
                         <table id="bootstrap-data-table-export"
                             class="display nowrap table table-hover table-responsive table-bordered">
