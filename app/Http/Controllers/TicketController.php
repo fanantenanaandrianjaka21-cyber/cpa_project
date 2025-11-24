@@ -171,6 +171,7 @@ class TicketController extends Controller
             Mail::to($demandeur->email)->send(new mailTicket($ticket, $demandeur));
         }
 
+        //A changer avec les emails des Admin IT.
         Mail::to('onjamalalasahala@gmail.com')->send(new nouveauTicket($ticket, $demandeur));
 
         // $tickets = Ticket::all();
