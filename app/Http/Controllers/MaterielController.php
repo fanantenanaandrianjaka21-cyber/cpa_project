@@ -152,7 +152,7 @@ class MaterielController extends Controller
         $emplacement1 = $emplacement;
         // $alert = Alert::where('id', 1)->get()->first();
         // $alert=Alert::All();
-        $alert=Alertes_types::All();
+        $alert = Alertes_types::All();
         // dd($alert);
         $active_tab = 'stock';
         return view('materiel.gestion', compact('materielpartype', 'emplacement', 'colonnes', 'i', 'active_tab', 'alert', 'emplacement1'));
@@ -281,21 +281,20 @@ class MaterielController extends Controller
             ]);
             // dd($affectation);
             // MouvementStockController::CreatMouvementStock($mouvementstock);
-            $cles = $request->input('cles');
-            // dd($cles);
-            $valeurs = $request->input('valeurs');
+            $cles = $request->input('cles', []);
+            $valeurs = $request->input('valeurs', []);
 
-            if (!empty($valeurs) and $valeurs != 'null') {
+            foreach ($cles as $index => $cle) {
 
-                foreach ($valeurs as $index => $valeur) {
-                    if (!empty($valeur)) {
-                        CaracteristiqueSupplementaire::create([
-                            'id_materiel' => $objetMateriel->id,
-                            'cle' => $cles[$index],
-                            'valeur' => $valeurs[$index],
-                        ]);
-                    }
-                }
+                // récupérer la valeur correspondante ou chaîne vide
+                $valeur = $valeurs[$index] ?? '';
+                $valeur = trim($valeur); // enlever espaces
+
+                CaracteristiqueSupplementaire::create([
+                    'id_materiel' => $objetMateriel->id,
+                    'cle' => $cle,
+                    'valeur' => $valeur === null ? '' : $valeur,
+                ]);
             }
         }
         $notification['success'] = "Materiel ajouté avec succès";
@@ -444,38 +443,37 @@ class MaterielController extends Controller
         // Si ce n'est pas une requête AJAX
         abort(403, 'Requête non autorisée.');
     }
-public function distribuer(Request $request)
-{
-    $request->validate([
-        'ids' => 'required|array',
-        'id_emplacement' => 'required|integer',
-    ]);
+    public function distribuer(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'id_emplacement' => 'required|integer',
+        ]);
 
-    try {
-        // ✅ Filtrer uniquement les IDs numériques (on enlève 'tous' ou autres valeurs non numériques)
-        $idsValides = array_filter($request->ids, fn($id) => is_numeric($id));
+        try {
+            // ✅ Filtrer uniquement les IDs numériques (on enlève 'tous' ou autres valeurs non numériques)
+            $idsValides = array_filter($request->ids, fn($id) => is_numeric($id));
 
-        if (!empty($idsValides)) {
-            // ✅ Mettre à jour tous les matériels sélectionnés
-            Materiel::whereIn('id', $idsValides)->update([
-                'id_emplacement' => $request->id_emplacement,
-            ]);
+            if (!empty($idsValides)) {
+                // ✅ Mettre à jour tous les matériels sélectionnés
+                Materiel::whereIn('id', $idsValides)->update([
+                    'id_emplacement' => $request->id_emplacement,
+                ]);
 
-            // ✅ Enregistrer un mouvement global pour la distribution
-            MouvementStock::create([
-                // Ici, tu peux enregistrer le premier ID ou un champ symbolique
-                'id_materiel' => $idsValides[0], // facultatif, selon ton modèle
-                'quantite' => count($idsValides),
-                'type_mouvement' => 'entree',
-                'source' => 'GLOBALE',
-                'emplacement_destination' => $request->id_emplacement,
-            ]);
+                // ✅ Enregistrer un mouvement global pour la distribution
+                MouvementStock::create([
+                    // Ici, tu peux enregistrer le premier ID ou un champ symbolique
+                    'id_materiel' => $idsValides[0], // facultatif, selon ton modèle
+                    'quantite' => count($idsValides),
+                    'type_mouvement' => 'entree',
+                    'source' => 'GLOBALE',
+                    'emplacement_destination' => $request->id_emplacement,
+                ]);
+            }
+
+            return response()->json(['message' => 'Mise à jour réussie.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erreur : ' . $e->getMessage()], 500);
         }
-
-        return response()->json(['message' => 'Mise à jour réussie.'], 200);
-    } catch (\Exception $e) {
-        return response()->json(['message' => 'Erreur : ' . $e->getMessage()], 500);
     }
-}
-
 }
