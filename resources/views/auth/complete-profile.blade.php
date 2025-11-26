@@ -68,7 +68,7 @@
                         <label>Code PIN (6 chiffres) :</label>
 
                         {{-- Champ caché pour Laravel --}}
-                        <input type="hidden" name="pin" id="pin-hidden" value="{{ old('pin') }}">
+                        <input type="hidden" name="pin" id="pin-hidden" value="{{ old('pin') }}" required>
 
                         <div class="d-flex gap-2 justify-content-between mt-2">
 
