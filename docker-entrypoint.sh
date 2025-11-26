@@ -46,7 +46,7 @@ fi
 # 3. Maintenance Laravel
 # ------------------------------
 echo "🧹 Nettoyage du cache Laravel..."
-php artisan migrate:reset --force || true
+# php artisan migrate:reset --force || true
 php artisan config:clear || true
 php artisan cache:clear || true
 php artisan view:clear || true
@@ -65,6 +65,8 @@ echo "⚡ Mise en cache de la configuration et des routes..."
 php artisan config:cache || true
 php artisan route:cache || true
 php artisan view:cache || true
+
+php artisan storage:link
 
 # ------------------------------
 # 5. Test rapide Laravel (optionnel)
