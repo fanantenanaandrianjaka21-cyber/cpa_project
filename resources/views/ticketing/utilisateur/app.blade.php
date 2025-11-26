@@ -99,243 +99,245 @@
                 data-bs-target="#modal-ticket"><i class="bi bi-plus-circle"></i> Demander un nouveau ticket</a>
             <div class="row mt-2">
                 <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4>Votre dernier ticket</h4>
-                                </div>
-                                <div class="card-body">
-                                    @if (isset($dernierTickets))
-                                        <table class="table table-bordered table-striped">
-                                            <tbody>
-                                                <tr>
-                                                    <th>
-                                                        Id :
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Votre dernier ticket</h4>
+                        </div>
+                        <div class="card-body">
+                            @if (isset($dernierTickets))
+                                <table class="table table-bordered table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <th>
+                                                Id :
 
-                                                    </th>
-                                                    <td>
-                                                        {{ $dernierTickets->id }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>
-                                                        Type du ticket :
-                                                    </th>
-                                                    <td>
-                                                        {{ $dernierTickets->type }}
-                                                    </td>
-                                                </tr>
+                                            </th>
+                                            <td>
+                                                {{ $dernierTickets->id }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Type du ticket :
+                                            </th>
+                                            <td>
+                                                {{ $dernierTickets->type }}
+                                            </td>
+                                        </tr>
 
-                                                <tr>
-                                                    <th>
-                                                        Demandeur :
+                                        <tr>
+                                            <th>
+                                                Demandeur :
 
-                                                    </th>
-                                                    <td>
-                                                        {{ $dernierTickets->utilisateur->nom_utilisateur }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>
-                                                        Objet :
+                                            </th>
+                                            <td>
+                                                {{ $dernierTickets->utilisateur->nom_utilisateur }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Objet :
 
-                                                    </th>
-                                                    <td>
-                                                        {{ $dernierTickets->objet }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>
-                                                        Priorite:
+                                            </th>
+                                            <td>
+                                                {{ $dernierTickets->objet }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Priorite:
 
-                                                    </th>
-                                                    <td style="color: {{ $dernierTickets->priorite->color() }}">
-                                                        <span class="badge"
-                                                            style="background-color: {{ $dernierTickets->priorite->color() }}">
+                                            </th>
+                                            <td style="color: {{ $dernierTickets->priorite->color() }}">
+                                                <span class="badge"
+                                                    style="background-color: {{ $dernierTickets->priorite->color() }}">
 
-                                                        </span>
-                                                        {{ $dernierTickets->priorite->label() }}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>
-                                                        Status:
+                                                </span>
+                                                {{ $dernierTickets->priorite->label() }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Status:
 
-                                                    </th>
-                                                    <td>
-                                                        <span class="badge"
-                                                            style="background-color: {{ $dernierTickets->statut->color() }}">
-                                                            {{ $dernierTickets->statut->label() }}
-                                                        </span>
+                                            </th>
+                                            <td>
+                                                <span class="badge"
+                                                    style="background-color: {{ $dernierTickets->statut->color() }}">
+                                                    {{ $dernierTickets->statut->label() }}
+                                                </span>
 
-                                                    </td>
-                                                </tr>
-                                                @if ($dernierTickets->fichier)
-                                                    <tr>
-                                                        <th>
-                                                            Piece Jointe :
-                                                        </th>
-                                                        <td>
-                                                            @foreach (json_decode($dernierTickets->fichier, true) as $img)
-                                                                <img src="{{ asset('storage/' . $img) }}" width="100">
-                                                            @endforeach
-                                                        </td>
-                                                    </tr>
-                                                @endif
+                                            </td>
+                                        </tr>
+                                        @if ($dernierTickets->fichier)
+                                            <tr>
+                                                <th>
+                                                    Piece Jointe :
+                                                </th>
+                                                <td>
+                                                    @foreach (json_decode($dernierTickets->fichier, true) as $img)
+                                                        <img src="{{ asset('storage/' . $img) }}" width="100">
+                                                    @endforeach
+                                                </td>
+                                            </tr>
+                                        @endif
 
-                                                <tr>
-                                                    <th>
-                                                        Description :
-                                                    </th>
-                                                    <td>
-                                                        {!! $dernierTickets->description !!}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>
-                                                        Date du demande :
-                                                    </th>
-                                                    <td>
+                                        <tr>
+                                            <th>
+                                                Description :
+                                            </th>
+                                            <td>
+                                                {!! $dernierTickets->description !!}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Date du demande :
+                                            </th>
+                                            <td>
 
-                                                        {{ $date }}
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    @endif
-                                </div>
+                                                {{ $date }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            @endif
+                        </div>
 
-                                <!-- modal Ticket -->
-                                <div class="modal fade" id="modal-ticket">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content info">
-                                            <div class="modal-header card-body">
-                                                <h4 class="modal-title">Demander un nouveau ticket</h4>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
+                        <!-- modal Ticket -->
+                        <div class="modal fade" id="modal-ticket">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content info">
+                                    <div class="modal-header card-body">
+                                        <h4 class="modal-title">Demander un nouveau ticket</h4>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+
+                                    <div class="m-4">
+                                        <form method="POST" action="{{ route('ajoutTicketUtilisateur') }}"
+                                            {{-- id="register-form" --}} enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="form-group row">
+                                                <label
+                                                    class="col-md-3 col-form-label text-md-start">{{ __('Type :') }}</label>
+                                                <div class="col-md-9">
+                                                    <select class="form-select" name="type" required>
+                                                        <option value="" disabled selected>Choisir type du
+                                                            demande
+                                                        </option>
+
+                                                        <option value="Incident">Panne Materiel ou Logiciel</option>
+                                                        <option value="Demande">Demande Materiel</option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label for="marque"
+                                                    class="col-md-3 col-form-label text-md-start">{{ __('Objet :') }}</label>
+                                                <div class="col-md-9">
+                                                    <input id="objet" type="text"
+                                                        class="form-control @error('objet') is-invalid @enderror"
+                                                        name="objet" value="{{ old('objet') }}"
+                                                        placeholder="ex : Mon PC ne demmare pas, Site innaccessible,..."
+                                                        autocomplete="objet" autofocus>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label
+                                                    class="col-md-3 col-form-label text-md-start">{{ __('Priorite :') }}</label>
+                                                <div class="col-md-9">
+                                                    <select class="form-select" name="priorite" required>
+                                                        <option value="" disabled selected>Choisir priorité
+                                                        </option>
+                                                        @foreach ($priorite as $priorite)
+                                                            <option value="{{ $priorite->code }}">
+                                                                {{ $priorite->label }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
                                             </div>
 
-                                            <div class="m-4">
-                                                <form method="POST" action="{{ route('ajoutTicketUtilisateur') }}"
-                                                    {{-- id="register-form" --}} enctype="multipart/form-data">
-                                                    @csrf
-                                                    <div class="form-group row">
-                                                        <label
-                                                            class="col-md-3 col-form-label text-md-start">{{ __('Type :') }}</label>
-                                                        <div class="col-md-9">
-                                                            <select class="form-select" name="type" required>
-                                                                <option value="" disabled selected>Choisir type du
-                                                                    demande
-                                                                </option>
 
-                                                                <option value="Incident">Panne Materiel ou Logiciel</option>
-                                                                <option value="Demande">Demande Materiel</option>
-                                                            </select>
+                                            <textarea id="description" name="description" value='test' hidden></textarea>
+
+
+
+                                            <div class="row mb-3">
+                                                <label for="description"
+                                                    class="col-md-3 col-form-label text-md-start">{{ __('Description :') }}</label>
+                                                <div class="col-md-9">
+                                                    <div class="message-box">
+                                                        <div id="toolbar">
+                                                            <span class="ql-formats">
+                                                                <button class="ql-bold"></button>
+                                                                <button class="ql-italic"></button>
+                                                                <button class="ql-link"></button>
+                                                                <button class="ql-list" value="ordered"></button>
+                                                                <button class="ql-list" value="bullet"></button>
+                                                                <button class="ql-code-block"></button>
+                                                            </span>
                                                         </div>
 
-                                                    </div>
-                                                    <div class="row mb-3">
-                                                        <label for="marque"
-                                                            class="col-md-3 col-form-label text-md-start">{{ __('Objet :') }}</label>
-                                                        <div class="col-md-9">
-                                                            <input id="objet" type="text"
-                                                                class="form-control @error('objet') is-invalid @enderror"
-                                                                name="objet" value="{{ old('objet') }}"
-                                                                placeholder="ex : Mon PC ne demmare pas, Site innaccessible,..."
-                                                                autocomplete="objet" autofocus>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <label
-                                                            class="col-md-3 col-form-label text-md-start">{{ __('Priorite :') }}</label>
-                                                        <div class="col-md-9">
-                                                            <select class="form-select" name="priorite" required>
-                                                                <option value="" disabled selected>Choisir priorité
-                                                                </option>
-                                                                @foreach ($priorite as $priorite)
-                                                                    <option value="{{ $priorite->code }}">
-                                                                        {{ $priorite->label }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
+                                                        <div id="editor"></div>
 
-                                                    </div>
-
-
-                                                    <textarea id="description" name="description" value='test' hidden></textarea>
-
-
-
-                                                    <div class="row mb-3">
-                                                        <label for="description"
-                                                            class="col-md-3 col-form-label text-md-start">{{ __('Description :') }}</label>
-                                                        <div class="col-md-9">
-                                                            <div class="message-box">
-                                                                <div id="toolbar">
-                                                                    <span class="ql-formats">
-                                                                        <button class="ql-bold"></button>
-                                                                        <button class="ql-italic"></button>
-                                                                        <button class="ql-link"></button>
-                                                                        <button class="ql-list" value="ordered"></button>
-                                                                        <button class="ql-list" value="bullet"></button>
-                                                                        <button class="ql-code-block"></button>
-                                                                    </span>
-                                                                </div>
-
-                                                                <div id="editor"></div>
-
-                                                                <div
-                                                                    class="d-flex justify-content-between align-items-center p-2 border-top">
-                                                                    <div class="d-flex align-items-center gap-2">
-                                                                        <label class="btn btn-light btn-sm mb-0">
-                                                                            <i class="bi bi-paperclip"></i>
-                                                                            <input type="file" id="fileInput"
-                                                                                name='nom_fichier[]' multiple hidden>
-                                                                        </label>
-                                                                        <span id="fileName"
-                                                                            class="text-muted small"></span>
-                                                                    </div>
-                                                                </div>
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center p-2 border-top">
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <label class="btn btn-light btn-sm mb-0">
+                                                                    <i class="bi bi-paperclip"></i>
+                                                                    <input type="file" id="fileInput"
+                                                                        name='nom_fichier[]' multiple hidden>
+                                                                </label>
+                                                                <span id="fileName" class="text-muted small"></span>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                </div>
 
 
-                                                    </div>
-                                                    <input id="objet" type="hidden" name="statut" value="nouveau">
-                                                    <div class="text-center">
-                                                        <button type="reset" class="btn btn-danger">Annuler</button>
-                                                        <button id="sendBtn" type="submit"
-                                                            class="btn btn-success">Envoyer Demande</button>
-                                                    </div>
-                                                </form>
                                             </div>
-                                        </div>
-                                        <!-- /.modal-content -->
+                                            <input id="objet" type="hidden" name="statut" value="nouveau">
+                                            <div class="text-center">
+                                                <button type="reset" class="btn btn-danger">Annuler</button>
+                                                <button id="sendBtn" type="submit" class="btn btn-success">Envoyer
+                                                    Demande</button>
+                                            </div>
+                                        </form>
                                     </div>
-                                    <!-- /.modal-dialog -->
                                 </div>
+                                <!-- /.modal-content -->
                             </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card rounded-3 color-semi-secondary mb-2">
                         <div class="body m-3">
-                            <div class="text-center ">
+                            <div class="text-center">
                                 <a href="#">
-                                    <?php
-                                    $detail_materiel['image'] = '';
-                                    ?>
-                                    <img src="{{ $detail_materiel['image'] && file_exists(public_path('storage/' . $detail_materiel['image']))
-                                        ? asset('storage/' . $detail_materiel['image'])
+                                    @php
+                                        $userImage = Auth::user()->image;
+                                    @endphp
+
+                                    <img src="{{ $userImage && file_exists(public_path('storage/' . $userImage))
+                                        ? asset('storage/' . $userImage)
                                         : asset('asset/imageNotfound.jpg') }}"
-                                        style=" max-width: 200px;" class="rounded-circle">
+                                        style="max-width: 200px;" class="rounded-circle">
                                 </a>
                             </div>
+
+
                             <div class="card-body pt-3">
                                 <div class="text-center">
-                                    <h5 class="h3">
-                                        {{ Auth::user()->nom_utilisateur }} {{ Auth::user()->prenom_utilisateur }}
+                                    <h7>
+                                        {{ Auth::user()->nom_utilisateur }} ({{ Auth::user()->prenom_utilisateur }})
 
-                                    </h5>
+                                    </h7>
                                     <div>
                                         Matricule : <i class="fa fa-localisation mr-2"></i>{{ Auth::user()->id }}
                                     </div>
@@ -346,15 +348,23 @@
                                     <div class="h5 mt-1">
                                         <i class="ni mr-2"></i>{{ Auth::user()->societe }} {{ Auth::user()->equipe }}
                                     </div>
+                                    @if (Auth::user()->contact_utilisateur != '')
+                                        <div>
+                                            <i class="fa fa-phone mr-2"></i>{{ Auth::user()->contact_utilisateur }}
+                                        </div>
+                                    @endif
+                                    @if (Auth::user()->email != '')
+                                        <div class="small">
+                                            <i class="fa fa-envelope mr-2"></i>{{ Auth::user()->email }}
+                                        </div>
+                                    @endif
+
                                     <div>
-                                        <i class="fa fa-phone mr-2"></i>{{ Auth::user()->contact_utilisateur }}
-                                    </div>
-                                    <div>
-                                        <i class="fa fa-envelope mr-2"></i>{{ Auth::user()->email }}
-                                    </div>
-                                    <div>
-                                        <a href="#" class="btn btn-success mt-3"><i class="fa fa-edit"></i> Edit
-                                            Profil</a>
+                                        <a href="#" class="btn btn-success mt-3" data-bs-toggle="modal"
+                                            data-bs-target="#editProfileModal">
+                                            <i class="fa fa-edit"></i> Edit Profil
+                                        </a>
+
                                     </div>
                                 </div>
                             </div>
@@ -363,25 +373,74 @@
                 </div>
             </div>
 
+            <!-- Modal Edit Profil -->
+            <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
 
-            {{-- <div class="card">
-                <div class="card-body px-4 py-4-5">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <!-- Partie gauche : Mail aujourd'hui -->
-                        <div class="d-flex align-items-center">
-                            <div class="stats-icon purple me-3">
-                                <i class="iconly-boldWallet"></i>
-                            </div>
-                            <div>
-                                <h6 class="text-muted font-semibold mb-1">Mail</h6>
-                                <h6 class="font-extrabold mb-0">Aujourd'hui</h6>
-                            </div>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editProfileLabel">Modifier le profil</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Fermer"></button>
                         </div>
 
+                        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="modal-body">
+
+                                {{-- Nom --}}
+                                <div class="mb-3">
+                                    <label for="nom_utilisateur" class="form-label">Nom</label>
+                                    <input type="text" class="form-control" id="nom_utilisateur"
+                                        name="nom_utilisateur"
+                                        value="{{ old('nom_utilisateur', Auth::user()->nom_utilisateur) }}" required>
+                                </div>
+
+                                {{-- Prénom --}}
+                                <div class="mb-3">
+                                    <label for="prenom_utilisateur" class="form-label">Prénom</label>
+                                    <input type="text" class="form-control" id="prenom_utilisateur"
+                                        name="prenom_utilisateur"
+                                        value="{{ old('prenom_utilisateur', Auth::user()->prenom_utilisateur) }}"
+                                        required>
+                                </div>
+
+                                {{-- Email --}}
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        value="{{ old('email', Auth::user()->email) }}" required>
+                                </div>
+
+                                {{-- Contact --}}
+                                <div class="mb-3">
+                                    <label for="contact_utilisateur" class="form-label">Contact</label>
+                                    <input type="text" class="form-control" id="contact_utilisateur"
+                                        name="contact_utilisateur"
+                                        value="{{ old('contact_utilisateur', Auth::user()->contact_utilisateur) }}">
+                                </div>
+
+                                {{-- Image --}}
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Photo de profil</label>
+                                    <input type="file" class="form-control" id="image" name="image">
+                                </div>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            </div>
+                        </form>
 
                     </div>
                 </div>
-            </div> --}}
+            </div>
+
 
         </section>
     </div>

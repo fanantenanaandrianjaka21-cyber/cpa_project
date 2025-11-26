@@ -35,6 +35,7 @@ class CreateUsersTable extends Migration
                 ->default('Utilisateur');
             $table->string('contact_utilisateur')->nullable();
             $table->string('pin')->nullable();
+            $table->string('image')->nullable(); 
             $table->rememberToken();
             $table->timestamps();
         });
@@ -64,6 +65,20 @@ class CreateUsersTable extends Migration
                 'equipe' => 'Info',
                 'societe' => 'CPA',
                 'role' => 'Super Admin',
+                'contact_utilisateur' => '',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+                        [
+                'id' => 900,
+                'id_emplacement' =>2,
+                'nom_utilisateur' => 'RANDRIAMIARINIRINA Tahina Maminiaina ',
+                'prenom_utilisateur' => 'Maminiaina',
+                // 'email' => 'Maherisoa@gmail.com',
+                'password' => Hash::make('utilisateurmdp'),
+                'equipe' => 'Apprenti',
+                'societe' => 'CPA',
+                'role' => 'Utilisateur',
                 'contact_utilisateur' => '',
                 'created_at' => now(),
                 'updated_at' => now(),

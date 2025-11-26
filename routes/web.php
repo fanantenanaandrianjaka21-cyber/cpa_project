@@ -220,3 +220,4 @@ Route::post('/renvoyer-code', [App\Http\Controllers\AuthController::class, 'renv
 // profil
 Route::get('/complete-profile', [App\Http\Controllers\ProfileController::class, 'showForm'])->name('complete.profile');
 Route::post('/complete-profile', [App\Http\Controllers\ProfileController::class, 'saveIncompleteProfile']);
+Route::put('/profile/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
