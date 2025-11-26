@@ -34,6 +34,7 @@ class CreateUsersTable extends Migration
             $table->enum('role',['Utilisateur','Technicien IT','Responsable Site','Admin IT','Super Admin'])
                 ->default('Utilisateur');
             $table->string('contact_utilisateur')->nullable();
+            $table->string('pin')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -43,7 +44,7 @@ class CreateUsersTable extends Migration
                 'id_emplacement' =>2,
                 'nom_utilisateur' => 'Andrianjaka',
                 'prenom_utilisateur' => 'Fanantenana',
-                'email' => 'sahala@gmail.com',
+                // 'email' => 'sahala@gmail.com',
                 'password' => Hash::make('qwertyuiop'),
                 'equipe' => 'Administration',
                 'societe' => 'Experts CPA',

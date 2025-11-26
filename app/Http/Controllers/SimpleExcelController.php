@@ -690,7 +690,7 @@ public function importUtilisateur(Request $request)
                 'id_emplacement' => 1,
                 'nom_utilisateur' => $user['utilisateur'] ?? null,
                 'prenom_utilisateur' => preg_replace('/^(.*) \(\d+\)$/','$1',$prenom),
-                'email' => $user['email'] ?? $id.'@gmail.com',
+                // 'email' => $user['email'] ?? $id.'@gmail.com',
                 'password' => Hash::make($user['password'] ?? '111111'),
                 'equipe' => $user['equipe'] ?? null,
                 'societe' => $user['societe'] ?? null,

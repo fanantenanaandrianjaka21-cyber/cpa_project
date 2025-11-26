@@ -63,32 +63,32 @@ class LoginController extends Controller
     /**
      * On détecte si l'utilisateur utilise un email ou un ID
      */
-protected function credentials(Request $request)
-{
-    $login = $request->input('login');
+    protected function credentials(Request $request)
+    {
+        $login = $request->input('login');
 
-    // 1. Vérifier si email
-    if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+        // 1. Vérifier si email
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            return [
+                'email' => $login,
+                'password' => $request->input('password'),
+            ];
+        }
+
+        // 2. Vérifier si c'est un ID numérique
+        if (ctype_digit($login)) {
+            return [
+                'id' => (int) $login, // Sécurisé
+                'password' => $request->input('password'),
+            ];
+        }
+
+        // 3. Sinon → pas email + pas ID → login impossible
         return [
-            'email' => $login,
+            'id' => 0, // Aucun utilisateur n'a id=0 → safe & évite crash PostgreSQL
             'password' => $request->input('password'),
         ];
     }
-
-    // 2. Vérifier si c'est un ID numérique
-    if (ctype_digit($login)) {
-        return [
-            'id' => (int) $login, // Sécurisé
-            'password' => $request->input('password'),
-        ];
-    }
-
-    // 3. Sinon → pas email + pas ID → login impossible
-    return [
-        'id' => 0, // Aucun utilisateur n'a id=0 → safe & évite crash PostgreSQL
-        'password' => $request->input('password'),
-    ];
-}
 
 
     /**
@@ -110,5 +110,18 @@ protected function credentials(Request $request)
         throw ValidationException::withMessages([
             'login' => [trans('auth.failed')], // "Identifiants incorrects."
         ]);
+    }
+    /**
+     * Redirection après login réussi
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        // dd($user->email);
+        // Si l'utilisateur s'est connecté avec son ID mais n'a pas encore d'email
+        if (empty($user->email)) {
+            return redirect()->route('complete.profile');
+        }
+        // Redirige toujours vers /mail-verifier-code
+        return redirect()->to('/mail-verifier-code');
     }
 }

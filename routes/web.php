@@ -32,7 +32,12 @@ use Illuminate\Support\Facades\Route;
 // Auth::routes();
 Auth::routes(['register' => false]);
 /*Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');*/
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->middleware('auth')->name('home');
+// Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->middleware('auth')->name('home');
+Route::group(['middleware' => ['auth', '2fa']], function () {
+   Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->middleware('auth')->name('home');
+
+    // Toutes les routes protégées
+});
 Route::get('/inscription', [App\Http\Controllers\UserController::class, 'index'])->middleware('auth')->name('user.index');
 Route::post('/ajoutUser', [App\Http\Controllers\UserController::class, 'ajoutUser'])->middleware('auth')->name('ajoutUser');
 Route::get('/listUser/{id_emplacement},{role}', [App\Http\Controllers\UserController::class, 'listUser'])->middleware('auth')->name('user.liste');
@@ -206,3 +211,12 @@ Route::get('/run-schedule', function () {
     return 'OK';
 });
 Route::get('/import-progress', [App\Http\Controllers\SimpleExcelController::class, 'getProgress']);
+// route authentification par code verification
+Route::get('/mail-verifier-code', [App\Http\Controllers\AuthController::class, 'index'])->name('mailverifier.code');
+Route::get('/verifier-code', [App\Http\Controllers\AuthController::class, 'afficherFormulaire2FA'])->name('verifier.code');
+Route::post('/verifier-code', [App\Http\Controllers\AuthController::class, 'verifierCode2FA'])->name('verifier.code.submit');
+Route::post('/renvoyer-code', [App\Http\Controllers\AuthController::class, 'renvoyerCodeVerification'])->name('renvoyer.code');
+
+// profil
+Route::get('/complete-profile', [App\Http\Controllers\ProfileController::class, 'showForm'])->name('complete.profile');
+Route::post('/complete-profile', [App\Http\Controllers\ProfileController::class, 'saveIncompleteProfile']);

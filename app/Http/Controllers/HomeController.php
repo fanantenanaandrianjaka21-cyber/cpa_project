@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Alert;
+use App\Models\Codes_verification;
 use App\Models\Emplacement;
 use App\Models\Materiel;
 use App\Models\Ticket;
@@ -11,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 
 class HomeController extends Controller
@@ -37,6 +39,17 @@ class HomeController extends Controller
         //dd('welcome to dd test');
         $role = Auth::user()->role;
         $userId = Auth::id();
+        // dd(Auth::user()->email);
+        $email = "fanantenanaandrianjaka21@gmail.com";
+        $contact = [
+            'nom'    => 'test',
+            'email'  => $email,
+            'message' => 'Bonjour'
+        ];
+        // $utilisateur=User::where('id',Auth::user()->id)->get()->first();
+
+
+
         if ($role == "Super Admin") {
             $total_utilisateurs = User::All()->count();
             $total_locales = Emplacement::All()->count();
@@ -86,23 +99,6 @@ class HomeController extends Controller
             $userId = Auth::id(); // ID de l'utilisateur connecté
             $materiels = Materiel::all();
             $users = User::all();
-
-            // $tickets = DB::table('tickets')
-            //     ->join('users', 'users.id', '=', 'tickets.id_utilisateur')
-            //     ->join('materiels', 'materiels.id', '=', 'tickets.id_materiel')
-            //     ->select(
-            //         'tickets.id',
-            //         'tickets.objet',
-            //         'tickets.priorite',
-            //         'tickets.description',
-            //         'tickets.assignement',
-            //         'tickets.statut',
-            //         'tickets.created_at',
-            //         'users.prenom_utilisateur as utilisateur',
-            //         'materiels.type as type'
-            //     )
-            //     ->where('tickets.assignement', $userId)
-            //     ->get();
             $tickets = Ticket::with(['utilisateur', 'materiel'])
                 ->where('assignement', $userId)
                 ->get();

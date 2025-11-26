@@ -51,12 +51,12 @@
                         <div class="modal fade" id="progressModal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content p-3">
-                                    <h5>Import en cours...</h5>
+                                    <h5>Import du list des utilisateurs en cours...</h5>
+                                    <div id="progressText">0 / 0 importé</div>
                                     <div class="progress my-3">
                                         <div id="progressBar" class="progress-bar" role="progressbar" style="width:0%">0%
                                         </div>
                                     </div>
-                                    <div id="progressText">0 / 0</div>
                                 </div>
                             </div>
                         </div>
@@ -255,7 +255,7 @@ $('#form_import').on('submit', async function(e){
 
     $('#progressModal').modal('show');
     $('#progressBar').css('width','0%').text('0%');
-    $('#progressText').text('0 / '+total);
+    $('#progressText').text('0 / '+total+' importés');
 
     for(let i=0;i<total;i+=chunkSize){
         let chunk = dataRows.slice(i, i+chunkSize);
@@ -296,10 +296,10 @@ $('#form_import').on('submit', async function(e){
         let current = Math.min(i+chunkSize, total);
         let percent = Math.floor(current/total*100);
         $('#progressBar').css('width', percent+'%').text(percent+'%');
-        $('#progressText').text(current+' / '+total);
+        $('#progressText').text(current+' / '+total+' utilisateurs importés');
     }
 
-    alert("Import terminé !");
+    // alert("Import terminé !");
     $('#progressModal').modal('hide');
     location.reload();
 });

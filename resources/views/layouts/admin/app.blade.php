@@ -122,7 +122,7 @@
                             class="fa fa-ticket"></i>Ticketing</a>
                     {{-- <button id="darkModeToggle">mode</button> --}}
                     <a class="navbar-brand mt-4" href="{{ route('cv') }}">
-                        {{-- <img src="{{ asset('asset/logocpa.png') }}" style="height:50px;width: auto;" alt="Logo cpa"> --}}
+                        
                         <h2 class="fa fa-desktop me-2"><i class="fa fa-user-edit me-2"></i> Les Developpeurs<br> de l'application</h2>
                     </a>
                 </div> 
