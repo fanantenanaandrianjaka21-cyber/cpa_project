@@ -18,7 +18,8 @@ class ProfileController extends Controller
     {
         $request->validate([
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|confirmed|min:6'
+            'password' => 'required|confirmed|min:6',
+            'pin' => 'required|digits:6',
         ]);
 // dd($request->pin);
         // $user = Auth::user();

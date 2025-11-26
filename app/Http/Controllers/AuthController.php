@@ -23,7 +23,8 @@ class AuthController extends Controller
 
     } catch (\Exception $e) {
 // dd($e);
-        return "Échec : l'email n'existe probablement pas ou ne reçoit pas les mails.";
+            return redirect('/complete-profile')->with('error', 'code non envoye.');
+
     }
     }
        public function envoyerCodeVerification(User $utilisateur)
