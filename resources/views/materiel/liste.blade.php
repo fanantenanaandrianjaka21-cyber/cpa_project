@@ -6,19 +6,14 @@
 
     </div>
     <div class="w3-panel">
-        
-            @if( Auth::User()->role == "Utilisateur")
-            
-                <h4 class="w3-start w3-animate-right">Liste de tous mes Matériels</h4>
-                
-            
-            @else
-            
-                <h4 class="w3-start w3-animate-right">Liste de tous les Matériels</h4>
-                
-            @endif
-            
-        
+
+        @if (Auth::User()->role == 'Utilisateur')
+            <h4 class="w3-start w3-animate-right">Liste de tous mes Matériels</h4>
+        @else
+            <h4 class="w3-start w3-animate-right">Liste de tous les Matériels</h4>
+        @endif
+
+
     </div>
     <div class="card">
         <div class="card-body bg-primary text-black">
@@ -38,11 +33,11 @@
                     <div id="filters" class="row mb-3"></div>
                     <div class="row mb-2">
                         <div class="d-flex align-items-center gap-3">
-
-                            <div id="totalSelectionnes" class="text-black">
-                                0 Materiel sélectionné(s)
-                            </div>
-
+                            @if (Auth::user()->role != 'Utilisateur')
+                                <div id="totalSelectionnes" class="text-black">
+                                    0 Materiel sélectionné(s)
+                                </div>
+                            @endif
                             <div id="bouton-distribuer-container" style="display: none;">
                                 <button id="btn-distribuer" class="btn btn-success" data-bs-toggle="modal"
                                     data-bs-target="#modalDistribuer">
@@ -57,8 +52,11 @@
 
                         <thead>
                             <tr>
-                                <th class="text-center"><input class="form-check-input bg-secondary checkbox-materiel"
-                                        type="checkbox" id="tous" value="tous"> Tous</th>
+                                @if (Auth::user()->role != 'Utilisateur')
+                                    <th class="text-center"><input class="form-check-input bg-secondary checkbox-materiel"
+                                            type="checkbox" id="tous" value="tous"> Tous</th>
+                                @endif
+
                                 <th>Id</th>
                                 <th>Materiel</th>
                                 <th>Marque</th>
@@ -71,9 +69,13 @@
                             {{-- {{ dd($detail_materiel) }} --}}
                             @foreach ($detail_materiel as $materiel)
                                 <tr data-row-id="{{ $materiel['id'] }}">
-                                    <td class="text-center"><input class="form-check-input bg-secondary checkbox-materiel"
-                                            type="checkbox" id="option1" value="{{ $materiel['id'] }}"></td>
+                                    @if (Auth::user()->role != 'Utilisateur')
+                                        <td class="text-center"><input
+                                                class="form-check-input bg-secondary checkbox-materiel" type="checkbox"
+                                                id="option1" value="{{ $materiel['id'] }}"></td>
+                                    @endif
                                     <td>{{ $materiel['id'] }}</td>
+
                                     <td class="text-center">
                                         {{ $materiel['type'] }}
                                     </td>

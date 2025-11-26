@@ -5,8 +5,10 @@ use App\Http\Controllers\TicketStatusController;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -203,3 +205,4 @@ Route::get('/run-schedule', function () {
     Artisan::call('schedule:run');
     return 'OK';
 });
+Route::get('/import-progress', [App\Http\Controllers\SimpleExcelController::class, 'getProgress']);

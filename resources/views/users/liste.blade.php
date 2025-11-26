@@ -1,5 +1,7 @@
 @extends('layouts.dynamique')
 @section('content')
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
     @if (!empty($user))
         <div class="header d-none d-lg-block">
             <i class="fa fa-home"></i>/ Utilisateur / Liste
@@ -18,19 +20,51 @@
                         <?php
                         if (isset($notification)) {
                             echo "<div class='alert alert-success'>
-                                                                                                                                                                                            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                                                                                                                                                                                              <i class='fa fa-close'></i>
-                                                                                                                                                                                            </button>
-                                                                                                                                                                                            <span>
-                                                                                                                                                                                              <i class='fa fa-bell'></i><b>  Success - </b>" .
+                                                                                                                                                                                                                    <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                                                                                                                                                                                                      <i class='fa fa-close'></i>
+                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                    <span>
+                                                                                                                                                                                                                      <i class='fa fa-bell'></i><b>  Success - </b>" .
                                 $notification .
                                 "</span>
-                                                                                                                                                                                          </div>";
+                                                                                                                                                                                                                  </div>";
                         }
                         ?>
-                        <p class="text-black">Sélectionnez le fichier Excel (Mouvement materiel.xlsx) pour importer une liste des
+                                                <p class="text-black">Sélectionnez le fichier Excel (Mouvement materiel.xlsx) pour importer une
+                            liste des
                             "utilisateurs".<br>
-                        <form method="POST" action="{{ route('utilisateurexcel.import') }}" enctype="multipart/form-data">
+                        {{-- nouveau import --}}
+                        <form id="form_import" method="POST" action="{{ route('utilisateurexcel.import') }}"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <div class="d-flex align-items-center gap-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="file" name="fichier" class="form-control" required>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="submit" class="btn btn-success">Importer</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Modal Progression -->
+                        <div class="modal fade" id="progressModal" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content p-3">
+                                    <h5>Import en cours...</h5>
+                                    <div class="progress my-3">
+                                        <div id="progressBar" class="progress-bar" role="progressbar" style="width:0%">0%
+                                        </div>
+                                    </div>
+                                    <div id="progressText">0 / 0</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        {{-- fin nouveau import --}}
+
+                        {{-- <form method="POST" action="{{ route('utilisateurexcel.import') }}" enctype="multipart/form-data">
 
                             @csrf
                             <div class="d-flex align-items-center gap-4">
@@ -42,7 +76,7 @@
                                     <button type="submit" class="btn btn-success">Importer</button>
                                 </div>
                             </div>
-                        </form>
+                        </form> --}}
 
                         <div id="filters" class="row mb-3"></div>
                         <table id="bootstrap-data-table-export"
@@ -190,5 +224,85 @@
                 xhttp.send();
             });
         </script>
+
+        <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script>
+$('#form_import').on('submit', async function(e){
+    e.preventDefault();
+
+    let fileInput = $(this).find('input[name="fichier"]')[0];
+    if(fileInput.files.length === 0){
+        alert("Sélectionnez un fichier !");
+        return;
+    }
+
+    let file = fileInput.files[0];
+    let data = await file.arrayBuffer();
+    let workbook = XLSX.read(data);
+    let sheet = workbook.Sheets['utilisateurs_articles'];
+    if(!sheet){
+        alert("Feuille 'utilisateurs_articles' introuvable !");
+        return;
+    }
+
+    let jsonData = XLSX.utils.sheet_to_json(sheet, {header:1});
+    let headerRow = 1; // ligne 2
+    let headers = jsonData[headerRow];
+    let dataRows = jsonData.slice(headerRow+1).filter(r => r.length>0);
+
+    let total = dataRows.length;
+    let chunkSize = 10;
+
+    $('#progressModal').modal('show');
+    $('#progressBar').css('width','0%').text('0%');
+    $('#progressText').text('0 / '+total);
+
+    for(let i=0;i<total;i+=chunkSize){
+        let chunk = dataRows.slice(i, i+chunkSize);
+
+        let chunkData = chunk.map(row=>{
+            let obj = {};
+            headers.forEach((h, idx)=>{
+                // normalisation clé : minuscule + accents en lettres simples + espace/parenthèses remplacés par _
+                let key = h.toLowerCase()
+                           .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                           .replace(/[^a-z0-9]/g,'_');
+                obj[key] = row[idx] ?? null;
+            });
+            return obj;
+        });
+
+        // debug console : vérifier les clés
+        console.log("Chunk envoyé :", chunkData);
+
+        try {
+            let res = await $.ajax({
+                url: "{{ route('utilisateurexcel.import') }}",
+                type: "POST",
+                contentType: 'application/json',
+                processData: false,
+                data: JSON.stringify({data: chunkData}),
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}
+            });
+
+            console.log("Prénoms reçus du serveur :", res.prenoms);
+
+        } catch(err) {
+            console.error("Erreur lors de l'import d'un chunk :", err);
+            alert("Erreur lors de l'import, voir console pour détails.");
+            break;
+        }
+
+        let current = Math.min(i+chunkSize, total);
+        let percent = Math.floor(current/total*100);
+        $('#progressBar').css('width', percent+'%').text(percent+'%');
+        $('#progressText').text(current+' / '+total);
+    }
+
+    alert("Import terminé !");
+    $('#progressModal').modal('hide');
+    location.reload();
+});
+</script>
     @endif
 @endsection

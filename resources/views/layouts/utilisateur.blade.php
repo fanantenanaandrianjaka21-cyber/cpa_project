@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('Expert CPA', 'Expert CPA') }}</title>
+    <title>{{ config('GPTic CPA', 'GPTic CPA') }}</title>
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap4.min.css">
     <!-- ✅ jQuery et Bootstrap JS en ligne -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    
+
     {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> --}}
 
     <!-- ✅ DataTables et Buttons JS en ligne -->
@@ -70,7 +70,7 @@
             <nav class="navbar ">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{-- <img src="{{ asset('asset/logocpa.png') }}" style="height:50px;width: auto;" alt="Logo cpa"> --}}
-                    <h2 class="expertcpa"><i class="fa fa-user-edit me-2"></i>Expert CPA</h2>
+                    <h2 class="expertcpa"><i class="fa fa-user-edit me-2"></i>GPTic CPA</h2>
                 </a>
                 <?php
                 $active_tab = $active_tab ?? 'ticket';
@@ -92,9 +92,10 @@
                         class="nav-item nav-link {{ $active_tab == 'ticket' ? 'active' : '' }}"><i
                             class="fa fa-table me-2"></i>Ticketing</a>
 
-                                        {{-- <a href="{{ route('listTicketAdmin') }}"
-                        class="nav-item nav-link {{ $active_tab == 'ticket' ? 'active' : '' }}"><i
-                            class="fa fa-user me-2"></i>Developpeurs</a> --}}
+                    <a class="navbar-brand mt-4" href="{{ route('cv') }}">
+                        
+                        <h2 class="fa fa-desktop me-2"><i class="fa fa-user-edit me-2"></i> Les Developpeurs<br> de l'application</h2>
+                    </a>
                 </div>
             </nav>
         </div>

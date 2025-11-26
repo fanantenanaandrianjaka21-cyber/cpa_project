@@ -162,7 +162,7 @@ class MaterielController extends Controller
         if ($role == 'Super Admin' or $role == 'Admin IT') {
             $materiel = Materiel::with('caracteristiques', 'utilisateurs')->get();
         } else {
-            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('id_emplacement', $id_emplacement)->get();
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('id_emplacement', $id_emplacement)->where('id_utilisateur', Auth::user()->id)->get();
         }
 
         $colonnes = $this->recupererColonnes('caracteristique_supplementaires', 'cle');
