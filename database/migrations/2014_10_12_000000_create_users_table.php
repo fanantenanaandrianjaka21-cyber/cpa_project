@@ -40,6 +40,7 @@ class CreateUsersTable extends Migration
         });
             DB::table('users')->insert(
             [
+                [
                 'id' => 34025,
                 'id_emplacement' =>2,
                 'nom_utilisateur' => 'Andrianjaka',
@@ -52,7 +53,23 @@ class CreateUsersTable extends Migration
                 'contact_utilisateur' => '0334456987',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],);
+            ],
+                        [
+                'id' => 442,
+                'id_emplacement' =>2,
+                'nom_utilisateur' => 'RATEFIARISON Maherisoa Olivah',
+                'prenom_utilisateur' => 'Maherisoa',
+                // 'email' => 'Maherisoa@gmail.com',
+                'password' => Hash::make('adminmdp'),
+                'equipe' => 'Info',
+                'societe' => 'CPA',
+                'role' => 'Super Admin',
+                'contact_utilisateur' => '',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ],
+        );
     }
 
     /**
