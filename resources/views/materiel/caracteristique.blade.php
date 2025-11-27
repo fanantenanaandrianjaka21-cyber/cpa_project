@@ -117,6 +117,18 @@
                                 <option value="MAUVAIS">MAUVAIS</option>
                                 <option value="APPRENTI">APPRENTI</option>
                             </select>
+                        @elseif (strpos('test' . $colonnes, 'Mdp') == true)
+                            <div class="input-group">
+                                <input id="{{ $colonnes }}" type="password"
+                                    class="form-control password-field @error('password') is-invalid @enderror"
+                                    name="password" value="{{ $detail_materiel[$colonnes] ?? '-' }}" autocomplete="{{ $colonnes }}" required>
+                                <button type="button" class="btn btn-outline-secondary btn-toggle-pass">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                                @error('password')
+                                    <div class="invalid-feedback d-block"><strong>{{ $message }}</strong></div>
+                                @enderror
+                            </div>
                         @else
                             <input id="{{ $colonnes }}" type="text"
                                 class="form-control @error('{{ $colonnes }}') is-invalid @enderror"
@@ -200,11 +212,11 @@
                 onclick="document.getElementById('id01').style.display='block'"
                 >Affecter
                 à un utilisateur</a> --}}
-                @if ($detail_materiel['emplacement']!='GLOBALE' & Auth::User()->role != "Utilisateur")
-                                <a href="#" class="btn btn-info  btn-sm m-2" data-bs-toggle="modal"
-                data-bs-target="#modal-affectation">Affecter
-                à un utilisateur</a>
-                @endif
+            @if (($detail_materiel['emplacement'] != 'GLOBALE') & (Auth::User()->role != 'Utilisateur'))
+                <a href="#" class="btn btn-info  btn-sm m-2" data-bs-toggle="modal"
+                    data-bs-target="#modal-affectation">Affecter
+                    à un utilisateur</a>
+            @endif
 
             {{-- @if ($detail_materiel['Verification_physique'] == 'false') --}}
             {{-- @endif --}}
@@ -277,7 +289,7 @@
 
         </div>
     </div>
-        <div id="affichagelogticketing" class="collapse mt-4">
+    <div id="affichagelogticketing" class="collapse mt-4">
         <div class="col-lg-12">
             <table class="table table-dark">
                 <thead>
@@ -310,11 +322,11 @@
 
         </div>
     </div>
-    @if( Auth::User()->role != "Utilisateur")
-    <a href="#" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#affichagelogmateriel">Voir
-        Log Materiel</a>
-    <a href="#" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#affichagelogticketing">Voir
-        Log Ticketing</a>
+    @if (Auth::User()->role != 'Utilisateur')
+        <a href="#" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#affichagelogmateriel">Voir
+            Log Materiel</a>
+        <a href="#" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#affichagelogticketing">Voir
+            Log Ticketing</a>
     @endif
 
     <!-- modal affectation -->
@@ -371,8 +383,9 @@
 
                         <div class="col-md-6">
                             <input id="date_affectation" type="date"
-                                class="form-control @error('date_affectation') is-invalid @enderror" name="date_affectation"
-                                value="{{ old('date_affectation') }}" required autocomplete="date_affectation" autofocus>
+                                class="form-control @error('date_affectation') is-invalid @enderror"
+                                name="date_affectation" value="{{ old('date_affectation') }}" required
+                                autocomplete="date_affectation" autofocus>
                             @error('date_affectation')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -396,6 +409,22 @@
         <!-- /.modal-dialog -->
     </div>
     <script>
+                // Toggle show/hide password
+        document.querySelectorAll('.btn-toggle-pass').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.querySelector('i').classList.remove('fa-eye');
+                    this.querySelector('i').classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    this.querySelector('i').classList.remove('fa-eye-slash');
+                    this.querySelector('i').classList.add('fa-eye');
+                }
+            });
+        });
+
         const btnModifier = document.getElementById("modifier");
         if (btnModifier) {
             btnModifier.addEventListener("click", function() {

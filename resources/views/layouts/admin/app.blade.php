@@ -59,7 +59,6 @@
             font-weight: bold;
             text-decoration: underline;
         }
-
     </style>
 </head>
 
@@ -93,9 +92,21 @@
                     <a href="{{ route('gestionMateriels', ['id_emplacement' => Auth::user()->id_emplacement, 'role' => Auth::user()->role]) }}"
                         class="nav-item nav-link {{ $active_tab == 'stock' ? 'active' : '' }}"><i
                             class="fa fa-archive"></i>Stocks</a>
-                    <a href="{{ route('tousLesMateriels', ['id_emplacement' => Auth::user()->id_emplacement, 'role' => Auth::user()->role]) }}"
-                        class="nav-item nav-link {{ $active_tab == 'materiel' ? 'active' : '' }}"><i
-                            class="fa fa-wrench"></i>Materiels</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link  {{ $active_tab == 'materiel' ? 'active' : '' }}"
+                            data-bs-toggle="dropdown"><i class="fa fa-laptop" style="font-size: 20px;"></i>Materiels</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="{{ route('tousLesMateriels', ['id_emplacement' => Auth::user()->id_emplacement, 'role' => Auth::user()->role]) }}"
+                                class="dropdown-item " style="color: rgb(136, 219, 219)">
+                                Durables
+                            </a>
+                                                        <a href="{{ route('Consommable', ['id_emplacement' => Auth::user()->id_emplacement, 'role' => Auth::user()->role]) }}"
+                                class="dropdown-item" style="color: rgb(136, 219, 219)">
+                               Consommables
+                            </a>
+                        </div>
+                    </div>
+
                     <a href="{{ route('affectation.liste') }}"
                         class="nav-item nav-link {{ $active_tab == 'affectation' ? 'active' : '' }}"><i
                             class="fa fa-history"></i>Affectation</a>
@@ -114,7 +125,8 @@
                                 Liste des Utilisateurs
                             </a>
 
-                            <a href="{{ route('user.index') }}" class="dropdown-item" style="color: rgb(136, 219, 219)">Nouveau Utilisateur</a>
+                            <a href="{{ route('user.index') }}" class="dropdown-item"
+                                style="color: rgb(136, 219, 219)">Nouveau Utilisateur</a>
                         </div>
                     </div>
                     <a href="{{ route('listTicketAdmin') }}"
@@ -122,10 +134,11 @@
                             class="fa fa-ticket"></i>Ticketing</a>
                     {{-- <button id="darkModeToggle">mode</button> --}}
                     <a class="navbar-brand mt-4" href="{{ route('cv') }}">
-                        
-                        <h2 class="fa fa-desktop me-2"><i class="fa fa-user-edit me-2"></i> Les Developpeurs<br> de l'application</h2>
+
+                        <h2 class="fa fa-desktop me-2"><i class="fa fa-user-edit me-2"></i> Les Developpeurs<br> de
+                            l'application</h2>
                     </a>
-                </div> 
+                </div>
             </nav>
         </div>
         <!-- Sidebar End -->
@@ -154,7 +167,8 @@
                                 <input type="hidden" id='nombre_ticket' name="nombre_ticket">
                             </div>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                        <div
+                            class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                             <div id="0"></div>
                             <div id="1"></div>
                             <div id="2"></div>
@@ -379,17 +393,17 @@
                         content.icon = 'fa fa-bell';
                         content.url = '/detailsTicket/' + tickets[0].id;
                         // content.target = '_blank';
-if (window.userRole != 'Utilisateur') {
-                        $.notify(content, {
-                            // type: 'success',
-                            placement: {
-                                from: 'bottom',
-                                align: 'right'
-                            },
-                            // time: 5000,
-                            timer: 8000,
-                        });
-                    }
+                        if (window.userRole != 'Utilisateur') {
+                            $.notify(content, {
+                                // type: 'success',
+                                placement: {
+                                    from: 'bottom',
+                                    align: 'right'
+                                },
+                                // time: 5000,
+                                timer: 8000,
+                            });
+                        }
                         // alert('hAFA'+localStorage.getItem("ticket_non_vu"));
                         // localStorage.setItem("ticket_non_vu", (count-1).toString());
                         localStorage.setItem("ticket_non_vu", count.toString());
@@ -503,6 +517,21 @@ if (window.userRole != 'Utilisateur') {
         language: {
             url: 'langue/fr.json'
         }
+    });
+</script>
+<script>
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('.password-field');
+
+            if (input.type === "password") {
+                input.type = "text";
+                this.innerHTML = '<i class="fa fa-eye-slash"></i>';
+            } else {
+                input.type = "password";
+                this.innerHTML = '<i class="fa fa-eye"></i>';
+            }
+        });
     });
 </script>
 

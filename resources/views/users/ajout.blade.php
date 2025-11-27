@@ -64,21 +64,26 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="row mb-3">
-                                <label for="phone"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('Contact') }}</label>
-                                <div class="col-md-6">
-                                    <!-- Champ visuel -->
-                                    <input id="phone" type="tel"
-                                        class="form-control @error('contact_utilisateur') is-invalid @enderror"
-                                        name="contact_utilisateur" placeholder="Entrez le numéro">
-                                    @error('contact_utilisateur')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
+                        <div class="row mb-3">
+                            <label for="phone" class="col-md-4 col-form-label text-md-end">Contact</label>
+                            <div class="col-md-6">
+                                <input id="phone" type="tel"
+                                    class="form-control @error('contact_utilisateur') is-invalid @enderror"
+                                    name="contact_utilisateur"
+                                    value="{{ old('contact_utilisateur') }}"
+                                    placeholder="Entrez le numéro">
+
+                                {{-- Erreur Laravel (Nous ajoutons une classe pour la cibler en JS) --}}
+                                @error('contact_utilisateur')
+                                    <span class="invalid-feedback laravel-feedback d-block">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+
+                                {{-- Erreur JS (Utilisée par le script intl-tel-input) --}}
+                                <div id="phone-error" class="invalid-feedback"></div>
                             </div>
+                        </div>
                             <div class="form-group row">
                                 <label for="equipe"
                                     class="col-md-4 col-form-label text-md-right">{{ __('Equipe') }}</label>
@@ -172,32 +177,41 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <label for="password"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('Mot de passe') }}</label>
-
-                                <div class="col-md-6">
+                        {{-- MOT DE PASSE --}}
+                        <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-md-end">Mot de passe</label>
+                            <div class="col-md-6">
+                                <div class="input-group">
                                     <input id="password" type="password"
-                                        class="form-control @error('password') is-invalid @enderror" name="password"
-                                        required autocomplete="new-password">
-
+                                        class="form-control password-field @error('password') is-invalid @enderror"
+                                        name="password" required>
+                                    <button type="button" class="btn btn-outline-secondary btn-toggle-pass">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
                                     @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>La confirmation du mot de passe est incorrecte</strong>
-                                        </span>
+                                        <div class="invalid-feedback d-block"><strong>{{ $message }}</strong></div>
                                     @enderror
                                 </div>
                             </div>
-                            <!-- asina etoil en rouge ny champ obligatoir -->
-                            <div class="row mb-3">
-                                <label for="password-confirm"
-                                    class="col-md-4 col-form-label text-md-end">{{ __('Confirmation du mot de passe') }}</label>
+                        </div>
 
-                                <div class="col-md-6">
-                                    <input id="password-confirm" type="password" class="form-control"
-                                        name="password_confirmation" required autocomplete="new-password">
+                        {{-- CONFIRMATION --}}
+                        <div class="row mb-3">
+                            <label class="col-md-4 col-form-label text-md-end">Confirmation du mot de passe</label>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input id="password-confirm" type="password"
+                                        class="form-control password-field @error('password_confirmation') is-invalid @enderror"
+                                        name="password_confirmation" required>
+                                    <button type="button" class="btn btn-outline-secondary btn-toggle-pass">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    @error('password_confirmation')
+                                        <div class="invalid-feedback d-block"><strong>{{ $message }}</strong></div>
+                                    @enderror
                                 </div>
                             </div>
+                        </div>
 
                             <div class="row mb-0">
                                 <div class="col-md-6 offset-md-4">
@@ -222,48 +236,101 @@
     <!-- utils.js (format/validation) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
 
-    <script>
-        const input = document.querySelector("#phone");
+<script>
+    const input = document.querySelector("#phone");
+    const errorMsg = document.getElementById("phone-error");
+    const form = document.getElementById('register-form');
+    // Cible l'erreur de Laravel pour pouvoir la masquer si l'erreur vient du JS
+    const laravelFeedback = document.querySelector('.laravel-feedback'); 
 
-        // init intl-tel-input
-        const iti = window.intlTelInput(input, {
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js", // pour format/validation
-            initialCountry: "auto",
-            geoIpLookup: function(callback) {
-                // optionnel : détecter le pays via IP (fallback 'us' si fail)
-                fetch('https://ipapi.co/json').then(res => res.json()).then(data => {
-                    callback(data.country_code ? data.country_code.toLowerCase() : 'us');
-                }).catch(() => callback('us'));
-            },
-            separateDialCode: false, // mettre true si tu veux afficher le dial code séparé du numéro
-            preferredCountries: ["mg", "fr", "us"], // ex: Madagascar, France, USA
-            onlyCountries: [], // laisser vide pour tous les pays, ou fournir une liste d'ISO (ex: ['mg','fr','us'])
-            dropdownContainer: document.body
-        });
+    // Initialisation intl-tel-input
+    const iti = window.intlTelInput(input, {
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        initialCountry: "mg",
+        preferredCountries: ["mg", "fr", "us"],
+        separateDialCode: false
+    });
 
-        // Avant envoi du formulaire, on remplit phone_full avec le format E.164
-        document.getElementById('phone-form').addEventListener('submit', function(e) {
-            const fullNumber = iti.getNumber(); // ex: +261341234567
-            document.getElementById('contact_utilisateur').value = fullNumber;
+    // --- LOGIQUE DE GESTION D'ERREUR MISE À JOUR ---
 
-            // Optionnel : validation côté client
-            if (!iti.isValidNumber()) {
-                e.preventDefault();
-                input.classList.add('is-invalid');
-                if (!document.querySelector('.iti-error')) {
-                    const div = document.createElement('div');
-                    div.className = 'text-danger iti-error mt-1';
-                    div.innerText = 'Numéro invalide pour le pays sélectionné.';
-                    input.parentNode.appendChild(div);
-                }
+    // 1. Validation avant envoi du formulaire (côté client)
+    form.addEventListener('submit', function (e) {
+        
+        // **ÉTAPE 1 : Nettoyage avant validation**
+        input.classList.remove("is-invalid"); // Retire la classe invalide
+        errorMsg.classList.remove("d-block"); // Masque l'erreur JS
+        errorMsg.textContent = "";
+
+        if (laravelFeedback) {
+             // Réaffiche l'erreur Laravel juste pour s'assurer qu'elle n'est pas masquée
+             laravelFeedback.classList.remove("d-none"); 
+        }
+
+        // **ÉTAPE 2 : Validation intl-tel-input**
+        if (!iti.isValidNumber()) {
+            e.preventDefault(); // Empêche l'envoi
+            
+            // Si le numéro est invalide, afficher l'erreur JS
+            
+            // 2a. Marquer l'input invalide
+            input.classList.add("is-invalid");
+
+            // 2b. Afficher le message d'erreur dans l'élément dédié
+            errorMsg.textContent = "Numéro de téléphone invalide.";
+            errorMsg.classList.add("d-block");
+            
+            // 2c. Masquer l'erreur Laravel pour éviter le conflit d'affichage
+            if (laravelFeedback) {
+                laravelFeedback.classList.add("d-none");
             }
-        });
 
-        // retire message d'erreur quand l'utilisateur change
-        input.addEventListener('input', function() {
-            input.classList.remove('is-invalid');
-            const err = document.querySelector('.iti-error');
-            if (err) err.remove();
-        });
-    </script>
+            return;
+        }
+
+        // Si le numéro est valide :
+        // Mettre à jour la valeur de l'input avec le numéro complet formaté (E.164)
+        input.value = iti.getNumber();
+
+        // Le formulaire se soumet normalement
+    });
+
+    // 2. Gestion dynamique des classes d'erreur lors de la saisie (INPUT)
+    input.addEventListener("input", function () {
+        // Au moindre changement, on retire l'erreur JS et réactive l'erreur Laravel
+
+        // Masquer l'erreur JS
+        errorMsg.classList.remove("d-block");
+        errorMsg.textContent = "";
+        
+        // Retirer la classe 'is-invalid' (elle sera réappliquée par Laravel si l'erreur est toujours là)
+        input.classList.remove("is-invalid"); 
+
+        // Réactiver l'affichage de l'erreur Laravel (si elle était présente)
+        if (laravelFeedback) {
+            laravelFeedback.classList.remove("d-none");
+        }
+    });
+
+    // 3. Initialisation : Si Laravel a renvoyé une erreur, on masque l'erreur JS au chargement.
+    document.addEventListener('DOMContentLoaded', function() {
+        // Masquer l'élément d'erreur JS au chargement pour s'assurer que l'erreur Laravel seule s'affiche si elle existe
+        if (errorMsg) {
+             errorMsg.classList.remove("d-block");
+             errorMsg.classList.add("d-none");
+        }
+
+        // Si Laravel a renvoyé une erreur, on s'assure qu'elle est visible et l'input est marqué
+        @error('contact_utilisateur')
+            if (laravelFeedback) {
+                laravelFeedback.classList.remove("d-none");
+            }
+            input.classList.add("is-invalid");
+        @else
+            // Si aucune erreur Laravel n'est présente, on s'assure que l'erreur JS est cachée par défaut
+            if (errorMsg) {
+                 errorMsg.classList.add("d-none");
+            }
+        @enderror
+    });
+</script>
 @endsection

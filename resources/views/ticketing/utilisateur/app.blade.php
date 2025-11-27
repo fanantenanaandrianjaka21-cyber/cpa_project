@@ -327,7 +327,7 @@
                                     <img src="{{ $userImage && file_exists(public_path('storage/' . $userImage))
                                         ? asset('storage/' . $userImage)
                                         : asset('asset/imageNotfound.jpg') }}"
-                                        style="max-width: 200px;" class="rounded-circle">
+                                        style="max-width: 200px;max-height: 200px;min-width: 200px;min-height: 200px;" class="rounded-circle">
                                 </a>
                             </div>
 

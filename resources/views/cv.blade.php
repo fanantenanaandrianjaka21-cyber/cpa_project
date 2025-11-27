@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPTic CPA</title>
     <link rel="stylesheet" href="cvstyle.css">
-        
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 </head>
+
 <body>
 
     <div class="container">
@@ -32,13 +34,13 @@
             <h3>Expérience</h3>
             <ul>
                 <li>Projet Universitaire:</li>
-                    <ul>
-                        <li>Devellopement de site web (2023-2024)</li>
-                        <li>Devellopement de jeu de quiz (2023-2024)</li>
-                        <li>Elaboration d'une application de gestion de station essence (2024-2025)</li>
-                        <li>Elaboration d'une application de gestion de bibliothèque (2024-2025)</li>
-                        <li>Elaboration d'une application de gestion de paiement de salaire des salariés (2024-2025)</li>
-                    </ul>
+                <ul>
+                    <li>Devellopement de site web (2023-2024)</li>
+                    <li>Devellopement de jeu de quiz (2023-2024)</li>
+                    <li>Elaboration d'une application de gestion de station essence (2024-2025)</li>
+                    <li>Elaboration d'une application de gestion de bibliothèque (2024-2025)</li>
+                    <li>Elaboration d'une application de gestion de paiement de salaire des salariés (2024-2025)</li>
+                </ul>
                 <li>Stage pour l'élaboration d'une application de gestion de parc informatique et du ticketing</li>
             </ul>
 
@@ -60,11 +62,31 @@
         <div class="cv">
             <div class="header">
                 <h2>ANDRIANJAKA Fanantenana</h2>
-                <p>Développeur Web</p>
-            </div>
+                <p>Informaticien</p>
+                @php
+                    $userImage = Auth::user()->image;
+                @endphp
 
+
+            </div>
+            <div class="row mr-2">
+                <div class="col-md-6">
             <h3>Profil</h3>
             <p>Créative et polyvalente, spécialisée en design graphique et communication visuelle.</p>
+
+                </div>
+                <div class="col-md-6 ">
+
+                    <div class="p-2 text-center">
+                        <img src="{{ $userImage && file_exists(public_path('storage/' . $userImage))
+                            ? asset('storage/' . $userImage)
+                            : asset('asset/imageNotfound.jpg') }}"
+                            style="max-width: 200px;max-height: 200px;min-width: 200px;min-height: 200px;"
+                            class="img-fluid border rounded-circle w-75 p-2 mb-4">
+                    </div>
+                </div>
+
+            </div>
 
             <h3>Compétences</h3>
             <ul>
@@ -96,4 +118,5 @@
     </div>
 
 </body>
+
 </html>

@@ -81,6 +81,7 @@ Route::get('/export', function () {
 // ***************route materiel*************//
 Route::get('/gestionMateriels/{id_emplacement},{role}', [App\Http\Controllers\MaterielController::class, 'index'])->middleware('auth')->name('gestionMateriels');
 Route::get('/tousLesMateriels/{id_emplacement},{role}', [App\Http\Controllers\MaterielController::class, 'afficheMateriels'])->middleware('auth')->name('tousLesMateriels');
+Route::get('/Consommable/{id_emplacement},{role}', [App\Http\Controllers\MaterielController::class, 'afficheConsommable'])->middleware('auth')->name('Consommable');
 Route::get('/partype_centre/{type}', [App\Http\Controllers\MaterielController::class, 'afficheMaterielspartype_centre'])->middleware('auth')->name('materiel.partype_centre');
 Route::get('/partype_par_centre/{type},{id_emplacement}', [App\Http\Controllers\MaterielController::class, 'afficheMaterielspartype_par_centre'])->middleware('auth')->name('materiel.partype_par_centre');
 Route::post('/modifierMateriels', [App\Http\Controllers\MaterielController::class, 'modifierMateriel'])->middleware('auth')->name('materiel.modifier');

@@ -45,7 +45,7 @@ class InventaireController extends Controller
         //  $detail_materiel[$index]['observation']=$existing->observation;
         // }
         // }
-            // dd($detail_materiel);
+        // dd($detail_materiel);
 
         // Vérifier si l'inventaire existe déjà ce mois-ci
 
@@ -155,17 +155,26 @@ class InventaireController extends Controller
                 'date_inventaire' => $today,
             ]);
             foreach ($validated['anciencle'] as $index => $col) {
-                CaracteristiqueSupplementaire::where('id_materiel', $materielId)->where('cle', $col)->update(
-                    [
-                        'valeur' => $validated['valeur'][$index],
-                    ]
-                );
+                // On récupère la valeur et on remplace null par ''
+                $valeur = $validated['valeur'][$index] ?? ''; // si clé inexistante => ''
+
+                // Optionnel : si la valeur existe mais est null, on met ''
+                if (is_null($valeur)) {
+                    $valeur = '';
+                }
+
+                CaracteristiqueSupplementaire::where('id_materiel', $materielId)
+                    ->where('cle', $col)
+                    ->update([
+                        'valeur' => $valeur,
+                    ]);
             }
-                                        CaracteristiqueSupplementaire::where('id_materiel', $materielId)->where('cle', 'Verification_physique')->update(
-                    [
-                        'valeur' => 'true',
-                    ]
-                );
+
+            CaracteristiqueSupplementaire::where('id_materiel', $materielId)->where('cle', 'Verification_physique')->update(
+                [
+                    'valeur' => 'true',
+                ]
+            );
             return response()->json(['success' => true, 'data' => $inventaire]);
         } catch (\Exception $e) {
             return response()->json([
@@ -175,7 +184,7 @@ class InventaireController extends Controller
             ], 500);
         }
     }
-      public function modifier(Request $request)
+    public function modifier(Request $request)
     {
         // Validation de base
         $messages = [
@@ -196,20 +205,31 @@ class InventaireController extends Controller
         try {
             $materielId = $validated['id_materiel'];
             foreach ($validated['anciencle'] as $index => $col) {
-                CaracteristiqueSupplementaire::where('id_materiel', $materielId)->where('cle', $col)->update(
-                    [
-                        'valeur' => $validated['valeur'][$index],
-                    ]
-                );
+                // On récupère la valeur et on remplace null par ''
+                $valeur = $validated['valeur'][$index] ?? ''; // si clé inexistante => ''
+
+                // Optionnel : si la valeur existe mais est null, on met ''
+                if (is_null($valeur)) {
+                    $valeur = '';
+                }
+
+                CaracteristiqueSupplementaire::where('id_materiel', $materielId)
+                    ->where('cle', $col)
+                    ->update([
+                        'valeur' => $valeur,
+                    ]);
             }
-                            CaracteristiqueSupplementaire::where('id_materiel', $materielId)->where('cle', 'Verification_physique')->update(
-                    [
-                        'valeur' => 'false',
-                    ]
-                );
-            return response()->json(['success' => true,
-            //  'data' => $inventaire
-            ]
+
+            CaracteristiqueSupplementaire::where('id_materiel', $materielId)->where('cle', 'Verification_physique')->update(
+                [
+                    'valeur' => 'false',
+                ]
+            );
+            return response()->json(
+                [
+                    'success' => true,
+                    //  'data' => $inventaire
+                ]
             );
         } catch (\Exception $e) {
             return response()->json([

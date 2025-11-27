@@ -135,7 +135,7 @@
                         <p><i class="fa fa-warning"></i> Tous les donnees
                             de cet utilisateur seront aussi supprimer definitivement</p>
                     </div>
-                    <div class="modal-footer footer bg-primary">
+                    <div class="modal-footer footer">
                         <button id="confirmDelete" class="btn btn-outline-success">Confirmer</button>
                         <button class="btn btn-outline-primary" data-dismiss="modal">Annuler</button>
                     </div>

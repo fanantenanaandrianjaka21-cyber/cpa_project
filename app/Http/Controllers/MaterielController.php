@@ -160,7 +160,8 @@ class MaterielController extends Controller
     public function afficheMateriels($id_emplacement, $role)
     {
         if ($role == 'Super Admin' or $role == 'Admin IT') {
-            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->get();
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('categorie','poste')->get();
+            // dd($materiel);
         } else {
             $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('id_emplacement', $id_emplacement)->where('id_utilisateur', Auth::user()->id)->get();
         }
@@ -173,6 +174,24 @@ class MaterielController extends Controller
         $active_tab = 'materiel';
         return view('materiel.liste', compact('detail_materiel', 'emplacement', 'colonnes', 'i', 'active_tab'));
     }
+        public function afficheConsommable($id_emplacement, $role)
+    {
+        if ($role == 'Super Admin' or $role == 'Admin IT') {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('categorie','consommable')->get();
+            // dd($materiel);
+        } else {
+            $materiel = Materiel::with('caracteristiques', 'utilisateurs')->where('id_emplacement', $id_emplacement)->where('id_utilisateur', Auth::user()->id)->get();
+        }
+
+        $colonnes = $this->recupererColonnes('caracteristique_supplementaires', 'cle');
+        $i = $colonnes;
+        $detail_materiel = $this->recupererLesInfoMateriels($materiel, $colonnes);
+
+        $emplacement = Emplacement::all();
+        $active_tab = 'materiel';
+        return view('materiel.liste', compact('detail_materiel', 'emplacement', 'colonnes', 'i', 'active_tab'));
+    }
+    
     public function afficheMaterielspartype_centre($type)
     {
         if (Auth::User()->role == 'Super Admin' or Auth::User()->role == 'Admin IT') {
