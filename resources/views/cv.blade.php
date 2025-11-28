@@ -72,15 +72,14 @@
             <div class="row mr-2">
                 <div class="col-md-6">
             <h3>Profil</h3>
-            <p>Créative et polyvalente, spécialisée en design graphique et communication visuelle.</p>
+            <p>Ingénieur en Génie Logiciel, expérimenté dans le domaine du développement des
+systèmes numériques, habitué à accomplir un travail selon les besoins des clients.</p>
 
                 </div>
                 <div class="col-md-6 ">
 
                     <div class="p-2 text-center">
-                        <img src="{{ $userImage && file_exists(public_path('storage/' . $userImage))
-                            ? asset('storage/' . $userImage)
-                            : asset('asset/imageNotfound.jpg') }}"
+                        <img src="{{asset('asset/GcamHero.jpg') }}"
                             style="max-width: 200px;max-height: 200px;min-width: 200px;min-height: 200px;"
                             class="img-fluid border rounded-circle w-75 p-2 mb-4">
                     </div>
@@ -90,27 +89,34 @@
 
             <h3>Compétences</h3>
             <ul>
-                <li>Photoshop / Illustrator / Figma</li>
-                <li>Branding & Identité visuelle</li>
-                <li>Mise en page & Affiches</li>
+                <li>PHP / lARAVEL</li>
+                <li>React Native / Flutter</li>
             </ul>
 
             <h3>Expérience</h3>
             <ul>
-                <li>Graphiste – Creativa Agency (2021–2024)</li>
-                <li>Designer Freelance (2019–2021)</li>
-            </ul>
+                <li>Stagiaire Dévellopeur web du CPA (Septembre–Novembre 2025)</li>
+                <li>Développeur d’application mobile (Mai Novembre 2024)</li>
+                <li>Réalisateur de l’application mobile PM-Mada pour la soutenance de
+mémoire (Master 2 en Génie Logiciel). (2023-2024)</li>
+<li>Stagiaire Dévellopeur web  de l’Open-Data Madagascar. (Août-Novembre 2022)</li>   
+<li>Formateur au sein de l’association Tia-Tech Antsirabe. (2021)</li> 
+<li>Réalisateur du système Hot_vi pour la soutenance de mémoire de Licence
+(troisième année en Génie Logiciel) (2021)</li>   
+<li>Membre dans l’association AUTOMATISME ELECTRONIQUE ET
+INFORMATIQUE INDUSTRIEL Antsirabe (2019-2020)</li>   
+</ul>
 
             <h3>Contact</h3>
             <p>Email : andrianjakafanantenana21@gmail.com</p>
             <table>
                 <tr>
                     <td>Téléphone :</td>
-                    <td>+261 34</td>
+                    <td>+261 34 02 596 36</td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td>+261 33</td>
+                    <td>+261 33 25 263 89</td>
                 </tr>
             </table>
         </div>

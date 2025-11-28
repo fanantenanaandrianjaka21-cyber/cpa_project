@@ -25,7 +25,7 @@ class CreateTicketPrioritesTable extends Migration
         // ['code' => 'TRES_BASSE', 'label' => 'Très basse', 'color' => '#007bff'],
         ['code' => 'BASSE', 'label' => 'Basse', 'color' => '#fd7e14'],
         ['code' => 'MOYENNE', 'label' => 'Moyenne', 'color' => '#28a745'],
-        ['code' => 'URGENT', 'label' => 'Urgent', 'color' => '#6c757d'],
+        ['code' => 'URGENT', 'label' => 'Urgent', 'color' => '#dc3545'],
     ]);
     }
 
