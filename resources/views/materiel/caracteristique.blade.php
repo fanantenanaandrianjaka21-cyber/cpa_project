@@ -9,12 +9,12 @@
         ?>
         {{-- <div class="col-lg-12"> --}}
         <div class="header">
-            <i class="fa fa-home"></i>/ Details Materiels
+            <i class="fa fa-home"></i>/ Dtails Materiels
 
         </div>
         <div class="w3-panel">
             <h4 class="w3-start w3-animate-right">
-                Inforamtion du Materiel
+                Inforamtion sur le matériel
             </h4>
         </div>
         <div class="card">
@@ -69,7 +69,7 @@
                         </tr>
                         <tr>
                             <th>
-                                Numero de Serie :
+                                Numero de série :
 
                             </th>
                             <td>
