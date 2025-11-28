@@ -110,12 +110,13 @@
                             <select class="form-select" id="{{ $colonnes }}">
                                 <option value="{{ $detail_materiel[$colonnes] ?? '' }}">
                                     {{ $detail_materiel[$colonnes] ?? 'Choisir ' . $colonnes }}</option>
-
-                                <option value="TRES BON">TRES BON</option>
+                                <option value="VRAI">Vrai</option>
+                                <option value="FAUX">Faux</option>
+                                {{-- <option value="TRES BON">TRES BON</option>
                                 <option value="BON">BON</option>
                                 <option value="MOYEN">MOYEN</option>
                                 <option value="MAUVAIS">MAUVAIS</option>
-                                <option value="APPRENTI">APPRENTI</option>
+                                <option value="APPRENTI">APPRENTI</option> --}}
                             </select>
                         @elseif (strpos('test' . $colonnes, 'Mdp') == true)
                             <div class="input-group">

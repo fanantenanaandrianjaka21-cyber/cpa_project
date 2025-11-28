@@ -14,34 +14,51 @@
     <div class="card ">
         <div class="card-body bg-primary text-black">
             <p class="text-black">Sélectionnez un fichier Excel (.xlsx) contenant une liste des "etat materiels".</p>
-<div class="d-flex align-items-center gap-4">
+            <div class="d-flex align-items-center gap-4">
 
-    <!-- Formulaire Import -->
-    <div class="d-flex align-items-center gap-2">
-        <form method="POST" action="{{ route('etatmaterielexcel.import') }}" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
-            @csrf
-            <input type="file" name="fichier" class="form-control">
-            <button type="submit" class="btn btn-success">Importer</button>
-        </form>
-    </div>
+                <!-- Formulaire Import -->
+                <div class="d-flex align-items-center gap-2">
 
-    <!-- Formulaire Export -->
-    <div class="d-flex align-items-center gap-2">
-        <form method="POST" action="{{ route('inventaireexcel.export') }}" class="d-flex align-items-center gap-2">
-            @csrf
-            <button type="submit" class="btn btn-success">Export Excel</button>
+                    <div class="row g-3 align-items-center">
 
-            <select name="extension" class="form-select" style="width: auto;">
-                <option value="xlsx">.xlsx</option>
-                <option value="csv">.csv</option>
-            </select>
-        </form>
-    </div>
+                        {{-- Zone Import Excel --}}
+                        <div class="col-auto">
+                            <form method="POST" action="{{ route('etatmaterielexcel.import') }}"
+                                enctype="multipart/form-data" class="d-flex align-items-center gap-2">
+                                @csrf
+                                <input type="file" name="fichier" class="form-control">
+                                <button type="submit" class="btn btn-success">Importer</button>
+                            </form>
+                        </div>
 
-</div>
+                        {{-- Bouton Télécharger modèle --}}
+                        <div class="col-auto">
+                            <a href="{{ route('download.modele.importInventaire') }}" class="btn btn-primary">
+                                <i class="fa fa-download"></i> Télécharger modèle Excel
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Formulaire Export -->
+                <div class="d-flex align-items-center gap-2">
+                    <form method="POST" action="{{ route('inventaireexcel.export') }}"
+                        class="d-flex align-items-center gap-2">
+                        @csrf
+                        <button type="submit" class="btn btn-success">Export Excel</button>
+
+                        <select name="extension" class="form-select" style="width: auto;">
+                            <option value="xlsx">.xlsx</option>
+                            <option value="csv">.csv</option>
+                        </select>
+                    </form>
+                </div>
+
+            </div>
 
 
-           
+
             <div id="filters" class="row mb-3"></div>
             <table id="bootstrap-data-table-export" class="table table-hover table-responsive">
                 <thead>
@@ -81,13 +98,13 @@
                             <td>
                                 {{ $materiel['code_interne'] }}
                             </td>
-                           
+
                             @if ($materiel['Verification_physique'] == 'true')
                                 <td class="text-success">
                                     Terminer <i class="fa fa-check"></i>
                                 </td>
                             @else
-                             {{-- {{ dd($materiel['Verification_physique']) }} --}}
+                                {{-- {{ dd($materiel['Verification_physique']) }} --}}
                                 <td class="text-danger">
                                     Non valide <i class="fa fa-close"></i>
                                 </td>
@@ -96,7 +113,7 @@
 
                             <td>
                                 <div class="text-center">
-                                    <a href="{{ route('caracteristique.voir', ['id'=>$materiel['id'],'page'=>'inventaire']) }}"
+                                    <a href="{{ route('caracteristique.voir', ['id' => $materiel['id'], 'page' => 'inventaire']) }}"
                                         class="btn btn-outline-info btn-xs">Voir Etat Dans la Base</a>
                                     {{-- <a href="{{ route('materiel.edit', $materiel['id']) }}"
                                         class="btn btn-outline-secondary btn-xs" data-toggle="tooltip" data-placement="top"

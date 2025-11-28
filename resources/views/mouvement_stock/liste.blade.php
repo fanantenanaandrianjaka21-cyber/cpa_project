@@ -77,7 +77,7 @@
                                     </td>
                                     <td>
                                         @if ($mouvement['type_mouvement'] == 'sortie')
-                                            {{ $mouvement['email'] }}
+                                            {{ $mouvement['prenom_utilisateur'] }}
                                         @else
                                             {{ $mouvement['destination'] }}
                                             {{-- soloina ny emplacement dans emplacements --}}

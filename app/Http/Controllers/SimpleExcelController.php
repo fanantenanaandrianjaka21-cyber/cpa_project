@@ -663,134 +663,134 @@ class SimpleExcelController extends Controller
             return back()->with('error', 'Erreur lors de l’importation : ' . $e->getMessage());
         }
     }
-// public function importUtilisateur(Request $request)
-// {
-//     $rows = $request->input('data'); 
-//     $prenoms = [];
-//     $already_exists = []; // cumulatif pour tout le fichier
+    // public function importUtilisateur(Request $request)
+    // {
+    //     $rows = $request->input('data'); 
+    //     $prenoms = [];
+    //     $already_exists = []; // cumulatif pour tout le fichier
 
-//     foreach ($rows as $user) {
+    //     foreach ($rows as $user) {
 
-//         // récupérer dynamiquement la clé contenant "prenom"
-//         $prenomKey = null;
-//         foreach(array_keys($user) as $k){
-//             if(str_contains($k, 'prenom')){
-//                 $prenomKey = $k;
-//                 break;
-//             }
-//         }
+    //         // récupérer dynamiquement la clé contenant "prenom"
+    //         $prenomKey = null;
+    //         foreach(array_keys($user) as $k){
+    //             if(str_contains($k, 'prenom')){
+    //                 $prenomKey = $k;
+    //                 break;
+    //             }
+    //         }
 
-//         $prenom = $prenomKey ? $user[$prenomKey] : '';
-//         preg_match('/\d+/', $prenom ?? '', $matches);
-//         $id = isset($matches[0]) ? (int)$matches[0] : null;
-//         if (!$id) continue;
+    //         $prenom = $prenomKey ? $user[$prenomKey] : '';
+    //         preg_match('/\d+/', $prenom ?? '', $matches);
+    //         $id = isset($matches[0]) ? (int)$matches[0] : null;
+    //         if (!$id) continue;
 
-//         $prenom_clean = preg_replace('/^(.*) \(\d+\)$/','$1',$prenom);
+    //         $prenom_clean = preg_replace('/^(.*) \(\d+\)$/','$1',$prenom);
 
-//         $exists = DB::table('users')->where('id', $id)->exists();
+    //         $exists = DB::table('users')->where('id', $id)->exists();
 
-//         if (!$exists) {
-//             // créer l’utilisateur
-//             \App\Models\User::create([
-//                 'id' => $id,
-//                 'id_emplacement' => 1,
-//                 'nom_utilisateur' => $user['utilisateur'] ?? null,
-//                 'prenom_utilisateur' => $prenom_clean,
-//                 // 'email' => $user['email'] ?? $id.'@gmail.com',
-//                 'password' => Hash::make($user['password'] ?? '111111'),
-//                 'equipe' => $user['equipe'] ?? null,
-//                 'societe' => $user['societe'] ?? null,
-//                 'role' => $user['role'] ?? 'Utilisateur',
-//                 'contact_utilisateur' => $user['contact_utilisateur'] ?? null,
-//                 'created_at' => now(),
-//                 'updated_at' => now(),
-//             ]);
-//         } else {
-//             // ajouter aux doublons
-//             $already_exists[] = $prenom_clean;
-//         }
+    //         if (!$exists) {
+    //             // créer l’utilisateur
+    //             \App\Models\User::create([
+    //                 'id' => $id,
+    //                 'id_emplacement' => 1,
+    //                 'nom_utilisateur' => $user['utilisateur'] ?? null,
+    //                 'prenom_utilisateur' => $prenom_clean,
+    //                 // 'email' => $user['email'] ?? $id.'@gmail.com',
+    //                 'password' => Hash::make($user['password'] ?? '111111'),
+    //                 'equipe' => $user['equipe'] ?? null,
+    //                 'societe' => $user['societe'] ?? null,
+    //                 'role' => $user['role'] ?? 'Utilisateur',
+    //                 'contact_utilisateur' => $user['contact_utilisateur'] ?? null,
+    //                 'created_at' => now(),
+    //                 'updated_at' => now(),
+    //             ]);
+    //         } else {
+    //             // ajouter aux doublons
+    //             $already_exists[] = $prenom_clean;
+    //         }
 
-//         $prenoms[] = $prenom_clean;
-//     }
+    //         $prenoms[] = $prenom_clean;
+    //     }
 
-//     return response()->json([
-//         'status' => 'ok',
-//         'prenoms' => $prenoms,
-//         'already_exists' => $already_exists, // contient TOUS les doublons du fichier
-//         'total_already_exists' => count($already_exists)
-//     ]);
-// }
-
-
+    //     return response()->json([
+    //         'status' => 'ok',
+    //         'prenoms' => $prenoms,
+    //         'already_exists' => $already_exists, // contient TOUS les doublons du fichier
+    //         'total_already_exists' => count($already_exists)
+    //     ]);
+    // }
 
 
 
-public function importUtilisateur(Request $request)
-{
-    $rows = $request->input('data'); 
-    $prenoms = [];
-    $already_exists = [];
-    $imported = [];
-    $failed = [];
 
-    foreach ($rows as $user) {
-        // récupérer dynamiquement la clé contenant "prenom"
-        $prenomKey = null;
-        foreach(array_keys($user) as $k){
-            if(str_contains($k, 'prenom')){
-                $prenomKey = $k;
-                break;
+
+    public function importUtilisateur(Request $request)
+    {
+        $rows = $request->input('data');
+        $prenoms = [];
+        $already_exists = [];
+        $imported = [];
+        $failed = [];
+
+        foreach ($rows as $user) {
+            // récupérer dynamiquement la clé contenant "prenom"
+            $prenomKey = null;
+            foreach (array_keys($user) as $k) {
+                if (str_contains($k, 'prenom')) {
+                    $prenomKey = $k;
+                    break;
+                }
             }
+
+            $prenom = $prenomKey ? $user[$prenomKey] : '';
+            preg_match('/\d+/', $prenom ?? '', $matches);
+            $id = isset($matches[0]) ? (int)$matches[0] : null;
+            $prenom_clean = preg_replace('/^(.*) \(\d+\)$/', '$1', $prenom);
+            $prenom_utilisateur = strtok($prenom_clean, '(');
+            if (!$id) {
+                // ligne invalide ou non importable
+                $failed[] = $prenom ?? '(ligne sans ID)';
+                continue;
+            }
+
+            $exists = DB::table('users')->where('id', $id)->exists();
+
+            if (!$exists) {
+                // créer l’utilisateur
+                \App\Models\User::create([
+                    'id' => $id,
+                    'id_emplacement' => 1,
+                    'nom_utilisateur' => $user['utilisateur'] ?? null,
+                    'prenom_utilisateur' => $prenom_utilisateur,
+                    'password' => Hash::make($user['password'] ?? '111111'),
+                    'equipe' => $user['equipe'] ?? null,
+                    'societe' => $user['societe'] ?? null,
+                    'role' => $user['role'] ?? 'Utilisateur',
+                    'contact_utilisateur' => $user['contact_utilisateur'] ?? null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                $imported[] = $prenom_clean;
+            } else {
+                $already_exists[] = $prenom_clean;
+            }
+
+            $prenoms[] = $prenom_clean;
         }
 
-        $prenom = $prenomKey ? $user[$prenomKey] : '';
-        preg_match('/\d+/', $prenom ?? '', $matches);
-        $id = isset($matches[0]) ? (int)$matches[0] : null;
-        $prenom_clean = preg_replace('/^(.*) \(\d+\)$/','$1',$prenom);
-
-        if (!$id) {
-            // ligne invalide ou non importable
-            $failed[] = $prenom ?? '(ligne sans ID)';
-            continue;
-        }
-
-        $exists = DB::table('users')->where('id', $id)->exists();
-
-        if (!$exists) {
-            // créer l’utilisateur
-            \App\Models\User::create([
-                'id' => $id,
-                'id_emplacement' => 1,
-                'nom_utilisateur' => $user['utilisateur'] ?? null,
-                'prenom_utilisateur' => $prenom_clean,
-                'password' => Hash::make($user['password'] ?? '111111'),
-                'equipe' => $user['equipe'] ?? null,
-                'societe' => $user['societe'] ?? null,
-                'role' => $user['role'] ?? 'Utilisateur',
-                'contact_utilisateur' => $user['contact_utilisateur'] ?? null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            $imported[] = $prenom_clean;
-        } else {
-            $already_exists[] = $prenom_clean;
-        }
-
-        $prenoms[] = $prenom_clean;
+        return response()->json([
+            'status' => 'ok',
+            'prenoms' => $prenoms,
+            'already_exists' => $already_exists,
+            'imported' => $imported,
+            'failed' => $failed, // 🔹 lignes non importées
+            'total_to_import' => count($rows),
+            'total_imported' => count($imported),
+            'total_already_exists' => count($already_exists),
+            'total_failed' => count($failed) // 🔹 nombre de non importés
+        ]);
     }
-
-    return response()->json([
-        'status' => 'ok',
-        'prenoms' => $prenoms,
-        'already_exists' => $already_exists,
-        'imported' => $imported,
-        'failed' => $failed, // 🔹 lignes non importées
-        'total_to_import' => count($rows),
-        'total_imported' => count($imported),
-        'total_already_exists' => count($already_exists),
-        'total_failed' => count($failed) // 🔹 nombre de non importés
-    ]);
-}
 
     // Exporter les données
     public function export(Request $request)
@@ -871,8 +871,8 @@ public function importUtilisateur(Request $request)
                     'Code Ecran' => null,
                     'HDMI' => null,
                     'Clavier' => null,
-                    'Souris' => null,
-                    'Micro/Audio' => null,
+                    'LAN' => null,
+                    'USB' => null,
                     'Etat du PC' => null,
                     'Localisation' => $u->emplacement->emplacement ?? null,
                     'Mdp PC' => null,
@@ -943,8 +943,8 @@ public function importUtilisateur(Request $request)
                     'Code Ecran' => $ecrans[$i]->code_interne ?? null,
                     'HDMI' => $hdmis,
                     'Clavier' => $Clavier,
-                    'Souris' => $Souris,
-                    'Micro/Audio' => $Micro_audio,
+                    'LAN' => $Souris,
+                    'USB' => $Micro_audio,
                     // 'Etat du PC' => $pcs[$i]->caracteristiqueSupplementaire->firstWhere('cle','Etat actuel')?->valeur?? null,
                     'Etat du PC' => $pcs[$i]?->caracteristiques?->firstWhere('cle', 'Etat')?->valeur ?? null,
                     // $pcs[$i]?-> → si $pcs[$i] n’existe pas (par exemple, pas de PC pour cet utilisateur), on évite une erreur.

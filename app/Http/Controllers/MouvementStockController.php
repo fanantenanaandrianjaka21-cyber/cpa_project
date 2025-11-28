@@ -97,7 +97,7 @@ $mouvement = MouvementStock::with('utilisateurs')->where('emplacement_destinatio
         });
 
         $mouvement = $detail_mouvements;
-        // dd($mouvement);
+        // dd($mouvement[2]);
         $active_tab='stock';
         return view('mouvement_stock.liste', compact('mouvement','active_tab'));
     }

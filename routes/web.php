@@ -86,7 +86,16 @@ Route::get('/download-modele-import', function () {
     }
 
     return response()->download($path, 'Modele-Import-Utilisateurs.xlsx');
-})->name('download.modele.import');
+})->name('download.modele.importInventaire');
+Route::get('/download-modele-import', function () {
+    $path = public_path('modelImport/Modele-Import-Inventaire.xlsx');
+
+    if (!file_exists($path)) {
+        abort(404, "Fichier modèle introuvable !");
+    }
+
+    return response()->download($path, 'Modele-Import-Inventaires.xlsx');
+})->name('download.modele.importInventaire');
 
 
 // ***************route materiel*************//
