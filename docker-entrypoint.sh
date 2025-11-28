@@ -46,7 +46,7 @@ fi
 # 3. Maintenance Laravel
 # ------------------------------
 echo "🧹 Nettoyage du cache Laravel..."
-php artisan migrate:reset --force || true
+# php artisan migrate:reset --force || true
 php artisan config:clear || true
 php artisan cache:clear || true
 php artisan view:clear || true
