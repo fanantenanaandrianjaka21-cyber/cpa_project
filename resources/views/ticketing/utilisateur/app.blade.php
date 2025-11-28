@@ -335,7 +335,7 @@
                             <div class="card-body pt-3">
                                 <div class="text-center">
                                     <h7>
-                                        {{ Auth::user()->nom_utilisateur }} ({{ Auth::user()->prenom_utilisateur }})
+                                        {{ Auth::user()->nom_utilisateur }} <br>({{ Auth::user()->prenom_utilisateur }})
 
                                     </h7>
                                     <div>
