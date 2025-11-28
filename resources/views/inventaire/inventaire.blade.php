@@ -52,7 +52,7 @@
                         <th>Code inventaire</th>
                         {{-- <th>Marque</th> --}}
                         {{-- <th>Etat General</th> --}}
-                        <th>Vérification physique</th>
+                        <th>Inventaire annuel</th>
                         {{-- @foreach ($colonnes as $colonne)
                             <th>{{ $colonne }}</th>
                         @endforeach --}}

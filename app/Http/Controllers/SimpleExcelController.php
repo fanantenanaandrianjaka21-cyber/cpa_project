@@ -663,13 +663,78 @@ class SimpleExcelController extends Controller
             return back()->with('error', 'Erreur lors de l’importation : ' . $e->getMessage());
         }
     }
+// public function importUtilisateur(Request $request)
+// {
+//     $rows = $request->input('data'); 
+//     $prenoms = [];
+//     $already_exists = []; // cumulatif pour tout le fichier
+
+//     foreach ($rows as $user) {
+
+//         // récupérer dynamiquement la clé contenant "prenom"
+//         $prenomKey = null;
+//         foreach(array_keys($user) as $k){
+//             if(str_contains($k, 'prenom')){
+//                 $prenomKey = $k;
+//                 break;
+//             }
+//         }
+
+//         $prenom = $prenomKey ? $user[$prenomKey] : '';
+//         preg_match('/\d+/', $prenom ?? '', $matches);
+//         $id = isset($matches[0]) ? (int)$matches[0] : null;
+//         if (!$id) continue;
+
+//         $prenom_clean = preg_replace('/^(.*) \(\d+\)$/','$1',$prenom);
+
+//         $exists = DB::table('users')->where('id', $id)->exists();
+
+//         if (!$exists) {
+//             // créer l’utilisateur
+//             \App\Models\User::create([
+//                 'id' => $id,
+//                 'id_emplacement' => 1,
+//                 'nom_utilisateur' => $user['utilisateur'] ?? null,
+//                 'prenom_utilisateur' => $prenom_clean,
+//                 // 'email' => $user['email'] ?? $id.'@gmail.com',
+//                 'password' => Hash::make($user['password'] ?? '111111'),
+//                 'equipe' => $user['equipe'] ?? null,
+//                 'societe' => $user['societe'] ?? null,
+//                 'role' => $user['role'] ?? 'Utilisateur',
+//                 'contact_utilisateur' => $user['contact_utilisateur'] ?? null,
+//                 'created_at' => now(),
+//                 'updated_at' => now(),
+//             ]);
+//         } else {
+//             // ajouter aux doublons
+//             $already_exists[] = $prenom_clean;
+//         }
+
+//         $prenoms[] = $prenom_clean;
+//     }
+
+//     return response()->json([
+//         'status' => 'ok',
+//         'prenoms' => $prenoms,
+//         'already_exists' => $already_exists, // contient TOUS les doublons du fichier
+//         'total_already_exists' => count($already_exists)
+//     ]);
+// }
+
+
+
+
+
 public function importUtilisateur(Request $request)
 {
     $rows = $request->input('data'); 
     $prenoms = [];
+    $already_exists = [];
+    $imported = [];
+    $failed = [];
 
-    foreach($rows as $user){
-        // récupérer la clé contenant "prenom" dynamiquement
+    foreach ($rows as $user) {
+        // récupérer dynamiquement la clé contenant "prenom"
         $prenomKey = null;
         foreach(array_keys($user) as $k){
             if(str_contains($k, 'prenom')){
@@ -679,18 +744,25 @@ public function importUtilisateur(Request $request)
         }
 
         $prenom = $prenomKey ? $user[$prenomKey] : '';
-        preg_match('/\d+/',$prenom ?? '', $matches);
+        preg_match('/\d+/', $prenom ?? '', $matches);
         $id = isset($matches[0]) ? (int)$matches[0] : null;
-        if(!$id) continue;
+        $prenom_clean = preg_replace('/^(.*) \(\d+\)$/','$1',$prenom);
 
-        $exists = DB::table('users')->where('id',$id)->exists();
-        if(!$exists){
+        if (!$id) {
+            // ligne invalide ou non importable
+            $failed[] = $prenom ?? '(ligne sans ID)';
+            continue;
+        }
+
+        $exists = DB::table('users')->where('id', $id)->exists();
+
+        if (!$exists) {
+            // créer l’utilisateur
             \App\Models\User::create([
                 'id' => $id,
                 'id_emplacement' => 1,
                 'nom_utilisateur' => $user['utilisateur'] ?? null,
-                'prenom_utilisateur' => preg_replace('/^(.*) \(\d+\)$/','$1',$prenom),
-                // 'email' => $user['email'] ?? $id.'@gmail.com',
+                'prenom_utilisateur' => $prenom_clean,
                 'password' => Hash::make($user['password'] ?? '111111'),
                 'equipe' => $user['equipe'] ?? null,
                 'societe' => $user['societe'] ?? null,
@@ -699,145 +771,26 @@ public function importUtilisateur(Request $request)
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+            $imported[] = $prenom_clean;
+        } else {
+            $already_exists[] = $prenom_clean;
         }
 
-        $prenoms[] = preg_replace('/^(.*) \(\d+\)$/','$1',$prenom);
+        $prenoms[] = $prenom_clean;
     }
 
     return response()->json([
         'status' => 'ok',
-        'prenoms' => $prenoms
+        'prenoms' => $prenoms,
+        'already_exists' => $already_exists,
+        'imported' => $imported,
+        'failed' => $failed, // 🔹 lignes non importées
+        'total_to_import' => count($rows),
+        'total_imported' => count($imported),
+        'total_already_exists' => count($already_exists),
+        'total_failed' => count($failed) // 🔹 nombre de non importés
     ]);
 }
-
-
-
-
-
-    // public function importUtilisateur(Request $request)
-    // {
-
-    //     // 1. Validation du fichier (uniquement .xlsx autorisé)
-    //     $request->validate([
-    //         'fichier' => 'required|file|mimes:xlsx'
-    //     ]);
-    //     // 2. Déplacement du fichier vers le dossier public temporairement
-    //     $fichier = $request->file('fichier');
-    //     $nomFichier = $fichier->hashName();
-    //     $cheminFichier = $fichier->move(public_path(), $nomFichier);
-
-    //     try {
-    //         // 🧩 Vérifier que le fichier est bien envoyé
-    //         if (!$request->hasFile('fichier')) {
-    //             return back()->with('error', 'Aucun fichier sélectionné.');
-    //         }
-
-
-    //         // 🧩 Charger le fichier Excel
-    //         $spreadsheet = IOFactory::load($cheminFichier->getRealPath());
-    //         $sheet = $spreadsheet->getActiveSheet();
-    //         // ⭐️ NOUVEAU : Sélectionner la feuille par son nom 'utilisateurs_articles'
-    //         // Ceci remplace $sheet = $spreadsheet->getActiveSheet();
-    //         $sheet = $spreadsheet->getSheetByName('utilisateurs_articles');
-
-    //         // ⚠️ Vérification : Si la feuille n'existe pas
-    //         if ($sheet === null) {
-    //             // Optionnel : Supprimer le fichier temporaire avant de retourner une erreur
-    //             unlink($cheminFichier->getRealPath());
-    //             return back()->with('error', 'La feuille "utilisateurs_articles" est introuvable dans le fichier.');
-    //         }
-
-    //         // 🧩 Convertir toutes les lignes de la feuille sélectionnée en tableau
-    //         $rows = $sheet->toArray(null, true, true, true);
-    //         // Ne conserver que les colonnes A → D
-    //         $rows = array_map(fn($row) => array_slice($row, 0, 4), $rows);
-    //         // 🧩 Ligne d’en-tête (A2 → ligne 2)
-    //         $headerRow = 2; // Ajustez cette valeur si l'en-tête n'est pas à la ligne 1 de cette feuille.
-
-    //         if (!isset($rows[$headerRow])) {
-    //             return back()->with('error', 'Impossible de trouver la ligne d’en-tête (A8).');
-    //         }
-
-
-    //         $headers = $rows[$headerRow];
-
-    //         // 🧩 Nettoyer les en-têtes
-    //         $keys = collect($headers)->map(function ($h) {
-    //             return strtolower(trim(str_replace(
-    //                 [' ', '/', 'é', 'è', 'à', 'ù', 'ô', 'ê', 'î'],
-    //                 ['_', '_', 'e', 'e', 'a', 'u', 'o', 'e', 'i'],
-    //                 $h
-    //             )));
-    //         })->values()->toArray();
-
-    //         // 🧩 Lire les données après la ligne 8
-    //         $data = [];
-    //         $highestRow = $sheet->getHighestRow();
-    //         // dd($highestRow);
-    //         for ($row = $headerRow + 1; $row <= $highestRow; $row++) {
-    //             $line = $rows[$row];
-
-    //             // Ignorer les lignes vides
-    //             if (!array_filter($line)) continue;
-
-    //             $values = array_values($line);
-    //             $data[] = array_combine($keys, $values);
-    //         }
-
-    //         // 🧩 Vérifier si on a des données
-    //         if (empty($data)) {
-    //             return back()->with('error', 'Aucune donnée trouvée après la ligne 8.');
-    //         }
-
-    //         // dd($data);
-
-    //         foreach ($data as $user) {
-    //             // On récupère la localisation depuis le tableau
-    //             // $matricule = $user['id'] ?? null;
-    //             $prenom = preg_replace('/^(.*) \(\d+ \)$/', '$1', $user['prenoms_(id)']);
-    //             // preg_match('/\((\d+) \)/', $user['prenoms_(id)'], $matches);
-    //             preg_match('/\d+/', $user['prenoms_(id)'], $matches);
-    //             // $id = (isset($matches[1])) ? trim($matches[1]) : null;
-    //             $id = (isset($matches[0])) ? trim($matches[0]) : null;
-    //             $id_entier = (int)$id;
-    //             $matricule = $id_entier ?? null;
-    //             // dd($matches);
-    //             // On saute si la localisation est vide
-    //             if (!$matricule) continue;
-
-
-    //             // Vérifie si cette localisation existe déjà
-    //             $exists = DB::table('users')
-    //                 ->where('id', $matricule)
-    //                 ->exists();
-
-    //             // Si elle n’existe pas, on insère
-    //             if (!$exists) {
-    //                 User::create([
-    //                     'id' => $matricule,
-    //                     'id_emplacement' => '1',
-    //                     'nom_utilisateur' => $user['utilisateur'],
-    //                     'prenom_utilisateur' => $prenom,
-    //                     'email' => $user['email'] ?? $matricule . '@gmail.com',
-    //                     'password' => Hash::make($user['password'] ?? '111111'),
-    //                     'equipe' => $user['equipe'] ?? null,
-    //                     'societe' => $user['societe'] ?? null,
-    //                     'role' => $user['role'] ?? 'Utilisateur',
-    //                     'contact_utilisateur' => $user['contact_utilisateur'] ?? null,
-    //                     'created_at' => now(),
-    //                     'updated_at' => now(),
-    //                 ]);
-    //             }
-    //         }
-
-    //         // dd($data);
-    //         // ✅ Succès
-    //         return back()->with('success', 'Importation réussie avec succès !');
-    //     } catch (\Exception $e) {
-    //         // ⚠️ Gestion des erreurs
-    //         return back()->with('error', 'Erreur lors de l’importation : ' . $e->getMessage());
-    //     }
-    // }
 
     // Exporter les données
     public function export(Request $request)

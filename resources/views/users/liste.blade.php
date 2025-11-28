@@ -20,20 +20,20 @@
                         <?php
                         if (isset($notification)) {
                             echo "<div class='alert alert-success'>
-                                                                                                                                                                                                                    <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                                                                                                                                                                                                                      <i class='fa fa-close'></i>
-                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                    <span>
-                                                                                                                                                                                                                      <i class='fa fa-bell'></i><b>  Success - </b>" .
+                                                                                                                                                                                                                                                                                                                                                                                                                                            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                                                                                                                                                                                                                                                                                                                                                                                                                                              <i class='fa fa-close'></i>
+                                                                                                                                                                                                                                                                                                                                                                                                                                            </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                            <span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                              <i class='fa fa-bell'></i><b>  Success - </b>" .
                                 $notification .
                                 "</span>
-                                                                                                                                                                                                                  </div>";
+                                                                                                                                                                                                                                                                                                                                                                                                                                          </div>";
                         }
                         ?>
-                                                <p class="text-black">Sélectionnez le fichier Excel (Mouvement materiel.xlsx) pour importer une
+                        <p class="text-black">Sélectionnez le fichier Excel (Mouvement materiel.xlsx) pour importer une
                             liste des
                             "utilisateurs".<br>
-                        {{-- nouveau import --}}
+                            {{-- nouveau import --}}
                         <form id="form_import" method="POST" action="{{ route('utilisateurexcel.import') }}"
                             enctype="multipart/form-data">
                             @csrf
@@ -47,19 +47,11 @@
                             </div>
                         </form>
 
-                        <!-- Modal Progression -->
-                        <div class="modal fade" id="progressModal" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content p-3">
-                                    <h5>Import du list des utilisateurs en cours...</h5>
-                                    <div id="progressText">0 / 0 importé</div>
-                                    <div class="progress my-3">
-                                        <div id="progressBar" class="progress-bar" role="progressbar" style="width:0%">0%
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+
+
+
+
 
 
                         {{-- fin nouveau import --}}
@@ -145,6 +137,52 @@
             <!-- /.modal-dialog -->
         </div>
         <!-- /.modal -->
+        {{-- modal progression --}}
+<!-- Modal Progression Améliorée -->
+<div class="modal fade" id="progressModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl"><!-- plus large -->
+        <div class="modal-content p-3 position-relative">
+
+            <!-- Bouton close -->
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close">
+            </button>
+
+            <h5 class="mb-3">Import de la liste des utilisateurs en cours...</h5>
+            
+            <!-- Progression -->
+            <div id="progressText">0 / 0 lignes dans le fichier</div>
+            <div class="progress my-3">
+                <div id="progressBar" class="progress-bar" role="progressbar" style="width:0%">0%</div>
+            </div>
+
+            <!-- Résumé importé / non importé -->
+            <div id="importSummary" class="mb-3"></div>
+
+            <!-- Doublons -->
+            <div id="doublonsContainer" class="mt-3" style="display:none;">
+                <h6 class="fw-bold text-warning d-flex align-items-center">
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                    Utilisateurs déjà existants
+                    <span id="doublonsBadge" class="badge bg-warning ms-2 text-dark">0</span>
+                </h6>
+                <ul id="doublonsList" class="list-group" style="max-height:250px; overflow-y:auto;"></ul>
+            </div>
+
+            <!-- Lignes non importées -->
+            <div id="failedContainer" class="mt-3" style="display:none;">
+                <h6 class="fw-bold text-danger d-flex align-items-center">
+                    <i class="fa fa-times-circle me-2"></i>
+                    Lignes non importées
+                    <span id="failedBadge" class="badge bg-danger ms-2">0</span>
+                </h6>
+                <ul id="failedList" class="list-group" style="max-height:250px; overflow-y:auto;"></ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+        {{-- fin modal progression --}}
         <script>
             let currentId = null;
 
@@ -227,8 +265,17 @@
 
         <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <script>
-$('#form_import').on('submit', async function(e){
+    $('#form_import').on('submit', async function(e) {
     e.preventDefault();
+
+    // 🔹 Réinitialisation du modal
+    $('#doublonsList').empty();
+    $('#failedList').empty();
+    $('#doublonsContainer').hide();
+    $('#failedContainer').hide();
+    $('#doublonsBadge').text("0");
+    $('#failedBadge').text("0");
+    $('#progressBar').css('width','0%').text('0%');
 
     let fileInput = $(this).find('input[name="fichier"]')[0];
     if(fileInput.files.length === 0){
@@ -245,35 +292,34 @@ $('#form_import').on('submit', async function(e){
         return;
     }
 
-    let jsonData = XLSX.utils.sheet_to_json(sheet, {header:1});
+    let jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
     let headerRow = 1; // ligne 2
     let headers = jsonData[headerRow];
-    let dataRows = jsonData.slice(headerRow+1).filter(r => r.length>0);
-
-    let total = dataRows.length;
-    let chunkSize = 10;
+    let dataRows = jsonData.slice(headerRow + 1).filter(r => r.length > 0);
+    let totalLines = dataRows.length;
 
     $('#progressModal').modal('show');
+    $('#progressText').text(`0 / ${totalLines} lignes importées`);
     $('#progressBar').css('width','0%').text('0%');
-    $('#progressText').text('0 / '+total+' importés');
 
-    for(let i=0;i<total;i+=chunkSize){
-        let chunk = dataRows.slice(i, i+chunkSize);
+    let chunkSize = 10;
+    let totalImported = 0;
+    let totalAlreadyExists = 0;
+    let totalFailed = 0;
 
-        let chunkData = chunk.map(row=>{
+    for (let i = 0; i < totalLines; i += chunkSize) {
+        let chunk = dataRows.slice(i, i + chunkSize);
+
+        let chunkData = chunk.map(row => {
             let obj = {};
-            headers.forEach((h, idx)=>{
-                // normalisation clé : minuscule + accents en lettres simples + espace/parenthèses remplacés par _
+            headers.forEach((h, idx) => {
                 let key = h.toLowerCase()
-                           .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                           .replace(/[^a-z0-9]/g,'_');
+                            .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+                            .replace(/[^a-z0-9]/g,'_');
                 obj[key] = row[idx] ?? null;
             });
             return obj;
         });
-
-        // debug console : vérifier les clés
-        console.log("Chunk envoyé :", chunkData);
 
         try {
             let res = await $.ajax({
@@ -281,28 +327,56 @@ $('#form_import').on('submit', async function(e){
                 type: "POST",
                 contentType: 'application/json',
                 processData: false,
-                data: JSON.stringify({data: chunkData}),
-                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}
+                data: JSON.stringify({ data: chunkData }),
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
             });
 
-            console.log("Prénoms reçus du serveur :", res.prenoms);
+            totalImported += res.total_imported;
+            totalAlreadyExists += res.total_already_exists;
+            totalFailed += res.total_failed;
+
+            // Mise à jour progression
+            let percent = Math.floor((i + chunk.length) / totalLines * 100);
+            $('#progressBar').css('width', percent + '%').text(percent + '%');
+            $('#progressText').html(`
+                Total lignes fichier: ${totalLines} <br>
+                Total importé: ${totalImported} <br>
+                Doublons: ${totalAlreadyExists} <br>
+                Non importé: ${totalFailed}
+            `);
+
+            // Affichage doublons et échecs partiels
+            if(res.already_exists.length > 0){
+                $('#doublonsContainer').show();
+                $('#doublonsBadge').text(totalAlreadyExists);
+                res.already_exists.forEach(name => {
+                    $('#doublonsList').append(`<li class="list-group-item list-group-item-warning">${name}</li>`);
+                });
+            }
+
+            if(res.failed.length > 0){
+                $('#failedContainer').show();
+                $('#failedBadge').text(totalFailed);
+                res.failed.forEach(name => {
+                    $('#failedList').append(`<li class="list-group-item list-group-item-danger">${name}</li>`);
+                });
+            }
 
         } catch(err) {
             console.error("Erreur lors de l'import d'un chunk :", err);
             alert("Erreur lors de l'import, voir console pour détails.");
             break;
         }
-
-        let current = Math.min(i+chunkSize, total);
-        let percent = Math.floor(current/total*100);
-        $('#progressBar').css('width', percent+'%').text(percent+'%');
-        $('#progressText').text(current+' / '+total+' utilisateurs importés');
     }
 
-    // alert("Import terminé !");
-    $('#progressModal').modal('hide');
-    location.reload();
+    $('#progressBar').css('width','100%').text('100%');
 });
+$('#progressModal').on('hidden.bs.modal', function () {
+    location.reload(); // recharge la page
+});
+
 </script>
+
+
     @endif
 @endsection
