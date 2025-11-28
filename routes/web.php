@@ -78,6 +78,17 @@ Route::get('/export', function () {
     return view('excel.export');
 });
 
+Route::get('/download-modele-import', function () {
+    $path = public_path('modelImport/Modele-Import-Utilisateurs.xlsx');
+
+    if (!file_exists($path)) {
+        abort(404, "Fichier modèle introuvable !");
+    }
+
+    return response()->download($path, 'Modele-Import-Utilisateurs.xlsx');
+})->name('download.modele.import');
+
+
 // ***************route materiel*************//
 Route::get('/gestionMateriels/{id_emplacement},{role}', [App\Http\Controllers\MaterielController::class, 'index'])->middleware('auth')->name('gestionMateriels');
 Route::get('/tousLesMateriels/{id_emplacement},{role}', [App\Http\Controllers\MaterielController::class, 'afficheMateriels'])->middleware('auth')->name('tousLesMateriels');
