@@ -60,7 +60,7 @@ class CreateUsersTable extends Migration
                 'id_emplacement' =>2,
                 'nom_utilisateur' => 'RATEFIARISON Maherisoa Olivah',
                 'prenom_utilisateur' => 'Maherisoa',
-                'email' => 'mihossiraman@gmail.com',
+                // 'email' => 'mihossiraman@gmail.com',
                 'password' => Hash::make('adminmdp'),
                 'equipe' => 'Info',
                 'societe' => 'CPA',
