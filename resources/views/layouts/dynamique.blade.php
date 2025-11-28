@@ -8,7 +8,7 @@
             $layout = 'layouts.admin.app';
             break;
         case 'Informatique':
-            $layout = 'layouts.informatique.app';
+            $layout = 'layouts.admin.app';
             break;
         default:
             $layout = 'layouts.utilisateur';

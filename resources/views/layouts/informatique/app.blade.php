@@ -24,6 +24,8 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('cpa/css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('cpa/font-awesome-4.7.0/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
     <!---->
     <link rel="stylesheet" href="{{ asset('cpa/css/animate/animate.min.css') }}">
     <link rel="stylesheet" href="{{ asset('cpa/css/owl-carousel/owl.carousel.min.css') }}">
@@ -40,16 +42,46 @@
     <script src="{{ asset('soutenance/js/smoothscroll.js') }}"></script>
     <script src="{{ asset('soutenance/js/custom.js') }}"></script>
 
+    <style>
+        body {
+            /* background-color: azure; */
+            background-image: url("{{ asset('asset/Parcpc7.jpeg') }}");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100%;
+            /* Assure que le body occupe toute la hauteur de la vue */
+            min-height: 87vh; 
+            display: flex;
+            flex-direction: column;
+        }
 
+        #app {
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* CSS CORRIGÉ : Centrage vertical et horizontal */
+        .content-center {
+            display: flex;
+            align-items: center; /* Centrage vertical */
+            justify-content: center; /* Centrage horizontal */
+            flex-grow: 1; /* Permet à main de prendre tout l'espace sous la navbar */
+            /* Retirez le padding vertical si vous utilisez full-height-center pour un centrage parfait */
+            padding-top: 0 !important; 
+            padding-bottom: 0 !important; 
+        }
+    </style>
 </head>
 
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light  shadow-sm">
 
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    <img src="{{ asset('asset/logocpa.png') }}" style="height:60px;width: auto;" alt="Logo cpa">
+                    {{-- <img src="{{ asset('asset/logocpa.png') }}" style="height:50px;width: auto;" alt="Logo cpa"> --}}
+                    <h2 class="expertcpa"><i class="fa fa-user-edit me-2"></i>GPTic CPA</h2>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -65,75 +97,9 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
-                        @guest
-                            <!-- @if (Route::has('login'))
-    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('login') }}">{{ __('Se connecter') }}</a>
-                                    </li>
-    @endif
-
-                                @if (Route::has('register'))
-    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('register') }}">{{ __('S\'inscrire') }}</a>
-                                    </li>
-    @endif-->
-                        @else
+        
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle smooth-scroll" href="#" id="navbarDropdownMenuLink"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Materiels</a>
-                                <div class="dropdown-menu dropdown-cust" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="/inscription">Etat Actuel des materiels</a>
-                                    <a class="dropdown-item" href="/inscription">Materiels en stock</a>
-                                    <a href="#" class="dropdown-item" data-toggle="modal"
-                                        data-target="#search-modal">Ajout</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle smooth-scroll" href="#" id="navbarDropdownMenuLink"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mouvement Stocks</a>
-                                <div class="dropdown-menu dropdown-cust" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="/inscription">Entré</a>
-                                    <a href="#" class="dropdown-item" data-toggle="modal"
-                                        data-target="#search-modal">Affectation</a>
-                                    <a class="dropdown-item" href="/transfert">Retour</a>
-                                    <a class="dropdown-item" href="/transfert">Matériel hors d’usage</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle smooth-scroll" href="#" id="navbarDropdownMenuLink"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Inventaire</a>
-                                <div class="dropdown-menu dropdown-cust" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="/inscription">Nouveau inventaire</a>
-                                    <a class="dropdown-item" href="/transfert">Historique des inventaires</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle smooth-scroll" href="#"
-                                    id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">Maintenance</a>
-                                <div class="dropdown-menu dropdown-cust" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="/inscription">Demande des utilisateurs</a>
-                                    <a class="dropdown-item" href="/inscription">Intervention en cours</a>
-                                    <a class="dropdown-item" href="/transfert">Historique des maintenances</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle smooth-scroll" href="#"
-                                    id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">Utilisateurs</a>
-                                <div class="dropdown-menu dropdown-cust" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="{{ route('user.liste') }}">Liste des utilisateurs</a>
-                                    <a class="dropdown-item" href="/inscription">Nouveau utilisateur</a>
-
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle text-white" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->nom_utilisateur }}
                                 </a>
@@ -151,8 +117,6 @@
                                     </form>
                                 </div>
                             </li>
-
-                        @endguest
                     </ul>
                 </div>
             </div>

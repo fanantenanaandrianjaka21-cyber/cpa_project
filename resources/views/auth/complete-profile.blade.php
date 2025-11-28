@@ -1,13 +1,13 @@
-@extends('layouts.app')
+@extends('layouts.informatique.app')
 
 @section('content')
-<div class="container mt-5">
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-md-5">
             <div class="card p-4">
 
-                <h4 class="mb-3">Compléter votre profil</h4>
-                <p>Vous devez ajouter un email, un mot de passe et un code PIN à 6 chiffres pour continuer.</p>
+                <h4 class="mb-3">Finalisation du profil</h4>
+                <p class="text-white">Vous devez ajouter un email, un nouveau mot de passe et un code PIN à 6 chiffres pour continuer.</p>
 
                 {{-- 🔥 Affichage global des erreurs --}}
                 @if ($errors->any())
@@ -65,7 +65,7 @@
 
                     {{-- ⭐ PIN à 6 chiffres --}}
                     <div class="mb-3">
-                        <label>Code PIN (6 chiffres) :</label>
+                        <label> Crée votre Code PIN (6 chiffres) :</label>
 
                         {{-- Champ caché pour Laravel --}}
                         <input type="hidden" name="pin" id="pin-hidden" value="{{ old('pin') }}" required>
