@@ -126,7 +126,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
+                            {{-- <div class="row mb-3">
                                 <label for="status"
                                     class="col-md-4 col-form-label text-md-end">{{ __('Status :') }}</label>
 
@@ -136,7 +136,38 @@
                                         value="{{ $materiel['status'] }}"required>
                                     <div class="invalid-feedback"></div>
                                 </div>
+                            </div> --}}
+                            <div class="row mb-3">
+                                <label for="status"
+                                    class="col-md-4 col-form-label text-md-end">{{ __('Status :') }}</label>
+
+                                <div class="col-md-6">
+                                    <select id="status" class="form-control @error('status') is-invalid @enderror"
+                                        name="status" required>
+
+                                        <option value="possible" {{ $materiel['status'] == 'possible' ? 'selected' : '' }}>
+                                            Possible</option>
+                                        <option value="disponible"
+                                            {{ $materiel['status'] == 'disponible' ? 'selected' : '' }}>Disponible</option>
+                                        <option value="utiliser" {{ $materiel['status'] == 'utiliser' ? 'selected' : '' }}>
+                                            Utiliser</option>
+                                        <option value="en maintenance"
+                                            {{ $materiel['status'] == 'en maintenance' ? 'selected' : '' }}>En maintenance
+                                        </option>
+                                        <option value="hors service"
+                                            {{ $materiel['status'] == 'hors service' ? 'selected' : '' }}>Hors service
+                                        </option>
+
+                                    </select>
+
+                                    <div class="invalid-feedback">
+                                        @error('status')
+                                            {{ $message }}
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
+
                             <div class="row mb-3">
                                 <label for="image" class="col-md-4 col-form-label text-md-end">Image :</label>
                                 <div class="col-md-6">
@@ -163,7 +194,7 @@
                                     <button type="submit" class="btn btn-success">
                                         {{ __('Modifier') }}
                                     </button>
-                                                                        <button type="reset" class="btn btn-danger">
+                                    <button type="reset" class="btn btn-danger">
                                         {{ __('Annulerr') }}
                                     </button>
                                 </div>
